@@ -10,8 +10,8 @@ A centralized digital platform designed to automate academic and administrative 
 
 ## 🚀 Tech Stack
 This project is built using a three-tier client-server architecture based on the **MERN Stack**:
-* **Frontend (Presentation Layer):** React.js, HTML, JS (Web and Mobile browsers)   -- Will be Designed by Arpit Kasana & Karan Minj
-* **Backend (Business Logic Layer):** Node.js and Express.js -- Will be Designed by Aryan Kumar & Bhavishya
+* **Frontend (Presentation Layer):** React.js, HTML, JS (Web and Mobile browsers)   -- Will be Designed by Aryan Kumar & Karan Minj
+* **Backend (Business Logic Layer):** Node.js and Express.js -- Will be Designed by Arpit Kasana & Bhavishya
 * **Database (Data Layer):** MongoDB (NoSQL) using Mongoose ODM -- Will be designed by Kulwant
 
 ## ✨ Key Features
