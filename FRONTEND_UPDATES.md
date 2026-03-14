@@ -3,7 +3,7 @@
 **Project:** College Administration Management System  
 **Frontend Lead:** Karan Minj  
 **Frontend Developer:** Aryan Kumar  
-**Last Updated:** March 13, 2026 (Day 4 - Sprint 1)  
+**Last Updated:** March 13, 2026 (Day 4 - Phase 1)  
 **Document Version:** 1.1  
 **Project Deadline:** March 30, 2026 (20 Days)
 
@@ -218,12 +218,12 @@ This document tracks **all frontend development progress, completed milestones, 
 ## 🔔 Current Status Update - March 13, 2026 (Day 4)
 
 **Overall Project Status:** 🟢 ON TRACK  
-**Sprint 1 Progress:** Day 4 of 4 - Foundation & Setup Complete  
+**Phase 1 Progress:** Day 4 of 4 - Foundation & Setup Complete  
 **Critical Path:** No blockers identified
 
 ### Day 4 Summary (March 13, 2026)
 **Team Status:** Karan (Project Setup Lead) & Aryan (Infrastructure Setup)  
-**Focus:** Sprint 1 completed successfully with all foundational setup delivered
+**Focus:** Phase 1 completed successfully with all foundational setup delivered
 
 **Completed Today:**
 - ✅ Vite project initialization with React 18
@@ -235,9 +235,9 @@ This document tracks **all frontend development progress, completed milestones, 
 - ✅ RBAC middleware foundation
 - ✅ Protected routes framework
 
-**Sprint 1 Status:** ✅ COMPLETED (All deliverables met)
+**Phase 1 Status:** ✅ COMPLETED (All deliverables met)
 
-**Next Steps (Sprint 2 - March 14-17):**
+**Next Steps (Phase 2 - March 14-17):**
 - Admin Dashboard (Stats, Overview)
 - Teacher Dashboard (Classes, Quick Links)
 - Student Dashboard (Schedule, Fees, Videos)
@@ -247,13 +247,13 @@ This document tracks **all frontend development progress, completed milestones, 
 **Blockers:** None currently  
 **Risks:** Backend API readiness dependency - mitigation: use mock data if needed
 
-**Note:** Frontend development can proceed independently. Backend API integration planned for Sprint 2 start (March 14).
+**Note:** Frontend development can proceed independently. Backend API integration planned for Phase 2 start (March 14).
 
 ---
 
-## 📅 Sprint Planning
+## 📅 Phase Planning
 
-### Sprint 1 - Foundation & Authentication Setup
+### Phase 1 - Foundation & Authentication Setup
 **Duration:** March 10-13 (4 Days)  
 **Target Completion Date:** March 13, 2026  
 **SRS Coverage:** UC-01 (User Authentication & RBAC), NFR-01 (Secure Access & Authorization)
@@ -283,26 +283,20 @@ This document tracks **all frontend development progress, completed milestones, 
 - [ ] CORS properly configured
 - [ ] Environment variables protected (.env.local)
 
-**Notes:**
-- Karan starts immediately using Vite for faster builds
-- Mock backend data if API not ready
-- Configure automatic token refresh before expiry
-- Security settings are NON-NEGOTIABLE per SRS
 
----
 
-### Sprint 2 - Dashboard Implementation
+### Phase 2 - Dashboard Implementation
 **Duration:** March 14-17 (4 Days)  
 **Target Completion Date:** March 17, 2026  
 **SRS Coverage:** UC-01 (Dashboards), UC-04 (View Records), Section 2.3 (User Classes)
 
 | Module | Developer | SRS Ref | Status | Priority |
 |--------|-----------|---------|--------|----------|
-| Admin Dashboard (Stats, Overview) | Aryan | 3.1, 2.3 | Not Started | P0 |
-| Teacher Dashboard (Classes, Quick Links) | Karan | 3.1, UC-02 | Not Started | P0 |
-| Student Dashboard (Schedule, Fees, Videos) | Aryan | 3.1, UC-03, UC-04 | Not Started | P0 |
+| Admin Dashboards | Aryan | 3.1, 2.3 | Not Started | P0 |
+| Teacher Dashboard | Aryan | 3.1, UC-02 | Not Started | P0 |
+| Student Dashboard | Aryan | 3.1, UC-03, UC-04 | Not Started | P0 |
 | Dashboard Redux Slices | Karan | 7.2 | Not Started | P0 |
-| API Integration with Backend | Both | 3.3, 3.4 | Not Started | P0 |
+| Authentication Module | Karan | UC-01 | Not Started | P0 |
 | Mock Data/Testing | Both | - | Not Started | P1 |
 
 **Key Deliverables:**
@@ -325,18 +319,16 @@ This document tracks **all frontend development progress, completed milestones, 
 
 ---
 
-### Sprint 3 - Core Features Implementation
+### Phase 3 - Core Features Implementation
 **Duration:** March 18-21 (4 Days)  
 **Target Completion Date:** March 21, 2026  
 **SRS Coverage:** UC-02 (Attendance), UC-03 (Payments), 4.2 (Video Upload), 4.3 (Video Streaming)
 
 | Module | Developer | SRS Ref | Status | Priority |
 |--------|-----------|---------|--------|----------|
-| Attendance Management UI (Mark + View) | Karan | UC-02, 4.1, 7.2.2 | Not Started | P0 |
-| Video Upload & Library Components | Aryan | 4.2, 3.1 | Not Started | P0 |
-| Video Player Integration (HLS Streaming) | Aryan | 4.3, 5.1 | Not Started | P0 |
-| Payment Gateway Setup (Razorpay) | Karan | UC-03, NFR-02, 7.4.2 | Not Started | P0 |
-| Notifications System (Bell + Center) | Karan | UC-01, 3.1 | Not Started | P1 |
+| Attendance Management | Karan | UC-02, 4.1, 7.2.2 | Not Started | P0 |
+| Video Management | Aryan | 4.2, 3.1 | Not Started | P0 |
+| Payment Integration | Karan | UC-03, NFR-02, 7.4.2 | Not Started | P0 |
 
 **Key Deliverables:**
 - ✅ Attendance marking functional (UC-02, SRS 4.1)
@@ -361,22 +353,20 @@ This document tracks **all frontend development progress, completed milestones, 
 - Razorpay test keys for dev environment (SRS 5.3)
 - Payment security: Backend handles all sensitive data (SRS 7.4.2)
 - Implement optimistic UI updates where possible (SRS 5.1)
-- Defer notifications (P1) if Sprint 4 space is needed
+- Defer notifications (P1) if Phase 4 space is needed
 
 ---
 
-### Sprint 4 - Advanced Features & Refinement
+### Phase 4 - Advanced Features & Refinement
 **Duration:** March 22-25 (4 Days)  
 **Target Completion Date:** March 25, 2026  
 **SRS Coverage:** 4.4 (Reach Analytics), UC-04 (View Records), UC-05 (Events), Notifications
 
 | Module | Developer | SRS Ref | Status | Priority |
 |--------|-----------|---------|--------|----------|
-| Analytics Dashboard (Charts & Stats) | Aryan | 4.4, 3.1 | Not Started | P1 |
-| Attendance Analytics & Trends | Aryan | UC-04, 4.4 | Not Started | P1 |
-| Event Management UI | Karan | UC-05, 3.1 | Not Started | P2 |
-| Payment History & Receipts | Karan | UC-03, 3.1 | Not Started | P1 |
-| Real-time Notifications (Polling) | Both | UC-01, 3.1 | Not Started | P2 |
+| Reach Analytics | Karan | 4.4, 3.1 | Not Started | P1 |
+| Event Management | Aryan | UC-05, 3.1 | Not Started | P2 |
+| Notifications | Aryan | UC-01, 3.1 | Not Started | P1 |
 
 **Key Deliverables:**
 - ✅ Analytics dashboards with charts (SRS 4.4)
@@ -396,14 +386,19 @@ This document tracks **all frontend development progress, completed milestones, 
 
 ---
 
-### Sprint 5 - Testing, Optimization & Deployment
+### Phase 5 - Testing, Optimization & Deployment
 **Duration:** March 26 - March 30 (5 Days)  
 **Target Completion Date:** March 30, 2026  
 **SRS Coverage:** NFR-01 (Security), NFR-02 (Payments), 5.1 (Performance), 5.4 (Quality)
 
 | Task | Developer | SRS Ref | Status | Priority |
 |------|-----------|---------|--------|----------|
-| Security Testing (Auth, RBAC, XSS/CSRF) | Aryan | NFR-01, 5.3, 7.4 | Not Started | P0 |
+| Unit Testing | Both | - | Not Started | P0 |
+| Integration Testing | Both | - | Not Started | P0 |
+| End-to-End Testing | Aryan | - | Not Started | P0 |
+| Performance Optimization | Karan | 5.1 | Not Started | P0 |
+| Security Audit | Aryan | NFR-01, 5.3, 7.4 | Not Started | P0 |
+| Cross-browser Testing | Aryan | - | Not Started | P0 |
 | API Integration Testing | Karan | NFR-01, NFR-02, 3.3 | Not Started | P0 |
 | Cross-browser Testing (Chrome, FF, Safari) | Aryan | 5.4 | Not Started | P0 |
 | Bug Fixes & UI Polish | Karan | 5.4 | Not Started | P0 |
@@ -559,13 +554,13 @@ Per SRS, backend must implement these endpoints for frontend integration. Use th
 
 ### Development Guidelines
 - **Daily sync required** - 10:30 AM daily standup with backend/DB teams
-- **Backend dependency** - Backend APIs must be ready by Sprint 2 start per SRS 3.3
+- **Backend dependency** - Backend APIs must be ready by Phase 2 start per SRS 3.3
 - **Prioritize ruthlessly** - Only implement P0 features, defer P2 to post-launch
 - **No perfectionism** - MVP approach: working > polished, but SECURE > everything
 - **Security first** - Security requirements are NOT optional (SRS 5.3, NFR-01, NFR-02)
-- **Test early & often** - Manual testing on real devices during sprints
+- **Test early & often** - Manual testing on real devices during phases
 - **Keep communication tight** - Update this doc DAILY with blockers
-- **Prepare deployment early** - Set up Vercel/Netlify by Sprint 3 end (SRS 7.1)
+- **Prepare deployment early** - Set up Vercel/Netlify by Phase 3 end (SRS 7.1)
 - **Use component libraries** - Headless UI, Tailwind reduce custom CSS (SRS 5.1 Performance)
 - **Avoid scope creep** - Any new request requires dropping equal priority task
 - **Have backup plans** - If backend delayed, use mock data to stay unblocked
@@ -586,8 +581,8 @@ Per SRS, backend must implement these endpoints for frontend integration. Use th
 - **Traceability Matrix:** Section 8.1 (Requirement-to-Design Mapping)
 
 ### GitHub Milestones (SRS Compliance)
-- **March 13:** Sprint 1 Complete (Foundation & Authentication Setup)
-- **March 17:** Sprint 2 Complete (Dashboard Implementation)
-- **March 21:** Sprint 3 Complete (Core Features Implementation)
-- **March 25:** Sprint 4 Complete (Advanced Features & Refinement)
-- **March 30:** Sprint 5 Complete (Testing, Optimization & Deployment)
+- **March 13:** Phase 1 Complete (Foundation & Authentication Setup)
+- **March 17:** Phase 2 Complete (Dashboard Implementation)
+- **March 21:** Phase 3 Complete (Core Features Implementation)
+- **March 25:** Phase 4 Complete (Advanced Features & Refinement)
+- **March 30:** Phase 5 Complete (Testing, Optimization & Deployment)
