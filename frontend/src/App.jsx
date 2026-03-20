@@ -9,7 +9,6 @@
 
 import { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
 import { setupInterceptors } from '@/middleware/setupInterceptors'
 import { useAppDispatch } from '@/hooks/useRedux'
 import store from '@/store/store'
@@ -24,51 +23,41 @@ import ResetPasswordPage from '@/pages/ResetPasswordPage'
 import AuthLayout from '@/layouts/AuthLayout'
 import MainLayout from '@/layouts/MainLayout'
 
+// Protected Route Components
+import ProtectedRoute from '@/components/Common/ProtectedRoute'
+import RoleProtectedRoute from '@/components/Common/RoleProtectedRoute'
+
 // Dashboard Pages
 import AdminDashboard from '@/pages/AdminDashboard'
 import TeacherDashboard from '@/pages/TeacherDashboard'
 import StudentDashboard from '@/pages/StudentDashboard'
 
-/**
- * Protected Route Component
- * Requires authentication to access
- */
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useSelector((state) => state.auth)
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-
-  return children
-}
-
-/**
- * Role-Based Protected Route
- * Requires authentication and specific role
- */
-const RoleProtectedRoute = ({ children, requiredRole }) => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth)
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-
-  if (requiredRole && user?.role !== requiredRole) {
-    return <Navigate to="/unauthorized" replace />
-  }
-
-  return children
-}
+// Utils
+import { getStoredUser, isTokenValid } from '@/utils/tokenUtils'
 
 function App() {
+  const dispatch = useAppDispatch()
+
   /**
-   * Initialize interceptors on component mount
-   * This sets up axios interceptors for JWT token handling
+   * Initialize authentication on app mount
+   * 1. Set up axios interceptors for JWT token handling
+   * 2. Check for stored auth data and restore session
    */
   useEffect(() => {
+    // Set up request/response interceptors
     setupInterceptors(store)
-  }, [])
+
+    // Check for stored authentication data
+    const storedUser = getStoredUser()
+    const token = localStorage.getItem('authToken')
+
+    // If we have stored credentials and token is valid, the auth state should already be set
+    // If token is expired, the user will need to login again (interceptor will handle refresh)
+    if (storedUser && token && !isTokenValid(token)) {
+      // Token is expired, but interceptor will attempt refresh
+      // If that fails, user will be redirected to login
+    }
+  }, [dispatch])
 
   return (
     <Router>

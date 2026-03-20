@@ -367,3 +367,17 @@ export default {
   validateField,
   validateForm,
 }
+
+// Named export for consistency with import patterns
+export const validate = {
+  email: validateEmail,
+  password: validatePassword,
+  username: validateUsername,
+  fullName: validateFullName,
+  phoneNumber: validatePhoneNumber,
+  url: validateUrl,
+  date: validateDate,
+  age: validateAge,
+  field: validateField,
+  form: validateForm,
+}
