@@ -1,593 +1,2227 @@
-# Frontend Updates & Progress Document
+# College Administration Management System - Frontend Development Plan
 
-**Project:** College Administration Management System  
-**Frontend Lead:** Karan Minj  
-**Frontend Developer:** Aryan Kumar  
-**Last Updated:** March 13, 2026 (Day 4 - Sprint 1)  
-**Document Version:** 1.1  
-**Project Deadline:** March 30, 2026 (20 Days)
-
----
-
-## 📋 Document Purpose
-
-This document tracks **all frontend development progress, completed milestones, blockers, and issues** aligned with the **Software System Requirements Specification (SRS)** and the **FRONTEND_DEVELOPMENT_PLAN.md**.
-
-**Detailed progress and updates are logged DAILY** with SRS compliance verification:
-- ✅ Functional Requirements (UC-01 through UC-05)
-- ✅ Non-Functional Requirements (NFR-01, NFR-02)
-- ✅ Security Requirements (SRS Section 5.3 & 7.4)
-- ✅ Design & Architecture (SRS Section 7.0)
+**Version:** 1.2  
+**Created:** March 10, 2026  
+**Last Updated:** March 20, 2026  
+**Document Purpose:** Defines frontend work to be done with clear task assignments & progress tracking  
+**Developers:** Karan Minj (Lead), Aryan Kumar  
+**Project Duration:** 20 Days (Accelerated)  
+**Target Launch:** March 30, 2026  
+**Reference Document:** Software System Requirements Specification & Design (SRS)  
+**Architecture:** Three-Tier MERN Stack (MongoDB, Express.js, React.js, Node.js)
 
 ---
 
-## 🔄 Update Log
+## 📊 PROGRESS STATUS (As of March 20, 2026)
 
-### Update #1 - Phase 1 Completion
-**Date:** March 13, 2026 (Day 4)  
-**Status:** ✅ COMPLETED  
-**Developers:** Karan Minj (Lead)  
-**Module:** Foundation & Setup (Phase 1)
+| Phase | Status | Completion | Lead | Notes |
+|-------|--------|------------|------|-------|
+| **Phase 1: Foundation & Setup** | ✅ **COMPLETED** | 100% | Karan Minj | All initialization, Redux, and config tasks done. Build & lint passing. |
+| **Phase 2: Authentication & Layout** | 🔄 **IN PROGRESS** | 50% | Karan Minj | API services, interceptors, routes created. Auth pages skeleton done. |
+| **Phase 3: Dashboard Implementation** | ⏳ **NOT STARTED** | 0% | Aryan Kumar | Pending Phase 2 completion |
+| **Phase 4: Feature Implementation** | ⏳ **NOT STARTED** | 0% | Both | Attendance, Video, Payments, Notifications |
+| **Phase 5: Analytics & Advanced** | ⏳ **NOT STARTED** | 0% | Both | Analytics dashboard & Events |
+| **Phase 6: Testing & Deployment** | ⏳ **NOT STARTED** | 0% | Both | Final testing and production deployment |
 
-#### Tasks Completed
+### Phase 1 Completion Summary ✅
+**Completed on:** March 20, 2026 (7 days after target, due to dependency issues)
 
-**Completed by Karan Minj (Lead):**
+**Tasks Completed:**
+1. ✅ Project initialization with Vite & React 18.3.1
+2. ✅ Absolute imports (@/ paths) - vite.config.js & jsconfig.json
+3. ✅ All dependencies installed (443 packages, legacy-peer-deps)
+4. ✅ Redux store configured with 4 slices:
+   - authSlice.js - Login/logout/token management
+   - userSlice.js - Profile & preferences
+   - notificationSlice.js - Notifications & toasts
+   - uiSlice.js - Sidebar, modals, theme
+5. ✅ Configuration files:
+   - eslint.config.js - React & hooks rules
+   - .prettierrc - Code formatting
+   - tailwind.config.js - Theme with custom colors
+   - postcss.config.js - Tailwind & autoprefixer
+   - .husky - Pre-commit & pre-push hooks
+6. ✅ Environment configuration (src/config/environment.js)
+7. ✅ Build verification - 143.57 kB bundle, 46.42 kB gzipped
+8. ✅ Linting verification - 0 errors, 0 warnings
+9. ✅ Fixed vite.config.js __dirname error
+10. ✅ Fixed jsconfig.json TypeScript type definitions
 
-**1. React + Vite Project Initialization (3.1.1)**
-- ✅ Initialized Vite React project at `/frontend/`
-- ✅ Configured Git workflow and branching strategy
-- ✅ Set up development environment (.env.local)
-- ✅ Configured absolute imports (@/ paths)
-- ✅ Verified project runs without errors
+**Build Status:**
+- Build time: 741ms ✓
+- Bundle size: 46.42 kB (gzipped) ✓
+- ESLint: 0 errors, 0 warnings ✓
+- All tests ready to run ✓
 
-**2. Project Structure Setup (3.1.2)**
-- ✅ Created 18 feature-based directories
-- ✅ Component organization: Common, Auth, Dashboard, Attendance, Video, Payment, Notifications
-- ✅ Service, Hook, Store, Utils layers structured
-- ✅ Configuration directories organized hierarchically
+### Phase 2 Progress Summary (In Progress) 🔄
+**Started:** March 20, 2026  
+**Target Completion:** March 23, 2026  
+**Karan Minj - Authentication Module (50% Complete)**
 
-**3. Dependencies & Redux Setup (3.1.3)**
-- ✅ Installed all 40+ required dependencies
-- ✅ Verified package compatibility and resolved conflicts
-- ✅ Redux store configured with Redux Toolkit
-- ✅ `authSlice.js` - Authentication and user session management
-- ✅ `userSlice.js` - User profile and preferences management
-- ✅ `notificationSlice.js` - System notifications and toasts management
-- ✅ `uiSlice.js` - UI state (sidebar toggle, modals, theme, loading states)
-- ✅ Testing framework setup (Vitest + React Testing Library)
-- ✅ Global testing utilities configured
+**Tasks Completed:**
+1. ✅ Dashboard Redux Slice with async thunks (fetchStats, fetchUsers, fetchClasses, fetchReports, fetchNotifications)
+2. ✅ API service layer (api.js, authService.js, dashboardService.js)
+3. ✅ Auth interceptors & token management with JWT refresh logic
+4. ✅ Form validation utilities (email, password strength, username, phone, date, age, etc.)
+5. ✅ Authentication routes & page structure:
+   - React Router setup with ProtectedRoute & RoleProtectedRoute
+   - AuthLayout component
+   - Login, Register, Forgot Password, Reset Password pages (skeleton)
+   - Custom useRedux hooks
+   - Redux Provider wrapped in main.jsx
 
-**4. Code Quality & Build Configuration (3.1.4)**
-- ✅ ESLint configured with React/Hooks rules
-- ✅ Prettier formatting rules applied (100-char width, smart quotes, trailing commas)
-- ✅ Tailwind CSS 3.4.1 configured with custom color palette
-- ✅ PostCSS and autoprefixer installed
-- ✅ Husky pre-commit and pre-push hooks created
-- ✅ Global styles with utility classes created at `src/styles/index.css`
-- ✅ Environment configuration templates (.env.local, .env.example)
-- ✅ `src/config/environment.js` centralized config utility
+**Build Status:**
+- Build time: 696ms ✓
+- Bundle size: 253.64 kB JS, 82.63 kB gzipped ✓
+- ESLint: 0 errors, 9 warnings (expected - console statements) ✓
+- 132 modules transformed ✓
 
-
-
-
-#### Key Implementation Details
-
-**Developer Responsibilities:**
-
-**Karan Minj:**
-- Project initialization and infrastructure setup
-- Directory structure and file organization
-- Code quality tooling (ESLint, Prettier, Husky)
-- Tailwind CSS and styling framework
-- Global styles and utility classes
-- Environment configuration and templates
-- Build configuration (Vite, PostCSS)
-- Dependency installation and verification
-- Redux store architecture and configuration
-- Redux state slices design and implementation:
-  - Auth slice for user session & JWT token management
-  - User slice for profile data and preferences
-  - Notification slice for toast & notification state
-  - UI slice for sidebar, modals, theme, loading states
-- Testing framework setup (Vitest + React Testing Library)
-- Testing utilities and initial test templates
-
-#### SRS Alignment Verified
-
-✅ **Section 2.3 (User Classes)**: Foundation ready for Auth, Teacher, Admin, Student roles  
-✅ **Section 4.1 (JWT Auth)**: Redux auth state configured for token management  
-✅ **Section 7.1 (Architecture)**: Three-tier MERN frontend layer initialized  
-✅ **Section 7.4 (Security)**: Environment config prevents secret exposure  
-✅ **NFR-01 (Transport Security)**: HTTPS API config prepared  
-✅ **NFR-02 (Payments)**: Redux payment state structure ready for integration  
-
-#### Acceptance Criteria Met
-
-- ✅ Project runs without errors (`npm run dev` works)
-- ✅ Code linting passes (`npm run lint`)
-- ✅ Pre-commit hooks functional (Husky hooks set up)
-- ✅ All dependencies installed and verified (`node_modules` populated)
-- ✅ Tailwind CSS working (utility classes available)
-- ✅ Redux store configured (slices created)
-- ✅ Absolute imports working (@/ alias functional)
-- ✅ Environment configuration complete (.env setup done)
-
-#### Testing Status
-- ✅ Project builds without errors
-- ✅ Dev server starts successfully
-- ✅ ESLint configuration passes
-- ✅ Prettier formatting works
-- ✅ Redux store imports work
-- ✅ Tailwind CSS compiles correctly
-
-#### Blockers/Issues
-- **None** - Phase 1 completed without blockers
-
-#### Next Steps
-- Phase 2: Authentication & Layout (Ready to start on March 14, 2026)
-- Karan Minj: Authentication components (Login, Register, Auth Guards)
-- Aryan Kumar: Layout components (Header, Sidebar, Footer, Navigation)
+**Remaining Phase 2 Tasks:**
+6. ⏳ Implement Login component with form submission & API integration
+7. ⏳ Implement Register component with validation
+8. ⏳ Implement Forgot/Reset Password components
+9. ⏳ Create Protected Routes middleware & Auth Guard
+10. ⏳ Test all authentication flows end-to-end
 
 ---
 
-## 📊 Metrics & Statistics
+## 📌 Task Assignment Summary
 
-**Phase 1 Metrics:**
-- Lines of Code: ~500 (config files and Redux slices)
-- Files Created: 26 directories + 10+ config files
-- Dependencies: 40+ installed
-- Configuration: 8 major config files
-- Redux Slices: 4 (auth, user, notification, ui)
-- Project Size: ~150MB (with node_modules)
-- Build Time: < 1 second (Vite hot reload)
-- Dev Server Startup: < 1 second
+**Phase Assignments & Next Steps:**
 
-**Timeline Performance:**
-- Target Completion: March 13, 2026
-- Actual Completion: March 11, 2026
-- **Days Ahead: 2 Days** ✅
+| Phase | Lead Developer | Supporting Developer | Focus |
+|-------|-----------------|---------------------|-------|
+| Phase 1: Foundation & Setup | **Karan Minj** ✅ COMPLETE | Project setup, Redux setup (Karan) |
+| Phase 2: Authentication & Layout | **Karan Minj** 🔄 IN PROGRESS (50%) | **Aryan Kumar** | Auth module (Karan), Layout (Aryan) |
+| Phase 3: Dashboard Implementation | **Aryan Kumar** | **Karan Minj** | Admin & Teacher dashboards (Aryan), Student (Karan) |
+| Phase 4: Feature Implementation | **Both (Parallel)** | - | Attendance/Payment (Karan), Video/Notifications (Aryan) |
+| Phase 5: Analytics & Advanced Features | **Both (Parallel)** | - | Analytics (Karan), Events (Aryan) |
+| Phase 6: Testing, Optimization & Deployment | **Both (Parallel)** | - | Unit & Integration (Both), E2E (Aryan), Performance (Karan) |
 
 ---
 
-## 🔗 File References
-
-| Item | Location | Status |
-|------|----------|--------|
-| Frontend App | `/workspaces/.../frontend/` | ✅ Ready |
-| Redux Store | `/frontend/src/store/` | ✅ Configured |
-| Config Utils | `/frontend/src/config/environment.js` | ✅ Complete |
-| Environment | `/frontend/.env.local` | ✅ Set |
-| Styles | `/frontend/src/styles/index.css` | ✅ Created |
-| ESLint Config | `/frontend/eslint.config.js` | ✅ Set |
-| Prettier Config | `/frontend/.prettierrc` | ✅ Set |
-| Tailwind Config | `/frontend/tailwind.config.js` | ✅ Set |
-| Husky Hooks | `/frontend/.husky/` | ✅ Set |
+## 📑 Table of Contents
+1. [Executive Summary](#executive-summary)
+2. [Project Overview](#project-overview)
+3. [Development Phases](#development-phases)
+4. [Technology Stack](#technology-stack)
+5. [Project Structure](#project-structure)
+6. [Architecture & Design Patterns](#architecture--design-patterns)
+7. [Component Breakdown](#component-breakdown)
+8. [State Management Strategy](#state-management-strategy)
+9. [API Integration Plan](#api-integration-plan)
+10. [Styling & UI/UX](#styling--uiux)
+11. [Testing Strategy](#testing-strategy)
+12. [Performance Optimization](#performance-optimization)
+13. [Security Implementation](#security-implementation)
+14. [DevOps & Deployment](#devops--deployment)
+15. [Risk Management](#risk-management)
+16. [Success Metrics](#success-metrics)
 
 ---
 
-## 📝 Format for Future Updates
+## 1. Executive Summary
 
-```markdown
-### Update #[N] - [Feature/Phase Name]
-**Date:** [Date]
-**Status:** [Completed / In Progress / Blocked]
-**Developer:** [Name]
-**Module:** [Module Name]
+This frontend application is a **multi-role dashboard system** built with **React.js** for the College Administration Management System - a centralized digital platform that automates academic and administrative campus operations.
 
-#### Changes Made
-- [x] Task 1
-- [x] Task 2
+The system implements the **Presentation Layer** of a three-tier MERN stack, serving three distinct user roles (Admin, Teacher, Student) with customized dashboards, features, and workflows as defined in the SRS.
 
-#### Implementation Details
-- Technology/Library used
-- API Endpoints integrated
-- Database dependencies
-- Component structure
+**Key Objectives (Aligned with SRS):**
+- ✅ Implement JWT-based stateless authentication with RBAC
+- ✅ Create role-specific dashboards (Admin, Teacher, Student)
+- ✅ Build Teacher interface for attendance marking & video management
+- ✅ Build Student interface for video streaming & fee payments
+- ✅ Integrate Razorpay payment gateway with cryptographic validation
+- ✅ Implement real-time notifications system
+- ✅ Build analytics dashboards for reach and engagement metrics
+- ✅ Ensure HTTPS, XSS, CSRF, and input validation protection
+- ✅ Achieve accessibility and cross-browser compatibility
 
-#### Testing Status
-- Unit Tests: [✓/✗]
-- Integration Tests: [✓/✗]
-- E2E Tests: [✓/✗]
+**Accelerated Timeline:** 20 Days  
+**Team Size:** 2 Frontend Developers (Karan Minj - Lead, Aryan Kumar - Developer)  
+**Success Criteria:** 
+- ✅ All SRS functional requirements implemented (UC-01 through UC-05)
+- ✅ Security requirements fully compliant (NFR-01, NFR-02)
+- ✅ Lighthouse score > 85 (MVP target)
+- ✅ Page load time < 2.5 seconds
+- ✅ Zero critical security vulnerabilities
+- ✅ Production deployment by March 30, 2026
 
-#### Blockers/Issues
-- Issue 1: [Description & Solution]
+---
 
-#### SRS Alignment
-- [SRS Section] - [Verification]
+## 2. Project Overview
+
+### 2.1 System Architecture
+According to SRS Section 7.1, the College Administration Management System utilizes a **three-tier client-server architecture** based on MERN stack:
+
+```
+┌─────────────────────────────────────────────────────┐
+│    PRESENTATION LAYER (React.js) - This Project    │
+│  (Web & Mobile Browsers - Interactive UI)          │
+├──────────────┬──────────────┬──────────────────┤
+│   Admin      │   Teacher    │   Student        │
+│  Dashboard   │  Dashboard   │   Dashboard      │
+│  (Role: Admin)│ (Role: Teacher) │ (Role: Student)│
+└──────────────┴──────────────┴──────────────────┘
+                      ↓ (REST API)
+┌──────────────────────────────────────────────────────┐
+│   BUSINESS LOGIC LAYER (Node.js/Express.js)        │
+│   (Routing, Core Logic, Middleware, External APIs) │
+├──────────────────────────────────────────────────────┤
+│ - JWT Authentication & RBAC Middleware              │
+│ - Attendance Tracking Logic                         │
+│ - Event Scheduling                                  │
+│ - Razorpay Payment Gateway Integration              │
+└──────────────────────────────────────────────────────┘
+                      ↓
+┌──────────────────────────────────────────────────────┐
+│     DATA LAYER (MongoDB NoSQL Database)             │
+│  Collections: Users, Class, Attendance, Events,     │
+│  Payments, Notifications, Videos                    │
+└──────────────────────────────────────────────────────┘
 ```
 
-### Attention Required From
-- [ ] Backend Team (API Endpoints, Response Format)
-- [ ] Database Team (Schema Changes, Indexing)
-- [ ] QA Team (Testing Requirements)
-- [ ] Other: [Specify]
+### 2.2 SRS Functional Requirements Implementation & User Roles
+Per SRS Section 2.3 & 4 (System Features), frontend implements three distinct user classes:
 
-### Files Modified/Created
-- `src/components/ModuleName/Component.jsx`
-- `src/pages/PageName.jsx`
-- `src/services/apiService.js`
+**Admin Role**
+- System-wide privileges
+- Manages user accounts
+- Views platform analytics  
+- Creates teacher accounts (enforced per business rule)
+- Access: `/admin/*` routes
 
-### Screenshots/Demo
-[Add links to screenshots or demo videos]
+**Teacher Role**
+- Manage assigned classes
+- Mark attendance (Present, Absent, Late) - UC-02
+- Upload/manage video content by subject - UC-4.2
+- View attendance analytics - UC-04
+- Access: `/teacher/*` routes
+
+**Student Role**
+- View assigned classes & schedule
+- Access attendance records - UC-04
+- Stream subject-wise videos - UC-4.3
+- Pay fees through payment gateway - UC-03
+- View notifications
+- Access: `/student/*` routes
+
+### 2.3 Functional Requirements Mapping
+
+| SRS Requirement ID | Requirement Name | Frontend Module | Priority |
+|-----------------|-----------------|-----------------|----------|
+| UC-01 | User Authentication & RBAC | Authentication System | P0 |
+| UC-02 | Mark Student Attendance | Attendance Management | P0 |
+| UC-03 | Pay Campus Fees (Razorpay) | Payment Integration | P0 |
+| UC-04 | View Attendance Records | Dashboard + Analytics | P0 |
+| UC-05 | Manage Campus Events | Event Management | P1 |
+| 4.2 | Video Content Management (Teacher) | Video Upload & Management | P0 |
+| 4.3 | Subject-Wise Video Streaming | Video Streaming & Library | P0 |
+| 4.4 | Reach Analytics | Analytics Dashboard | P1 |
+
+### 2.4 Security Requirements (SRS Sections 5.3 & 7.4)
+The frontend enforces all specified security protocols:
+
+- ✅ **Transport Security** (NFR-01): HTTPS-only communication (enforced in API config)
+- ✅ **JWT Authentication**: Tokens stored in httpOnly cookies (not localStorage), issued per SRS 4.1
+- ✅ **Role-Based Access Control (RBAC)**: JWT payload checked for Admin/Teacher/Student roles
+- ✅ **XSS Protection**: Input sanitization, CSP headers, no innerHTML usage
+- ✅ **CSRF Protection**: CSRF tokens on all state-changing requests
+- ✅ **Input Validation**: All user inputs validated & sanitized before API submission
+- ✅ **Financial Transaction Security** (NFR-02): Payment verified via cryptographic signature on backend
+- ✅ **Secure Dependencies**: Regular audits for vulnerabilities
+
+### 2.5 MongoDB Collections Integration (SRS Section 7.3)
+Frontend interacts with established MongoDB schemas:
+
+| Collection | Purpose | Key Fields | Frontend Use |
+|-----------|---------|-----------|--------------|
+| **Users** | Authentication & Profiles | _id, username, email, role, profile_picture | Auth, Profile |
+| **Class** | Class/Course Info | _id, teacher_id, subject, class_code | Dashboard, Video |
+| **Attendance** | Attendance Records | _id, student_id, class_id, status (Present/Absent/Late), date | Marking, Analytics |
+| **Events** | Campus Events | _id, event_name, date, created_by | Event Management |
+| **Payments** | Fee Transactions | _id, student_id, amount, status, transaction_id, payment_captured | Payment Tracking |
+| **Notifications** | System Alerts | _id, user_id, message, status (Read/Unread) | Notification Display |
+
+### 2.6 Key Features to Implement
+1. **Authentication & Authorization** (UC-01) - JWT stateless auth, RBAC middleware
+2. **Role-Based Dashboards** - Admin, Teacher, Student customized views
+3. **Attendance Management** (UC-02) - Teacher marking, student viewing, analytics
+4. **Video Content Management** (4.2) - Teacher upload, categorization by subject & class
+5. **Subject-Wise Video Streaming** (4.3) - Authenticated access, media player
+6. **Fee Payment Processing** (UC-03) - Razorpay gateway, cryptographic webhook validation
+7. **Reach Analytics** (4.4 & UC-04) - Video viewership, engagement metrics, attendance correlation
+8. **Campus Notifications** - Real-time system alerts, notification center
+9. **Event Management** (UC-05) - Create, view, RSVP functionality
+10. **User Profile Management** - Edit profile, change password
 
 ---
+
+## 3. Development Phases
+
+### Phase 1: Foundation & Authentication Setup
+
+**Duration:** 4 Days  
+**Target Completion:** March 13, 2026  
+**Lead Developer:** Karan Minj (Project Setup & Architecture)  
+
+#### 3.1.1 Project Initialization (Assigned to: **Karan Minj**)
+
+**Tasks:**
+1. Initialize React app with Vite
+2. Configure Git workflow and branching strategy
+3. Set up development environment variables (.env.local)
+4. Configure absolute imports (@/ paths)
+5. Set up build and dev server configuration
+6. Verify project runs without errors
+
+**Deliverables:**
+- Vite React project initialized and running
+- Git workflow configured
+- Development environment ready
+- Absolute import paths working
+
+#### 3.1.2 Project Structure Setup (Assigned to: **Karan Minj**)
+
+**Directory Structure to Create:**
+```
+src/
+├── components/
+│   ├── Common/              # Shared components (Header, Footer, Sidebar)
+│   ├── Auth/                # Authentication components
+│   ├── Dashboard/           # Role-specific dashboards
+│   ├── Attendance/          # Attendance components
+│   ├── Video/               # Video management components
+│   ├── Payment/             # Payment components
+│   └── Notifications/       # Notification components
+├── pages/                   # Page components (route-level)
+├── services/                # API services (axios instances)
+├── hooks/                   # Custom React hooks
+├── store/                   # Redux state management
+├── utils/                   # Helper functions, constants
+├── styles/                  # Global styles, Tailwind config
+├── layouts/                 # Layout components
+├── middleware/              # Custom middleware (auth guards)
+├── constants/               # App constants, API endpoints
+└── config/                  # Configuration files
 ```
 
+#### 3.1.3 Dependencies & Redux Setup (Assigned to: **Karan Minj**)
+
+**Required Dependencies to Install:**
+```json
+{
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.22.0",
+    "axios": "^1.6.5",
+    "redux": "^4.2.1",
+    "react-redux": "^8.1.3",
+    "@reduxjs/toolkit": "^1.9.7",
+    "tailwindcss": "^3.4.1",
+    "headlessui": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "react-hot-toast": "^2.4.1",
+    "date-fns": "^2.30.0",
+    "react-player": "^2.14.2",
+    "hls.js": "^1.4.14"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/jest-dom": "^6.1.5",
+    "vitest": "^1.0.4",
+    "jsdom": "^23.0.1",
+    "eslint": "^9.39.4",
+    "prettier": "^3.1.1",
+    "husky": "^8.0.3",
+    "postcss": "^8.4.32",
+    "autoprefixer": "^10.4.16"
+  }
+}
+```
+
+#### 3.1.4 Configuration Files (Assigned to: **Karan Minj**)
+
+**Configuration Files to Create:**
+1. `.eslintrc.js` - ESLint configuration for code standards
+2. `.prettierrc` - Prettier formatting configuration
+3. `tailwind.config.js` - Tailwind CSS theme configuration
+4. `.husky/pre-commit` - Git pre-commit hooks
+5. `.husky/pre-push` - Git pre-push hooks
+6. `postcss.config.js` - PostCSS configuration
+7. `.env.local` - Local environment variables
+8. `.env.example` - Environment template
+9. `jsconfig.json` - Absolute imports configuration
+10. `src/config/environment.js` - Environment utilities
+
+**Redux State Slices to Create:**
+1. `src/store/store.js` - Redux store configuration
+2. `src/store/slices/authSlice.js` - Authentication state
+3. `src/store/slices/userSlice.js` - User profile state
+4. `src/store/slices/notificationSlice.js` - Notifications state
+5. `src/store/slices/uiSlice.js` - UI state
+
+**Global Styles:**
+1. `src/styles/index.css` - Global CSS with Tailwind directives
+
+**Acceptance Criteria:**
+- Project runs without errors
+- Code linting passes on all files
+- Pre-commit hooks functional
+- All dependencies can be installed and verified
+
+
+### Phase 2: Dashboard Implementation
+
+**Duration:** 4 Days  
+**Target Completion:** March 17, 2026  
+**Lead Developer:** Aryan Kumar  
+**Supporting Developer:** Karan Minj  
+**SRS Coverage:** UC-01, UC-04, Section 2.3
+
+#### 3.2.1 Admin & Teacher Dashboards (Assigned to: **Aryan Kumar**)
+
+**Components to Build:**
+1. Overview/Statistics Cards (Total Users, Classes, Revenue, etc.)
+2. Users Management Table
+3. Classes Management Interface
+4. Reports & Analytics View
+5. System Health Monitor
+
+**Acceptance Criteria:**
+- Dashboard loads in < 2 seconds
+- Charts/graphs render correctly
+- Real-time data updates work (if applicable)
+- Responsive design on all devices
+
+#### 3.2.2 Teacher Dashboard (Assigned to: **Aryan Kumar**)
+
+**Components to Build:**
+1. Class Information Cards
+2. Attendance Summary
+3. Quick Actions (Mark Attendance, Upload Video)
+4. Available Video Content Widget
+5. Student List with Status
+
+**Acceptance Criteria:**
+- Teacher can view all assigned classes
+- Quick attendance marking available
+- Video upload links functional
+- Real-time student count updates
+5. Responsive navigation (mobile hamburger menu)
+6. Active route highlighting
+
+**Acceptance Criteria:**
+- Layouts render correctly on all screen sizes
+- Navigation items change based on user role
+- User dropdown functional
+- Mobile responsiveness working
+
+#### 3.2.3 Student Dashboard (Assigned to: **Aryan Kumar**)
+
+**Components to Build:**
+1. Schedule/Timetable View
+2. Fee Payment Status
+3. Available Videos List
+4. Attendance Record
+5. Profile Information
+
+**Acceptance Criteria:**
+- Student can view personal schedule
+- Payment status clearly shown
+- Video access restricted to assigned content
+- Attendance percentage calculated correctly
+#### 3.2.4 Dashboard Redux Slices (Assigned to: **Karan Minj**)
+
+**Slices to Create:**
+- `dashboardSlice.js` - Dashboard data management
+- `userSlice.js` - User profile and settings
+- `notificationSlice.js` - System notifications
+
+**Required Implementation:**
+- Async thunks for API calls
+- Loading states for all operations
+- Error handling with user feedback
+- Data caching for performance
+
+**API Endpoints Required:**
+```
+GET /api/dashboard/stats
+GET /api/dashboard/users
+GET /api/dashboard/classes
+GET /api/dashboard/reports
+GET /api/notifications
+POST /api/notifications/mark-read
+```
+
+**Acceptance Criteria:**
+- All dashboard data loads on mount
+- Real-time updates via polling or websockets
+- Offline data persistence
+- State management follows Redux best practices
+
 ---
 
-## 🔔 Current Status Update - March 13, 2026 (Day 4)
+#### 3.2.5 Authentication Module (Assigned to: **Karan Minj**)
 
-**Overall Project Status:** 🟢 ON TRACK  
-**Sprint 1 Progress:** Day 4 of 4 - Foundation & Setup Complete  
-**Critical Path:** No blockers identified
+**Components to Build:**
+1. Login Page (`/login`)
+2. Registration Page (`/register`)
+3. Forgot Password Page (`/forgot-password`)
+4. Reset Password Page (`/reset-password/:token`)
+5. Email Verification Page
+6. Auth Guard/Protected Routes
 
-### Day 4 Summary (March 13, 2026)
-**Team Status:** Karan (Project Setup Lead) & Aryan (Infrastructure Setup)  
-**Focus:** Sprint 1 completed successfully with all foundational setup delivered
+**Required Implementation:**
+- JWT token stored in httpOnly cookies (for security)
+- Token refresh logic on API interceptor
+- Axios instance with auth interceptor
+- Error handling for auth failures
+- Loading states for async operations
+- Form validation (email format, password strength)
 
-**Completed Today:**
-- ✅ Vite project initialization with React 18
-- ✅ ESLint, Prettier, Husky configuration
-- ✅ Git workflow setup (main, develop, feature branches)
-- ✅ Redux/Context API setup
-- ✅ Axios instance with interceptors
-- ✅ JWT token management system
-- ✅ RBAC middleware foundation
-- ✅ Protected routes framework
+**API Endpoints Required (from Backend):**
+```
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+POST /api/auth/refresh-token
+POST /api/auth/forgot-password
+POST /api/auth/reset-password
+GET /api/auth/verify
+```
 
-**Sprint 1 Status:** ✅ COMPLETED (All deliverables met)
-
-**Next Steps (Sprint 2 - March 14-17):**
-- Admin Dashboard (Stats, Overview)
-- Teacher Dashboard (Classes, Quick Links)
-- Student Dashboard (Schedule, Fees, Videos)
-- Dashboard Redux Slices
-- API Integration with Backend
-
-**Blockers:** None currently  
-**Risks:** Backend API readiness dependency - mitigation: use mock data if needed
-
-**Note:** Frontend development can proceed independently. Backend API integration planned for Sprint 2 start (March 14).
-
----
-
-## 📅 Sprint Planning
-
-### Sprint 1 - Foundation & Authentication Setup
-**Duration:** March 10-13 (4 Days)  
-**Target Completion Date:** March 13, 2026  
-**SRS Coverage:** UC-01 (User Authentication & RBAC), NFR-01 (Secure Access & Authorization)
-
-| Module | Developer | SRS Ref | Status | Priority |
-|--------|-----------|---------|--------|----------|
-| Project Setup & Architecture | Karan | 7.1 | 🔄 In Progress | P0 |
-| Axios Config + API Integration Layer | Karan | 3.4, 7.1 | Not Started | P0 |
-| JWT Authentication & Token Management | Karan | UC-01, 4.1, 7.4.1 | Not Started | P0 |
-| RBAC Middleware (Admin/Teacher/Student) | Karan | UC-01, 7.4.1 | Not Started | P0 |
-| Redux Store Setup (Auth, UI, User) | Aryan | 7.2 | Not Started | P0 |
-| Protected Routes & Role Guards | Aryan | UC-01, 7.4.1 | Not Started | P0 |
-| Navigation Layout & Sidebar (Role-Based) | Aryan | 3.1 | Not Started | P1 |
-
-**Key Deliverables:**
-- ✅ Project initialized with Vite (SRS 7.1)
-- ✅ JWT authentication flow complete (SRS 4.1)
-- ✅ RBAC implemented for Admin/Teacher/Student (SRS 2.3)
-- ✅ Protected routes functional (SRS UC-01)
-- ✅ API interceptors with token handling (SRS 3.4)
-- ✅ Basic layout and navigation working
-
-**Security Checklist (SRS 5.3 & 7.4):**
-- [ ] JWT stored in httpOnly cookies (not localStorage)
-- [ ] Token refresh mechanism configured
-- [ ] HTTPS enforced in API config
-- [ ] CORS properly configured
-- [ ] Environment variables protected (.env.local)
-
-**Notes:**
-- Karan starts immediately using Vite for faster builds
-- Mock backend data if API not ready
-- Configure automatic token refresh before expiry
-- Security settings are NON-NEGOTIABLE per SRS
+**Acceptance Criteria:**
+- User can register with email validation
+- User can login with correct credentials
+- JWT token persists across page reloads
+- Tokens refresh automatically
+- Protected routes redirect to login
+- All auth endpoints tested
 
 ---
 
-### Sprint 2 - Dashboard Implementation
-**Duration:** March 14-17 (4 Days)  
-**Target Completion Date:** March 17, 2026  
-**SRS Coverage:** UC-01 (Dashboards), UC-04 (View Records), Section 2.3 (User Classes)
+### Phase 3: Core Features Implementation
 
-| Module | Developer | SRS Ref | Status | Priority |
-|--------|-----------|---------|--------|----------|
-| Admin Dashboard (Stats, Overview) | Aryan | 3.1, 2.3 | Not Started | P0 |
-| Teacher Dashboard (Classes, Quick Links) | Karan | 3.1, UC-02 | Not Started | P0 |
-| Student Dashboard (Schedule, Fees, Videos) | Aryan | 3.1, UC-03, UC-04 | Not Started | P0 |
-| Dashboard Redux Slices | Karan | 7.2 | Not Started | P0 |
-| API Integration with Backend | Both | 3.3, 3.4 | Not Started | P0 |
-| Mock Data/Testing | Both | - | Not Started | P1 |
-
-**Key Deliverables:**
-- ✅ Three role-based dashboards functional (SRS 2.3)
-- ✅ Data fetching from backend APIs (SRS 3.3)
-- ✅ Responsive design on mobile/tablet (SRS 5.1)
-- ✅ Loading states and error handling (SRS 5.1)
-- ✅ Role guards preventing unauthorized access (SRS 7.4.1)
-
-**Backend Dependency (SRS 3.3):**
-- Required: `/api/auth/verify` endpoint
-- Required: Role-based dashboard data endpoints
-- Block: If backend not ready → use mock data
-
-**Notes:**
-- Use skeleton loaders for UX (SRS 5.1 Performance)
-- Keep UI components reusable (SRS 5.4 Maintainability)
-- Enforce RBAC: Only teachers see teacher features (SRS 7.4.1)
-- Test with mock data if backend endpoints delayed
-
----
-
-### Sprint 3 - Core Features Implementation
-**Duration:** March 18-21 (4 Days)  
-**Target Completion Date:** March 21, 2026  
+**Duration:** 4 Days  
+**Target Completion:** March 21, 2026  
+**Lead Developer:** Karan Minj  
+**Supporting Developer:** Aryan Kumar  
 **SRS Coverage:** UC-02 (Attendance), UC-03 (Payments), 4.2 (Video Upload), 4.3 (Video Streaming)
 
-| Module | Developer | SRS Ref | Status | Priority |
-|--------|-----------|---------|--------|----------|
-| Attendance Management UI (Mark + View) | Karan | UC-02, 4.1, 7.2.2 | Not Started | P0 |
-| Video Upload & Library Components | Aryan | 4.2, 3.1 | Not Started | P0 |
-| Video Player Integration (HLS Streaming) | Aryan | 4.3, 5.1 | Not Started | P0 |
-| Payment Gateway Setup (Razorpay) | Karan | UC-03, NFR-02, 7.4.2 | Not Started | P0 |
-| Notifications System (Bell + Center) | Karan | UC-01, 3.1 | Not Started | P1 |
+#### 3.3.1 Attendance Management Module (Assigned to: **Karan Minj**)
 
-**Key Deliverables:**
-- ✅ Attendance marking functional (UC-02, SRS 4.1)
-- ✅ Video upload with progress bar (UC-4.2)
-- ✅ Video player streaming without buffering (UC-4.3, SRS 5.1)
-- ✅ Payment form integrated (UC-03, NFR-02)
-- ✅ Notification bell showing unread count
+**Teacher Interface Components:**
+1. Attendance Marking Screen
+   - Class selection dropdown
+   - Student list with checkboxes
+   - Mark as Present/Absent/Late
+   - Bulk actions (Mark all present, etc.)
+   - Submit with confirmation dialog
+   - History of marked attendance
 
-**Security Requirements (SRS 5.3, 7.4.2, NFR-02):**
-- [ ] Attendance: Only teachers can mark (RBAC enforcement)
-- [ ] Videos: Only student's assigned videos visible (SRS 4.3)
-- [ ] Payment: NEVER handle sensitive card data on frontend
-- [ ] Payment: Validate via backend webhook signature only
+2. Attendance Records View (Student & Teacher Analytics)
+   - Attendance records in table format
+   - Filter by date range, subject, student
+   - Attendance percentage by subject
+   - Trends visualization (Chart)
 
-**Database Collections (SRS 7.3):**
-- **Attendance**: student_id, class_id, status (Present/Absent/Late), date
-- **Videos**: teacher_id, subject, class_id, metadata
-- **Payments**: student_id, amount, status, transaction_id, payment_captured
+3. Attendance Analytics (Admin/Teacher)
+   - Attendance by student
+   - Attendance by class
+   - Comparative analysis
+   - Export functionality (CSV/PDF)
 
-**Notes:**
-- Use React Player for initial video streaming (SRS 4.3)
-- Razorpay test keys for dev environment (SRS 5.3)
-- Payment security: Backend handles all sensitive data (SRS 7.4.2)
-- Implement optimistic UI updates where possible (SRS 5.1)
-- Defer notifications (P1) if Sprint 4 space is needed
+**API Endpoints Required (from Backend):**
+```
+GET /api/attendance/class/:classId
+POST /api/attendance/mark
+GET /api/attendance/student/:studentId
+GET /api/attendance/analytics
+```
+
+**Acceptance Criteria:**
+- Teacher can mark attendance for all students in a class
+- Attendance records persist and display correctly
+- Students can view their attendance history
+- Attendance percentage calculated accurately
+- Charts display trends correctly
+
+#### 3.3.2 Video Management Module (Assigned to: **Aryan Kumar**)
+
+**Teacher Interface Components:**
+1. Video Upload Screen
+   - File selection (mp4, webm, mov)
+   - Video metadata entry (title, description, subject, class)
+   - Thumbnail upload/auto-generate
+   - Category assignment
+   - Upload progress bar
+   - Draft/Publish status toggle
+
+2. Video Library/Management
+   - List of uploaded videos
+   - Sort by date, subject, class
+   - Search functionality
+   - Edit metadata option
+   - Delete video option
+   - View statistics (views, watch time)
+
+**Student Interface Components:**
+1. Video Library/Browse
+   - Filter by subject and class
+   - Search videos
+   - Recommended videos section
+
+2. Video Player
+   - HLS streaming with adaptive bitrate (quality auto-selection)
+   - Manual quality selection (1080p, 720p, 480p, 360p)
+   - Playback speed control (0.75x, 1x, 1.25x, 1.5x, 2x)
+   - Subtitles support
+   - Watch progress tracking
+
+**API Endpoints Required (from Backend):**
+```
+POST /api/videos/upload
+GET /api/videos
+PUT /api/videos/:id
+DELETE /api/videos/:id
+GET /api/videos/stream/:id
+POST /api/videos/progress
+```
+
+**Acceptance Criteria:**
+- Video upload works for supported formats
+- HLS streaming provides smooth playback
+- Quality selection works correctly
+- Progress tracking saves watch position
+- Video access restricted by role/class
+
+#### 3.3.3 Payment Integration Module (Assigned to: **Karan Minj**)
+
+**Student Interface Components:**
+1. Fee Payment Page
+   - Display pending fees with amounts
+   - Payment method selection (Razorpay/UPI)
+   - Amount input with validation
+
+**Acceptance Criteria:**
+- Payment gateway integration works correctly
+- Payment status updates in real-time
+- Receipts generate and download properly
+- Payment history displays all transactions
+- Security measures prevent payment tampering
 
 ---
 
-### Sprint 4 - Advanced Features & Refinement
-**Duration:** March 22-25 (4 Days)  
-**Target Completion Date:** March 25, 2026  
+### Phase 4: Advanced Features & Refinement
+
+**Duration:** 4 Days  
+**Target Completion:** March 25, 2026  
+**Lead Developer:** Aryan Kumar  
+**Supporting Developer:** Karan Minj  
 **SRS Coverage:** 4.4 (Reach Analytics), UC-04 (View Records), UC-05 (Events), Notifications
 
-| Module | Developer | SRS Ref | Status | Priority |
-|--------|-----------|---------|--------|----------|
-| Analytics Dashboard (Charts & Stats) | Aryan | 4.4, 3.1 | Not Started | P1 |
-| Attendance Analytics & Trends | Aryan | UC-04, 4.4 | Not Started | P1 |
-| Event Management UI | Karan | UC-05, 3.1 | Not Started | P2 |
-| Payment History & Receipts | Karan | UC-03, 3.1 | Not Started | P1 |
-| Real-time Notifications (Polling) | Both | UC-01, 3.1 | Not Started | P2 |
+#### 3.4.1 Reach Analytics Module (Assigned to: **Karan Minj**)
 
-**Key Deliverables:**
-- ✅ Analytics dashboards with charts (SRS 4.4)
-- ✅ Payment history table with filters
-- ✅ Event management UI (UC-05)
-- ✅ Real-time notifications via polling (fallback if WebSocket unavailable)
+**Teacher/Admin Interface Components:**
+1. Video Analytics Dashboard
+   - Total views per video
+   - Watch time statistics
+   - Student engagement metrics
+   - Daily/Weekly/Monthly views chart
 
-**SRS Compliance:**
-- Analytics correlates video viewership with student engagement (SRS 4.4)
-- Soft deletion (is_deleted flag) for archived events (SRS 7.3)
+2. Student Engagement Analytics
+   - Active students count
+   - Most watched videos ranking
+   - Student participation trends
+   - Peak viewing time analysis
 
-**Notes:**
-- Use Recharts for quick chart implementation (SRS 5.1 Performance)
-- Analytics can be MVP with basic charts
-- WebSocket optional - polling acceptable for MVP (SRS 5.1)
-- Events: Only Admin/Teacher can create (RBAC, SRS 7.4.1)
+**Charts to Implement:**
+- Line chart for view trends over time
+- Bar chart for video comparison
+- Pie chart for engagement distribution
+- Heatmap for peak viewing times by day/hour
+
+**Charts Library:** Recharts or Chart.js
+
+**API Endpoints Required (from Backend):**
+```
+GET /api/analytics/videos
+GET /api/analytics/videos/:id
+GET /api/analytics/engagement
+GET /api/analytics/viewership-trends
+```
+
+**Acceptance Criteria:**
+- Charts render with correct data
+- Performance: Analytics dashboard loads in < 3 seconds
+
+#### 3.4.2 Event Management Module (Assigned to: **Aryan Kumar**)
+
+**Admin/Teacher Interface:**
+1. Event Creation Form
+   - Event name and description
+   - Date, time, and location fields
+   - Image upload for event poster
+   - Participant list management
+   - Draft/Publish status toggle
+
+2. Event Listing & Management (Admin/Teacher)
+   - Upcoming events list
+GET /api/attendance/class/:classId
+POST /api/attendance/mark
+GET /api/attendance/student/:studentId
+GET /api/attendance/analytics
+```
+
+**Acceptance Criteria:**
+- Teacher can mark attendance for all students in a class
+- Attendance records persist and display correctly
+- Students can view their attendance history
+- Attendance percentage calculated accurately
+- Charts display trends correctly
+
+#### 3.4.2 Video Management Module (Assigned to: **Aryan Kumar**)
+
+**Teacher Interface Components:**
+1. Video Upload Screen
+   - File selection (mp4, webm, mov)
+   - Video metadata entry (title, description, subject, class)
+   - Thumbnail upload/auto-generate
+   - Category assignment
+   - Upload progress bar
+   - Draft/Publish status toggle
+
+2. Video Library/Management
+   - List of uploaded videos
+   - Sort by date, subject, class
+   - Search functionality
+   - Edit metadata option
+   - Delete video option
+   - View statistics (views, watch time)
+
+**Student Interface Components:**
+1. Video Library/Browse
+   - Filter by subject and class
+   - Search videos
+   - Recommended videos section
+
+2. Video Player
+   - HLS streaming with adaptive bitrate (quality auto-selection)
+   - Manual quality selection (1080p, 720p, 480p, 360p)
+   - Playback speed control (0.75x, 1x, 1.25x, 1.5x, 2x)
+   - Subtitles support
+   - Watch progress tracking
+   - Remember last watched position
+
+**API Endpoints Required (from Backend):**
+```
+POST /api/videos/upload
+GET /api/videos
+GET /api/videos/:id
+DELETE /api/videos/:id
+PUT /api/videos/:id
+GET /api/videos/:id/stream
+POST /api/videos/:id/watch-progress
+```
+
+**Performance Considerations:**
+- Lazy load video thumbnails
+- Implement video streaming (HLS for adaptive bitrate)
+- Optimize video metadata fetching
+- Cache frequently accessed videos
+
+**Acceptance Criteria:**
+- Videos upload successfully with progress indication
+- Video streams without buffering issues
+- Quality auto-adapts to internet speed
+- Students can only access assigned videos
+- Watch progress saved correctly
+
+#### 3.4.3 Payment Integration Module (Assigned to: **Karan Minj**)
+
+**Student Interface Components:**
+1. Fee Payment Page
+   - Display pending fees with amounts
+   - Payment method selection (Razorpay/UPI)
+   - Amount input with validation
+   - Invoice/Receipt details
+
+2. Payment Gateway Integration
+   - Razorpay checkout modal integration
+   - UPI payment option
+   - Payment success/failure handling
+   - Receipt generation and download
+
+3. Payment History
+   - List of all transactions with status
+   - Filter by date range and payment status
+   - Download receipts for each transaction
+   - Refund status display
+
+**Payment Flow Implementation:**
+```
+1. Student initiates payment
+2. Show payment modal with amount and method options
+3. User selects payment method (Razorpay/UPI)
+4. Frontend sends order request to backend
+5. Backend returns order ID
+6. Frontend opens Razorpay/UPI checkout
+7. User completes payment
+8. Razorpay webhook verification happens on backend
+9. Frontend polls or receives update on payment status
+10. Show success/failure message & receipt
+```
+
+**API Endpoints Required (from Backend):**
+```
+POST /api/payments/initiate
+POST /api/payments/verify
+GET /api/payments/history
+GET /api/payments/pending-fees
+POST /api/payments/webhook (Backend only - for verification)
+```
+
+**Security Requirements (SRS Section 5.3 & 7.4):**
+- Never expose Razorpay secret key to frontend
+- Validate payment signature on backend before updating DB
+- Verify webhook signature on backend with secret key
+- Implement CSRF protection on all payment endpoints
+- Log all payment attempts for audit trail
+- Don't store sensitive payment data on frontend
+
+**Acceptance Criteria:**
+- Payment gateway modal opens correctly
+- Successful payment updates database
+- Failed payment shows appropriate error message
+- Students can download receipts
+- Fraud attempts are detected and prevented
+
+#### 3.4.4 Notifications Module (Assigned to: **Aryan Kumar**)
+
+**Components to Build:**
+1. Notification Bell Icon with Badge
+   - Show unread count badge
+   - Click to open dropdown with recent notifications
+   - List with timestamps and notification type
+
+2. Notification Center Page
+   - All notifications listed with pagination
+   - Filter by type (Payment, Attendance, Event, System)
+   - Mark as read / Mark all as read
+   - Delete individual notifications
+   - Real-time updates
+
+3. Notification Toast System
+   - Real-time toast notifications for immediate alerts
+   - Different toast types (success, error, warning, info)
+   - Auto-dismiss after configured duration
+
+**Real-time Notification Implementation:**
+- WebSocket integration for real-time notification delivery
+- OR Polling every 10-15 seconds as fallback
+- Toast notifications via react-hot-toast library
+
+**API Endpoints Required (from Backend):**
+```
+GET /api/notifications
+GET /api/notifications/unread
+POST /api/notifications/:id/read
+POST /api/notifications/read-all
+DELETE /api/notifications/:id
+WebSocket endpoint for real-time notifications
+```
+
+**Acceptance Criteria:**
+- Notifications display in real-time
+- Unread count updates correctly
+- Users can mark notifications as read
+- Users can delete old notifications
+- Toast notifications appear for new events
 
 ---
 
-### Sprint 5 - Testing, Optimization & Deployment
-**Duration:** March 26 - March 30 (5 Days)  
-**Target Completion Date:** March 30, 2026  
+### Phase 5: Testing, Optimization & Deployment
+
+**Duration:** 6 Days  
+**Target Completion:** March 30, 2026  
+**Lead Developer:** Karan Minj & Aryan Kumar (Both)  
 **SRS Coverage:** NFR-01 (Security), NFR-02 (Payments), 5.1 (Performance), 5.4 (Quality)
 
-| Task | Developer | SRS Ref | Status | Priority |
-|------|-----------|---------|--------|----------|
-| Security Testing (Auth, RBAC, XSS/CSRF) | Aryan | NFR-01, 5.3, 7.4 | Not Started | P0 |
-| API Integration Testing | Karan | NFR-01, NFR-02, 3.3 | Not Started | P0 |
-| Cross-browser Testing (Chrome, FF, Safari) | Aryan | 5.4 | Not Started | P0 |
-| Bug Fixes & UI Polish | Karan | 5.4 | Not Started | P0 |
-| Performance Optimization (Bundle < 400KB) | Karan | 5.1 | Not Started | P1 |
-| Lighthouse & Accessibility Audit | Aryan | 5.1, 5.4 | Not Started | P1 |
-| Deployment Setup (Vercel/Netlify) | Both | 7.1 | Not Started | P0 |
-| Production Configuration | Karan | 3.4, 5.3 | Not Started | P0 |
+#### 3.5.1 Unit Testing (Assigned to: **Both**)
 
-**Key Deliverables:**
-- ✅ All critical features tested (SRS Functional Requirements)
-- ✅ Security requirements verified (NFR-01, NFR-02)
-- ✅ Lighthouse score > 85 (SRS 5.1 Performance)
-- ✅ Zero critical bugs (SRS 5.4 Quality)
-- ✅ Deployed to production (SRS 7.1)
+**Tests to Write:**
+1. Utility function tests
+2. Custom React hooks tests
+3. Component rendering tests
+4. Redux store and slices tests
+5. API service tests
 
-**Security Compliance (SRS 5.3, 7.4):**
-- [ ] JWT authentication working correctly (UC-01)
-- [ ] RBAC enforced for all protected routes (NFR-01)
-- [ ] XSS/CSRF protections active
-- [ ] Payment gateway integration secure (NFR-02)
-- [ ] No sensitive data in console/logs
-- [ ] HTTPS enforced in production env
+**Test Coverage Target:** > 80%
+**Testing Framework:** Vitest + React Testing Library
 
-**Performance Targets (SRS 5.1):**
-- [ ] Bundle size < 400KB (gzipped)
-- [ ] First Contentful Paint (FCP) < 1.8s
-- [ ] Lighthouse score > 85 (MVP target)
-- [ ] Mobile performance 60+ FPS
+#### 3.5.2 Integration Testing (Assigned to: **Both**)
 
-**Notes:**
-- Deploy early (by March 28) to allow 2 days for fixes
-- Focus testing on critical user journeys (SRS Sequence Diagrams)
-- Use smoke tests for last-minute verification
-- Have team standby for hotfixes post-launch
+**Integration Tests:**
+1. Authentication flow (login, register, logout)
+2. API integration with backend endpoints
+3. Payment gateway integration
+4. Video upload and streaming flow
+5. Attendance marking and viewing flow
 
----
+**Test Environment:** Staging backend
 
-## 🔗 API Endpoints Status (SRS Section 3.3 & Traceability 8.1)
+#### 3.5.3 End-to-End Testing (Assigned to: **Aryan Kumar**)
 
-### Backend API Checklist
-Per SRS, backend must implement these endpoints for frontend integration. Use this to track readiness:
+**E2E Test Scenarios:**
 
-#### Authentication (UC-01, SRS 4.1)
-- [ ] `POST /api/auth/register` - User Registration (SRS 4.1)
-- [ ] `POST /api/auth/login` - User Login with JWT (SRS 4.1)
-- [ ] `POST /api/auth/logout` - User Logout (SRS 4.1)
-- [ ] `POST /api/auth/refresh-token` - JWT Refresh (SRS 4.1)
-- [ ] `GET /api/auth/verify` - Token Verification (SRS 4.1, UC-01)
+**Testing Tools:** Cypress or Playwright
+**Browser Coverage:** Chrome, Firefox, Safari, Edge
+**Test Coverage Target:** All critical user flows
 
-#### Attendance (UC-02, UC-04, SRS Collections: Attendance)
-- [ ] `GET /api/attendance` - Fetch Attendance Records (UC-04)
-- [ ] `POST /api/attendance/mark` - Mark Attendance (UC-02, SRS 4.1)
-- [ ] `GET /api/attendance/:studentId` - Student Attendance View (UC-04)
-- [ ] `GET /api/attendance/analytics` - Attendance Analytics (SRS 4.4)
+#### 3.5.4 Performance Optimization (Assigned to: **Karan Minj**)
 
-#### Videos (4.2, 4.3, SRS Collections: Videos)
-- [ ] `GET /api/videos` - Fetch Videos by Class/Subject (4.3)
-- [ ] `POST /api/videos/upload` - Upload Video (4.2, Teacher only)
-- [ ] `DELETE /api/videos/:id` - Delete Video (4.2, Teacher only)
-- [ ] `GET /api/videos/:id/stream` - Stream Video URL (4.3, Authenticated only)
-- [ ] `POST /api/videos/:id/watch-progress` - Track Watch Progress (4.4)
+**Optimization Tasks:**
+1. Code splitting for routes
+2. Lazy loading of component routes
+3. Image optimization and lazy loading
+4. Bundle size analysis and reduction
+5. Implement service workers for offline support
+6. Cache optimization strategies
+7. React DevTools profiling and optimization
+8. Database query optimization coordination
 
-#### Payments (UC-03, NFR-02, SRS Collections: Payments)
-- [ ] `GET /api/payments` - Fetch Payment Records (UC-03)
-- [ ] `POST /api/payments/initiate` - Create Razorpay Order (UC-03)
-- [ ] `POST /api/payments/verify` - Verify Payment Web hook (UC-03, NFR-02)
-- [ ] `GET /api/payments/history` - Payment History (UC-03)
-- [ ] `GET /api/payments/pending-fees` - Pending Fees (UC-03)
+**Performance Targets (from SRS Section 5.1):**
+- Lighthouse Score > 85 (MVP target)
+- Page load time < 2.5 seconds
+- Bundle size < 500KB (gzipped)
+- First Contentful Paint < 1.5 seconds
 
-#### Notifications (SRS Collections: Notifications)
-- [ ] `GET /api/notifications` - Fetch Notifications (UC-01)
-- [ ] `POST /api/notifications/mark-read` - Mark as Read (UC-01)
-- [ ] `GET /api/notifications/unread-count` - Unread Count (UC-01)
+#### 3.5.5 Security Audit (Assigned to: **Aryan Kumar**)
 
-#### Analytics (4.4, SRS 4.4)
-- [ ] `GET /api/analytics/video-views` - Video View Statistics (4.4)
-- [ ] `GET /api/analytics/student-engagement` - Student Engagement (4.4)
-- [ ] `GET /api/analytics/attendance-trends` - Attendance Trends (4.4)
+**Security Checks (SRS Section 7.4):**
+1. XSS protection verification
+2. CSRF token validation
+3. Input sanitization review
+4. JWT token security (httpOnly cookies)
+5. Sensitive data logging review
+6. Dependencies vulnerability scan
+1. Event Creation Form
+   - Event name and description
+   - Date, time, and location fields
+   - Image upload for event poster
+   - Participant list management
+   - Draft/Publish status toggle
 
----
+2. Event Listing & Management (Admin/Teacher)
+   - Upcoming events list
+   - Filter by date and event type
+   - Edit event functionality
+   - Delete event with confirmation
+   - View RSVP status
 
-## 🐛 Known Issues & Bugs (Tracked Against SRS Compliance)
+**Student/User Interface:**
+1. Event Listing (All Users)
+   - Display upcoming events
+   - Filter by date range and type
+   - Event details view with map/location
+   - RSVP button (Yes/No/Maybe)
+   - Event calendar view
 
-| ID | Module | Issue | SRS Impact | Severity | Status | Blocker? |
-|----|--------|-------|-----------|----------|--------|----------|
-| FE-001 | [Module] | [Description] | [Which SRS requirement affected] | High/Medium/Low | Open/Fixed | Yes/No |
+**API Endpoints Required (from Backend):**
+```
+POST /api/events
+GET /api/events
+GET /api/events/:id
+PUT /api/events/:id
+DELETE /api/events/:id
+POST /api/events/:id/rsvp
+GET /api/events/:id/attendees
+```
 
----
-
-## 📊 Metrics & Performance (Per SRS Section 5.1)
-
-| Metric | SRS Requirement | Target | Current | Status |
-|--------|--------|--------|---------|--------|
-| Page Load Time | 5.1 (Performance) | < 2.5s | - | - |
-| Bundle Size | 5.1 (Performance) | < 400KB | - | - |
-| Lighthouse Score | 5.1 (Performance) | > 85 | - | - |
-| Mobile Performance | 5.1 (Performance) | 60+ FPS | - | - |
-| Test Coverage | 5.4 (Quality) | > 70% | - | - |
-| Security Vulnerabilities | 5.3 (Security) | 0 Critical | - | - |
-
---- (SRS Section 5.3 & 7.4 - Non-Functional Requirements NFR-01 & NFR-02)
-
-### NFR-01: Secure Access & Authorization (SRS 7.4.1)
-- [ ] JWT token validation on all protected routes (SRS 4.1)
-- [ ] RBAC enforced per user role: Admin/Teacher/Student (SRS 2.3)
-- [ ] Protected routes redirect unauthenticated users to login
-- [ ] Role-specific features hidden from unauthorized users
-- [ ] Token automatic refresh before expiry (SRS 4.1)
-
-### NFR-02: Protect Financial Transactions (SRS 7.4.2)
-- [ ] Payment gateway modal opens correctly
-- [ ] Sensitive card data NEVER stored on frontend
-- [ ] Backend validates Razorpay webhook signature (x-razorpay-signature)
-- [ ] Transaction IDs tracked and deduplicated (SRS 5.3)
-- [ ] Payment status updates synchronized with database
-- [ ] Soft deletion (is_deleted flag) for failed transactions
-
-### SRS 5.3 Security Requirements
-- [ ] HTTPS enforced in all API calls
-- [ ] JWT tokens stored in httpOnly cookies (not localStorage)
-- [ ] XSS protection: Input sanitization active
-- [ ] CSRF tokens implemented for state-changing operations
-- [ ] Sensitive data NOT logged to console
-- [ ] Dependencies audited for vulnerabilities (npm audit)
-- [ ] Environment variables properly configured (.env.local)
-- [ ] Rate limiting on login attempts (backend enforced)
-- [ ] Password hashing via bcrypt/argon2 (backend enforced)ies
-- [ ] Environment variables properly configured
-- [ ] Rate limiting implemented on frontend
+**Acceptance Criteria:**
+- Events created and displayed correctly
+- RSVP functionality works for all users
+- Only admins/teachers can create/edit events
+- Calendar view displays events correctly
+- Email notifications sent on RSVP
 
 ---
 
-## 📚 Resources & References
+## 4. Technology Stack
 
-- [Project Repository](#)
-- [Backend API Documentation](#)
-- [Design System/UI Guidelines](#)
-- [Testing Guidelines](#)
-- [Deployment Guide](#)
+#### 3.6.1 Unit Testing (Assigned to: **Both**)
+
+**Tests to Write:**
+1. Utility function tests
+2. Custom React hooks tests
+3. Component rendering tests
+4. Redux store and slices tests
+5. API service tests
+
+**Test Coverage Target:** > 80%
+**Testing Framework:** Vitest + React Testing Library
+
+#### 3.6.2 Integration Testing (Assigned to: **Both**)
+
+**Integration Tests:**
+1. Authentication flow (login, register, logout)
+2. API integration with backend endpoints
+3. Payment gateway integration
+4. Video upload and streaming flow
+5. Attendance marking and viewing flow
+
+**Test Environment:** Staging backend
+
+#### 3.6.3 End-to-End Testing (Assigned to: **Aryan Kumar**)
+
+**E2E Test Scenarios:**
+1. Complete user registration and login flow
+2. Dashboard navigation for all roles
+3. Attendance marking workflow
+4. Video upload and playback
+5. Payment processing
+6. Notification system
+7. Event creation and RSVP
+8. Role-based access controls
+
+**Testing Tools:** Cypress or Playwright
+**Browser Coverage:** Chrome, Firefox, Safari, Edge
+**Test Coverage Target:** All critical user flows
+
+#### 3.6.4 Performance Optimization (Assigned to: **Karan Minj**)
+
+**Optimization Tasks:**
+1. Code splitting for routes
+2. Lazy loading of component routes
+3. Image optimization and lazy loading
+4. Bundle size analysis and reduction
+5. Implement service workers for offline support
+6. Cache optimization strategies
+7. React DevTools profiling and optimization
+8. Database query optimization coordination
+
+**Performance Targets (from SRS Section 5.1):**
+- Lighthouse Score > 85 (MVP target)
+- Page load time < 2.5 seconds
+- Bundle size < 500KB (gzipped)
+- First Contentful Paint < 1.5 seconds
+
+#### 3.6.5 Security Audit (Assigned to: **Aryan Kumar**)
+
+**Security Checks (SRS Section 7.4):**
+1. XSS protection verification
+2. CSRF token validation
+3. Input sanitization review
+4. JWT token security (httpOnly cookies)
+5. Sensitive data logging review
+6. Dependencies vulnerability scan
+
+**Security Compliance:**
+- Zero localStorage usage for auth tokens
+- All sensitive API calls over HTTPS
+- CORS headers properly configured
+- CSP headers implemented
+
+#### 3.6.6 Cross-browser Testing (Assigned to: **Aryan Kumar**)
+
+**Browser Coverage:**
+- Chrome (latest 2 versions)
+- Firefox (latest 2 versions)
+- Safari (latest 2 versions)
+- Edge (latest 2 versions)
+- Mobile: iOS Safari, Chrome Mobile
+
+**Responsive Testing:**
+- Desktop (1920x1080)
+- Tablet (768x1024)
+- Mobile (375x667, 414x896)
+
+**Acceptance Criteria:**
+- Lighthouse Score ≥ 85
+- Page load time ≤ 2.5 seconds
+- Bundle size ≤ 500KB (gzipped)
+- Test coverage ≥ 80%
+- Works on all major browsers
+- Zero critical security vulnerabilities
 
 ---
 
-## 📝 Notes
+## 3.7 Phase Timeline
 
-⚠️ **AGGRESSIVE 20-DAY TIMELINE - CRITICAL CONSIDERATIONS:**
+| Phase | Duration | Target End Date | Key Deliverables |
+|-------|----------|-----------------|------------------|
+| Phase 1: Foundation & Authentication Setup | 4 Days | March 13, 2026 | Vite Setup, Auth, RBAC, Redux |
+| Phase 2: Dashboard Implementation | 4 Days | March 17, 2026 | Admin/Teacher/Student Dashboards |
+| Phase 3: Core Features Implementation | 4 Days | March 21, 2026 | Attendance, Video, Payment, Notifications |
+| Phase 4: Advanced Features & Refinement | 4 Days | March 25, 2026 | Analytics, Events, Integrations |
+| Phase 5: Testing, Optimization & Deployment | 6 Days | March 30, 2026 | Tests, Security Audit, Deployment |
 
-### SRS Compliance Checklist
-- ✅ All Functional Requirements must be implemented (UC-01 through UC-05 per SRS 8.1)
-- ✅ Non-Functional Requirements non-negotiable (NFR-01, NFR-02 per SRS 5.3 & 7.4)
-- ✅ three user classes enforced with RBAC (Admin/Teacher/Student per SRS 2.3)
-- ✅ MongoDB collections properly mapped (Users, Class, Attendance, Events, Payments, Notifications per SRS 7.3)
-- ✅ Security protocols fully implemented (JWT, HTTPS, XSS/CSRF protection per SRS 7.4)
+---
 
-### Development Guidelines
-- **Daily sync required** - 10:30 AM daily standup with backend/DB teams
-- **Backend dependency** - Backend APIs must be ready by Sprint 2 start per SRS 3.3
-- **Prioritize ruthlessly** - Only implement P0 features, defer P2 to post-launch
-- **No perfectionism** - MVP approach: working > polished, but SECURE > everything
-- **Security first** - Security requirements are NOT optional (SRS 5.3, NFR-01, NFR-02)
-- **Test early & often** - Manual testing on real devices during sprints
-- **Keep communication tight** - Update this doc DAILY with blockers
-- **Prepare deployment early** - Set up Vercel/Netlify by Sprint 3 end (SRS 7.1)
-- **Use component libraries** - Headless UI, Tailwind reduce custom CSS (SRS 5.1 Performance)
-- **Avoid scope creep** - Any new request requires dropping equal priority task
-- **Have backup plans** - If backend delayed, use mock data to stay unblocked
+## 4. Technology Stack
 
-### Recommended Dev Process
-1. Frontend starts work immediately (can mock backend data)
-2. As backend endpoints ready → integrate one by one
-3. Daily merged code to `develop` branch
-4. Keep `main` pointing to last stable version
-5. Follow SRS Sequence Diagrams (7.2.2) for complex workflows
+### 4.1 Core Libraries
+| Library | Version | Purpose |
+|---------|---------|---------|
+| React | ^18.x | UI Framework |
+| React Router DOM | ^6.x | Routing |
+| Axios | ^1.x | HTTP Client |
+| Redux Toolkit | ^1.x | State Management |
+| React Redux | ^8.x | Redux bindings |
+| Tailwind CSS | ^3.x | Styling |
+| Headless UI | ^1.x | Unstyled components |
 
-### SRS References
-- **Architecture:** Section 7.1 (Three-Tier MERN Stack)
-- **Functional Requirements:** Section 4 (Features UC-01 through UC-05)
-- **Non-Functional Requirements:** Section 5 (Performance, Security, Quality)
-- **Security Design:** Section 7.4 (Authentication 7.4.1, Protocols 7.4.2)
-- **Database Schema:** Section 7.3 (MongoDB Collections)
-- **Traceability Matrix:** Section 8.1 (Requirement-to-Design Mapping)
+### 4.2 UI & Visualization
+| Library | Purpose |
+|---------|---------|
+| Recharts or Chart.js | Data visualization |
+| React Player | Video playback |
+| HLS.js | Video streaming |
+| React Hot Toast | Toast notifications |
 
-### GitHub Milestones (SRS Compliance)
-- **March 13:** Sprint 1 Complete (Foundation & Authentication Setup)
-- **March 17:** Sprint 2 Complete (Dashboard Implementation)
-- **March 21:** Sprint 3 Complete (Core Features Implementation)
-- **March 25:** Sprint 4 Complete (Advanced Features & Refinement)
-- **March 30:** Sprint 5 Complete (Testing, Optimization & Deployment)
+### 4.3 Development Tools
+| Tool | Purpose |
+|------|---------|
+| Vite or CRA | Project bundler |
+| ESLint | Code linting |
+| Prettier | Code formatting |
+| Husky | Git hooks |
+| Vitest | Unit testing |
+| React Testing Library | Component testing |
+| Cypress | E2E testing |
+
+---
+
+## 5. Project Structure
+
+```
+college-admin-frontend/
+├── public/
+│   ├── favicon.ico
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── Common/
+│   │   │   ├── Header.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   └── PageLoader.jsx
+│   │   ├── Auth/
+│   │   │   ├── LoginForm.jsx
+│   │   │   ├── RegisterForm.jsx
+│   │   │   └── ForgotPasswordForm.jsx
+│   │   ├── Dashboard/
+│   │   │   ├── AdminDashboard.jsx
+│   │   │   ├── TeacherDashboard.jsx
+│   │   │   └── StudentDashboard.jsx
+│   │   ├── Attendance/
+│   │   │   ├── AttendanceMarking.jsx
+│   │   │   ├── AttendanceView.jsx
+│   │   │   └── AttendanceChart.jsx
+│   │   ├── Video/
+│   │   │   ├── VideoUpload.jsx
+│   │   │   ├── VideoLibrary.jsx
+│   │   │   ├── VideoPlayer.jsx
+│   │   │   └── VideoCard.jsx
+│   │   ├── Payment/
+│   │   │   ├── PaymentForm.jsx
+│   │   │   ├── PaymentHistory.jsx
+│   │   │   └── ReceiptModal.jsx
+│   │   └── Notifications/
+│   │       ├── NotificationBell.jsx
+│   │       ├── NotificationCenter.jsx
+│   │       └── NotificationCard.jsx
+│   ├── pages/
+│   │   ├── LoginPage.jsx
+│   │   ├── DashboardPage.jsx
+│   │   ├── AttendancePage.jsx
+│   │   ├── VideoPage.jsx
+│   │   ├── PaymentPage.jsx
+│   │   └── NotFoundPage.jsx
+│   ├── store/
+│   │   ├── store.js
+│   │   ├── slices/
+│   │   │   ├── authSlice.js
+│   │   │   ├── userSlice.js
+│   │   │   ├── attendanceSlice.js
+│   │   │   ├── videoSlice.js
+│   │   │   ├── paymentSlice.js
+│   │   │   └── notificationSlice.js
+│   │   └── middleware/
+│   │       └── authMiddleware.js
+│   ├── services/
+│   │   ├── api.js
+│   │   ├── authService.js
+│   │   ├── attendanceService.js
+│   │   ├── videoService.js
+│   │   ├── paymentService.js
+│   │   └── notificationService.js
+│   ├── hooks/
+│   │   ├── useAuth.js
+│   │   ├── useFetch.js
+│   │   ├── useRoles.js
+│   │   └── useLocalStorage.js
+│   ├── utils/
+│   │   ├── constants.js
+│   │   ├── formatters.js
+│   │   ├── validators.js
+│   │   └── helpers.js
+│   ├── middleware/
+│   │   ├── ProtectedRoute.jsx
+│   │   ├── RoleBasedRoute.jsx
+│   │   └── authGuard.js
+│   ├── styles/
+│   │   ├── globals.css
+│   │   ├── tailwind.css
+│   │   └── animations.css
+│   ├── layouts/
+│   │   ├── MainLayout.jsx
+│   │   ├── AuthLayout.jsx
+│   │   └── DashboardLayout.jsx
+│   ├── App.jsx
+│   ├── index.jsx
+│   └── config/
+│       ├── routes.js
+│       └── apiConfig.js
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── e2e/
+├── .eslintrc.js
+├── .prettierrc
+├── .env.example
+├── tailwind.config.js
+├── vite.config.js
+├── package.json
+└── README.md
+```
+
+---
+
+## 6. Architecture & Design Patterns
+
+### 6.1 Component Architecture
+
+#### Presentation Components (Dumb Components)
+```javascript
+// Example: VideoCard.jsx
+const VideoCard = ({ video, onClickPlay, onClickDelete }) => {
+  return (
+    <div className="video-card">
+      <img src={video.thumbnail} alt={video.title} />
+      <h3>{video.title}</h3>
+      <p>{video.description}</p>
+      <button onClick={() => onClickPlay(video.id)}>Play</button>
+      <button onClick={() => onClickDelete(video.id)}>Delete</button>
+    </div>
+  );
+};
+```
+
+#### Container Components (Smart Components)
+```javascript
+// Example: VideoLibraryContainer.jsx
+const VideoLibrary = () => {
+  const videos = useSelector(state => state.videos.list);
+  const dispatch = useDispatch();
+  
+  const handlePlayVideo = (videoId) => {
+    // Logic to play video
+  };
+  
+  return (
+    <div>
+      {videos.map(video => (
+        <VideoCard 
+          key={video.id} 
+          video={video}
+          onClickPlay={handlePlayVideo}
+        />
+      ))}
+    </div>
+  );
+};
+```
+
+### 6.2 State Management Pattern
+
+**Redux with Redux Toolkit approach:**
+- Slice-based state management
+- Immer for immutable updates
+- Thunks for async operations
+- Middleware for logging and monitoring
+
+```javascript
+// Example: videoSlice.js
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+export const fetchVideos = createAsyncThunk(
+  'videos/fetchVideos',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/videos');
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+const videoSlice = createSlice({
+  name: 'videos',
+  initialState: {
+    list: [],
+    loading: false,
+    error: null
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchVideos.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchVideos.fulfilled, (state, action) => {
+        state.loading = false;
+        state.list = action.payload;
+      })
+      .addCase(fetchVideos.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  }
+});
+```
+
+### 6.3 Custom Hooks Pattern
+
+```javascript
+// useAuth.js - Custom hook for authentication
+export const useAuth = () => {
+  const dispatch = useDispatch();
+  const auth = useSelector(state => state.auth);
+  
+  return {
+    ...auth,
+    login: (credentials) => dispatch(loginUser(credentials)),
+    logout: () => dispatch(logoutUser()),
+    register: (userData) => dispatch(registerUser(userData))
+  };
+};
+
+// Usage in component
+const MyComponent = () => {
+  const { isAuthenticated, user, login } = useAuth();
+  // ...
+};
+```
+
+### 6.4 Error Handling Pattern
+
+```javascript
+// API error handler
+const handleApiError = (error) => {
+  if (error.response?.status === 401) {
+    // Unauthorized - redirect to login
+    store.dispatch(logoutUser());
+  } else if (error.response?.status === 403) {
+    // Forbidden - show permission error
+  } else if (error.response?.status >= 500) {
+    // Server error
+  }
+  return Promise.reject(error);
+};
+
+// Axios interceptor
+api.interceptors.response.use(
+  response => response,
+  error => handleApiError(error)
+);
+```
+
+---
+
+## 7. Component Breakdown
+
+### High-Level Component Hierarchy
+
+```
+App
+├── AuthLayout
+│   ├── LoginPage
+│   │   └── LoginForm
+│   │       ├── EmailInput
+│   │       ├── PasswordInput
+│   │       └── SubmitButton
+│   ├── RegisterPage
+│   │   └── RegisterForm
+│   └── ResetPasswordPage
+│       └── ResetPasswordForm
+└── DashboardLayout
+    ├── Header
+    │   ├── Logo
+    │   ├── SearchBar
+    │   ├── NotificationBell
+    │   │   └── NotificationDropdown
+    │   └── UserMenu
+    ├── Sidebar
+    │   └── NavigationItems (role-based)
+    ├── MainContent
+    │   └── (Role-specific Dashboard/Page)
+    │       ├── AdminDashboard
+    │       ├── TeacherDashboard
+    │       └── StudentDashboard
+    └── Footer
+```
+
+### Component Composition Guidelines
+
+1. **Atomic Design Approach:**
+   - Atoms: Basic UI elements (Button, Input, Badge)
+   - Molecules: Combinations of atoms (FormGroup, Card)
+   - Organisms: Complex UI sections (Form, Table)
+   - Pages: Full page views
+
+2. **Prop Guidelines:**
+   - Keep components focused with single responsibility
+   - Pass minimal required props
+   - Use composition over prop drilling
+   - Document prop types clearly
+
+---
+
+## 8. State Management Strategy
+
+### Global State Structure
+```javascript
+{
+  auth: {
+    isAuthenticated: boolean,
+    user: User | null,
+    token: string,
+    loading: boolean,
+    error: string | null
+  },
+  ui: {
+    theme: 'light' | 'dark',
+    sidebar: { isOpen: boolean },
+    notifications: Toast[]
+  },
+  attendance: {
+    records: AttendanceRecord[],
+    loading: boolean,
+    error: string | null
+  },
+  videos: {
+    list: Video[],
+    currentVideo: Video | null,
+    uploadProgress: number,
+    loading: boolean
+  },
+  payments: {
+    pendingFees: Fee[],
+    history: Payment[],
+    processing: boolean
+  },
+  notifications: {
+    list: Notification[],
+    unreadCount: number
+  }
+}
+```
+
+### Best Practices
+1. **Normalization:** Store data in normalized form to avoid duplication
+2. **Selectors:** Use reselect for memoized selectors
+3. **Middleware:** Use thunks for async operations
+4. **Time-travel debugging:** Enable Redux DevTools in development
+
+---
+
+## 9. API Integration Plan
+
+### 9.1 Axios Configuration
+```javascript
+// api.js
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// Request interceptor - Add token to headers
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Response interceptor - Handle token refresh
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    if (error.response?.status === 401) {
+      // Attempt token refresh
+      // If refresh fails, redirect to login
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+```
+
+### 9.2 Service Layer Pattern
+```javascript
+// attendanceService.js
+export const attendanceService = {
+  fetchAttendanceRecords: (params) => 
+    api.get('/attendance', { params }),
+  
+  markAttendance: (data) => 
+    api.post('/attendance/mark', data),
+  
+  getStudentAttendance: (studentId) => 
+    api.get(`/attendance/student/${studentId}`),
+  
+  getAnalytics: (params) => 
+    api.get('/attendance/analytics', { params })
+};
+```
+
+### 9.3 API Response Handling
+```javascript
+// Consistent response format
+{
+  success: boolean,
+  data: T | null,
+  message: string,
+  statusCode: number,
+  timestamp: ISO8601String
+}
+
+// Error response format
+{
+  success: false,
+  message: string,
+  errors: {
+    fieldName: [errorMessage]
+  },
+  statusCode: number
+}
+```
+
+### 9.4 Retry Logic
+```javascript
+// Implement exponential backoff for failed requests
+const axiosRetry = require('axios-retry');
+
+axiosRetry(api, {
+  retries: 3,
+  retryDelay: axiosRetry.exponentialDelay
+});
+```
+
+---
+
+## 10. Styling & UI/UX
+
+### 10.1 Design System
+
+**Color Palette:**
+```javascript
+// tailwind.config.js
+colors: {
+  primary: '#3B82F6',    // Blue
+  secondary: '#8B5CF6',  // Purple
+  success: '#10B981',    // Green
+  error: '#EF4444',      // Red
+  warning: '#F59E0B',    // Amber
+  info: '#0EA5E9',       // Cyan
+  neutral: '#6B7280'     // Gray
+}
+```
+
+**Typography:**
+- Headings: Inter Bold
+- Body: Inter Regular
+- Code: Fira Code
+
+**Spacing System:** Tailwind default (4px base unit)
+
+**Border Radius:** 
+- Small: 4px
+- Medium: 8px
+- Large: 12px
+- Full: 9999px
+
+### 10.2 Responsive Design
+
+**Breakpoints:**
+- Mobile: 320px-480px
+- Tablet: 481px-768px
+- Desktop: 769px-1024px
+- Large Desktop: 1025px+
+
+**Mobile-First Approach:**
+```css
+/* Mobile styles */
+.card { padding: 1rem; }
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .card { padding: 1.5rem; }
+}
+```
+
+### 10.3 Accessibility (WCAG 2.1 Level AA)
+
+Requirements:
+- [ ] Proper heading hierarchy (h1, h2, h3...)
+- [ ] ARIA labels for interactive elements
+- [ ] Keyboard navigation support
+- [ ] Color contrast ratio ≥ 4.5:1
+- [ ] Touch targets ≥ 44x44px
+- [ ] Alt text for images
+- [ ] Form labels properly associated
+
+```javascript
+// Example: Accessible button
+<button 
+  aria-label="Close dialog"
+  onClick={onClose}
+  className="text-gray-600 hover:text-gray-900"
+>
+  <XIcon size={24} />
+</button>
+```
+
+### 10.4 Dark Mode Support
+```javascript
+// Using Tailwind dark mode
+<div className="bg-white dark:bg-slate-900">
+  <p className="text-black dark:text-white">Content</p>
+</div>
+```
+
+---
+
+## 11. Testing Strategy
+
+### 11.1 Testing Pyramid
+
+```
+        E2E Tests (5%)
+       /            \
+      /    Integration  \
+     /       Tests (15%)  \
+    /                      \
+   /____ Unit Tests (80%)____\
+```
+
+### 11.2 Unit Testing
+**Framework:** Vitest / Jest  
+**Library:** React Testing Library
+
+**Coverage Requirements:**
+- Utility functions: 100%
+- Hooks: >90%
+- Components: >80%
+- Reducers: 100%
+
+**Example Test:**
+```javascript
+// button.test.jsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import Button from './Button';
+
+describe('Button Component', () => {
+  it('renders button with text', () => {
+    render(<Button>Click me</Button>);
+    expect(screen.getByText('Click me')).toBeInTheDocument();
+  });
+
+  it('calls onClick handler when clicked', async () => {
+    const handleClick = vi.fn();
+    render(<Button onClick={handleClick}>Click me</Button>);
+    
+    await userEvent.click(screen.getByText('Click me'));
+    expect(handleClick).toHaveBeenCalledOnce();
+  });
+});
+```
+
+### 11.3 Integration Testing
+**Focus Areas:**
+- Redux store integration
+- API service integration
+- Multi-component workflows
+
+```javascript
+// attendanceMarking.integration.test.jsx
+describe('Attendance Marking Flow', () => {
+  it('should mark attendance and update store', async () => {
+    // Setup
+    const { store } = renderWithProviders(<AttendanceMarking />);
+    
+    // Simulate marking attendance
+    // Assert store state updated
+    // Assert API called
+  });
+});
+```
+
+### 11.4 E2E Testing
+**Framework:** Cypress or Playwright
+
+**Key Scenarios to Test:**
+1. User login flow
+2. Attendance marking
+3. Video upload and viewing
+4. Payment process
+5. Notification reception
+
+```javascript
+// attendance.cy.js
+describe('Attendance Management', () => {
+  beforeEach(() => {
+    cy.login();
+    cy.visit('/teacher/attendance');
+  });
+
+  it('should mark attendance for all students', () => {
+    cy.get('[data-testid="student-checkbox"]')
+      .first()
+      .click();
+    cy.get('[data-testid="submit-btn"]').click();
+    cy.get('[data-testid="success-toast"]')
+      .should('be.visible');
+  });
+});
+```
+
+### 11.5 Performance Testing
+- Lighthouse CI for CI/CD pipeline
+- Bundle size analysis (Bundlesize)
+- Load time testing
+- Rendering performance profiling
+
+---
+
+## 12. Performance Optimization
+
+### 12.1 Code Splitting
+```javascript
+// Route-based code splitting
+const AdminDashboard = lazy(() => import('../pages/AdminDashboard'));
+const TeacherDashboard = lazy(() => import('../pages/TeacherDashboard'));
+
+function Routes() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <Switch>
+        <Route path="/admin" component={AdminDashboard} />
+        <Route path="/teacher" component={TeacherDashboard} />
+      </Switch>
+    </Suspense>
+  );
+}
+```
+
+### 12.2 Image Optimization
+- Use Next-Gen formats (WebP with fallback)
+- Lazy load images below the fold
+- Responsive images with srcset
+- Image compression tools (TinyPNG, ImageOptim)
+
+```jsx
+<img 
+  src="image.jpg"
+  srcSet="image-mobile.jpg 480w, image-desktop.jpg 1024w"
+  sizes="(max-width: 600px) 480px, 1024px"
+  loading="lazy"
+  alt="Description"
+/>
+```
+
+### 12.3 Bundle Optimization
+- Remove unused dependencies
+- Tree shaking
+- Minification
+- Gzip compression on server
+
+**Tools:**
+- Webpack Bundle Analyzer
+- Source Map Explorer
+
+### 12.4 React Performance
+- Memoization with React.memo
+- useMemo and useCallback hooks
+- Virtual scrolling for long lists
+- Debouncing/throttling for expensive operations
+
+```javascript
+// Memoized component
+const VideoCard = React.memo(({ video, onPlay }) => {
+  return <div>{video.title}</div>;
+}, (prevProps, nextProps) => {
+  return prevProps.video.id === nextProps.video.id;
+});
+
+// useCallback for event handlers
+const handleDelete = useCallback((id) => {
+  deleteVideo(id);
+}, []);
+```
+
+### 12.5 Caching Strategy
+- HTTP caching headers
+- Local storage for user preferences
+- IndexedDB for offline data
+- Service workers for offline support
+
+---
+
+## 13. Security Implementation (Per SRS Sections 5.3 & 7.4)
+
+### 13.1 Authentication Security (SRS 4.1 & 7.4.1)
+**JWT-based Stateless Authentication:**
+- [ ] Implement JWT token issuance on successful login
+- [ ] Store tokens in **httpOnly cookies** (not localStorage) - prevents XSS theft
+- [ ] Implement automatic token refresh mechanism (before expiry)
+- [ ] Validate JWT signature and expiry on every request
+- [ ] Backend responsibility: Password hashing via bcrypt or argon2 per SRS 7.4.2
+- [ ] Email verification for new accounts (backend-driven)
+- [ ] Rate limiting on login/registration attempts
+
+**RBAC Implementation (SRS 7.4.1):**
+```javascript
+// Frontend RBAC middleware checks JWT payload
+export const requireRole = (allowedRoles) => {
+  return (req, res, next) => {
+    const user = req.user; // From JWT payload
+    if (!allowedRoles.includes(user.role)) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    next();
+  };
+};
+
+// Only Admin can create teacher accounts (SRS Business Rule)
+// Only Teacher can mark attendance (SRS Business Rule)
+// Only Student can pay fees (SRS Business Rule)
+```
+
+### 13.2 XSS Prevention (SRS 5.3)
+**Input Sanitization & Output Encoding:**
+- [ ] Sanitize all user input before API submission
+- [ ] Use Content Security Policy (CSP) headers on backend
+- [ ] Avoid innerHTML - use textContent or sanitization libraries
+- [ ] Sanitize HTML content when displaying user-generated content
+
+```javascript
+import DOMPurify from 'dompurify';
+
+// Sanitize before API submission
+const sanitizedInput = DOMPurify.sanitize(userInput);
+
+// For displaying HTML safely
+const sanitizedHTML = DOMPurify.sanitize(richTextContent, { 
+  ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'p'] 
+});
+```
+
+### 13.3 CSRF Protection (SRS 5.3)
+**Cross-Site Request Forgery Prevention:**
+- [ ] Implement CSRF tokens on state-changing requests (POST, PUT, DELETE)
+- [ ] Validate SameSite cookie attribute (SameSite=Strict)
+- [ ] Backend validates referer headers for sensitive operations
+
+```javascript
+// Add CSRF token to request headers
+api.interceptors.request.use(config => {
+  // Get CSRF token from meta tag or cookie
+  const token = document.querySelector('meta[name="csrf-token"]')?.content 
+    || getCookie('CSRF-Token');
+  
+  if (token && ['POST', 'PUT', 'DELETE'].includes(config.method.toUpperCase())) {
+    config.headers['X-CSRF-Token'] = token;
+  }
+  return config;
+});
+```
+
+### 13.4 Data Protection (SRS 5.3 & 7.4.2)
+**Encryption & Secure Storage:**
+- [ ] **Transport Security**: HTTPS/TLS 1.2+ for all API communication
+- [ ] **At-Rest**: Never store sensitive data in localStorage (JWT in httpOnly cookies only)
+- [ ] **PII Protection**: Don't log PII to console in production
+- [ ] **CDN Usage**: Serve static assets through CDN with integrity headers
+- [ ] **Sensitive Operations**: Implement re-authentication for password/payment changes
+
+```javascript
+// Secure storage - httpOnly cookies only
+// NEVER store in localStorage:
+// ❌ localStorage.setItem('token', jwt); // INSECURE
+// ✅ Set via backend with httpOnly flag (SECURE)
+
+// Never log sensitive data
+console.log(userData); // ❌ If contains passwords/emails
+console.log({ userId: userData.id }); // ✅ Log only non-sensitive fields
+```
+
+### 13.5 Payment Security (SRS 5.3 & UC-03)
+**Razorpay Integration Security:**
+- [ ] Use Razorpay test keys in development (from .env)
+- [ ] **CRITICAL**: Never expose Razorpay secret key to frontend
+- [ ] Never handle sensitive payment data on frontend
+- [ ] Validate payment via backend webhook with cryptographic signature (x-razorpay-signature)
+- [ ] Prevent duplicate webhook processing with idempotency keys
+- [ ] Store only non-sensitive transaction data (transaction_id, status, amount)
+
+```javascript
+// Frontend: Initiate payment securely
+const initiatePayment = async (amount) => {
+  // Backend creates Razorpay order
+  const response = await api.post('/payments/create-order', { amount });
+  
+  // Open Razorpay checkout (handles sensitive data securely)
+  const options = {
+    key: process.env.REACT_APP_RAZORPAY_KEY_ID, // Public key only
+    amount: response.data.amount,
+    currency: 'INR',
+    order_id: response.data.orderId,
+    handler: handlePaymentSuccess,
+    prefill: { /* user non-sensitive data */ }
+  };
+  
+  const rzp = new window.Razorpay(options);
+  rzp.open();
+};
+
+// Backend ONLY: Verify webhook signature with secret
+const verifyWebhook = (signature, body, secret) => {
+  const hash = crypto
+    .createHmac('sha256', secret)
+    .update(JSON.stringify(body))
+    .digest('hex');
+  
+  return hash === signature; // Prevent spoofed payments (SRS 5.3)
+};
+```
+
+### 13.6 Dependency Security
+**Vulnerability Management:**
+```bash
+# Regular security audits
+npm audit                    # Check for vulnerabilities
+npm audit fix               # Fix automatically fixable issues
+npm update                  # Keep dependencies current
+
+# Use continuous monitoring:
+# - Snyk: npm install -g snyk && snyk test
+# - OWASP Dependency Check
+```
+
+**Secure Dependency Practices:**
+- [ ] Pin exact versions for critical dependencies
+- [ ] Review major version updates before upgrading
+- [ ] Avoid deprecated or unmaintained packages
+- [ ] Whitelist production dependencies in package.json
+
+### 13.7 Environment Variables (SRS Section 2.7)
+**Never commit sensitive keys - manage via .env files:**
+
+```env
+# .env.example (SHARE WITH TEAM - NO SECRETS)
+REACT_APP_API_URL=https://api.example.com
+REACT_APP_RAZORPAY_KEY_ID=rzp_test_XXXXXXXXXXXX
+
+# .env.local (NEVER COMMIT - LOCAL DEVELOPMENT)
+# Create this locally with actual values
+
+# Production .env (STORED SECURELY IN DEPLOYMENT PLATFORM)
+REACT_APP_API_URL=https://api.production.com
+REACT_APP_RAZORPAY_KEY_ID=rzp_live_XXXXXXXXXXXX
+```
+
+### 13.8 API Security (SRS 3.4)
+**Communication Interface Protection:**
+- [ ] Input validation on both frontend and backend (Defense in Depth)
+- [ ] Rate limiting implemented server-side (frontend can display cooldown)
+- [ ] API versioning (v1, v2) for backward compatibility
+- [ ] Enforce HTTPS/TLS 1.2+ on all endpoints
+- [ ] CORS properly configured (whitelist specific origins)
+- [ ] Token expiry & refresh rotation
+
+```javascript
+// Frontend: Add Authorization header with JWT
+api.interceptors.request.use(config => {
+  const token = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('token='))
+    ?.split('=')[1];
+  
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  
+  return config;
+});
+
+// Handle token expiry (401 response)
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    if (error.response?.status === 401) {
+      // Token expired - attempt refresh or redirect to login
+      // Backend will validate refresh token
+    }
+    return Promise.reject(error);
+  }
+);
+```
+
+### 13.9 Security Checklist (Per SRS Compliance)
+- [ ] **NFR-01 (Secure Access & Authorization)**
+  - ✅ JWT token validation on all protected routes
+  - ✅ RBAC enforced per user role (Admin/Teacher/Student)
+  - ✅ Role-specific dashboards prevent unauthorized access
+  
+- [ ] **NFR-02 (Protect Financial Transactions)**
+  - ✅ Payment data never stored in frontend
+  - ✅ Backend validates Razorpay webhook signatures (x-razorpay-signature)
+  - ✅ Transaction IDs and receipts tracked securely
+  - ✅ Soft deletion (is_deleted flag) for failed transactions
+
+- [ ] **Data Safety**
+  - ✅ No sensitive data logged to console (production)
+  - ✅ HTTPS enforced on all API calls
+  - ✅ XSS/CSRF/Injection protections active
+  - ✅ Dependencies regularly audited
+
+---
+
+## 14. DevOps & Deployment
+
+### 14.1 Development Environment
+**Setup Steps:**
+```bash
+git clone <repo>
+cd college-admin-frontend
+nvm use 18  # Use Node 18
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+### 14.2 Build Process
+```bash
+# Production build
+npm run build      # Creates optimized build in dist/
+npm run preview    # Preview production build locally
+
+# Expected output:
+# - Minified JS/CSS
+# - Optimized images
+# - Source maps for debugging
+# - Bundle size < 500KB
+```
+
+### 14.3 Deployment Targets
+**Options:**
+1. **Vercel** (Recommended for React)
+   - Automatic deployments on push
+   - Built-in optimization
+   - Easy environment management
+
+2. **Netlify**
+   - Similar to Vercel
+   - Good CI/CD integration
+
+3. **AWS S3 + CloudFront**
+   - More control
+   - Cost-effective at scale
+
+4. **Self-hosted (VPS)**
+   - Full control
+   - Requires more maintenance
+
+### 14.4 CI/CD Pipeline
+**GitHub Actions workflow example:**
+```yaml
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Lint
+        run: npm run lint
+      
+      - name: Run tests
+        run: npm run test:ci
+      
+      - name: Build
+        run: npm run build
+      
+      - name: Run E2E tests
+        run: npm run test:e2e
+      
+      - name: Upload coverage
+        uses: codecov/codecov-action@v2
+      
+      - name: Deploy to Vercel
+        if: github.ref == 'refs/heads/main'
+        run: vercel --prod
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+```
+
+### 14.5 Monitoring & Logging
+**Tools:**
+- Sentry for error tracking
+- LogRocket for session replay
+- Google Analytics for user analytics
+
+```javascript
+// Sentry integration
+import * as Sentry from "@sentry/react";
+
+Sentry.init({
+  dsn: process.env.REACT_APP_SENTRY_DSN,
+  environment: process.env.NODE_ENV,
+  tracesSampleRate: 1.0,
+});
+```
+
+### 14.6 Database Monitoring
+- Monitor MongoDB performance
+- Set up alerts for slow queries
+- Regular backups
+
+---
+
+## 15. Risk Management
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|-----------|
+| API delays | High | Medium | Implement loading states, skeleton screens, timeouts |
+| Payment gateway issues | Medium | High | Thorough testing, fallback payment methods |
+| Video streaming lag | Medium | High | Use CDN, implement adaptive bitrate |
+| Security vulnerabilities | Medium | Critical | Regular audits, security training, dependency updates |
+| Team member absence | Low | High | Code documentation, knowledge sharing sessions |
+| Browser compatibility | Low | Medium | Cross-browser testing, progressive enhancement |
+| Database performance | Low | High | Proper indexing, caching, database optimization |
+| Scope creep | High | Medium | Clear requirements, change management process |
+
+---
+
+## 16. Success Metrics
+
+### 16.1 Performance Metrics
+- [ ] Page load time < 2 seconds
+- [ ] Bundle size < 500KB
+- [ ] Lighthouse score > 90
+- [ ] First Contentful Paint (FCP) < 1.5s
+- [ ] Largest Contentful Paint (LCP) < 2.5s
+
+### 16.2 Quality Metrics
+- [ ] Test coverage > 80%
+- [ ] Zero high-severity security vulnerabilities
+- [ ] < 5 bugs in production per sprint
+- [ ] 99.5% uptime
+
+### 16.3 User Experience Metrics
+- [ ] Page bounce rate < 30%
+- [ ] Average session duration > 5 minutes
+- [ ] User satisfaction score > 4/5
+- [ ] Zero critical user-reported issues
+
+### 16.4 Development Metrics
+- [ ] Sprint velocity consistency
+- [ ] Code review turnaround < 24 hours
+- [ ] Deployment frequency > 2x per week
+- [ ] Mean time to recovery < 1 hour
+
+---
+
+## Appendix: Quick Reference
+
+### Development Commands
+```bash
+npm run dev          # Start development server
+npm run build        # Production build
+npm run lint         # Run ESLint
+npm run format       # Format code with Prettier
+npm run test         # Run unit tests
+npm run test:watch   # Run tests in watch mode
+npm run test:e2e     # Run E2E tests
+npm run analyze      # Analyze bundle size
+```
+
+### Git Workflow
+```bash
+# Create feature branch
+git checkout -b feature/feature-name
+
+# Make changes and commit
+git add .
+git commit -m "feat: Add new feature"
+
+# Push and create PR
+git push origin feature/feature-name
+
+# After approval, merge to develop
+# Then merge develop to main for release
+```
+
+### Commit Message Convention
+```
+feat: Add new attendance marking feature
+feat(video): Add video streaming support
+fix: Resolve token refresh issue
+docs: Update API documentation
+style: Fix code formatting
+refactor: Reorganize component structure
+test: Add unit tests for auth service
+chore: Update dependencies
+```
+
+### File Naming Conventions
+- Components: PascalCase (VideoPlayer.jsx)
+- Utilities: camelCase (formatDate.js)
+- Styles: kebab-case (video-player.module.css)
+- Tests: Same as source file with .test.js suffix
+
+---
+
+## Conclusion
+
+This comprehensive plan provides a solid foundation for building a production-grade React frontend for the College Administration Management System. Regular progress reviews and adjustments based on team feedback are essential for success.
+
+---
+
+**Last Updated:** March 10, 2026
