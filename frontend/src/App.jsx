@@ -31,6 +31,8 @@ import RoleProtectedRoute from '@/components/Common/RoleProtectedRoute'
 import AdminDashboard from '@/pages/AdminDashboard'
 import TeacherDashboard from '@/pages/TeacherDashboard'
 import StudentDashboard from '@/pages/StudentDashboard'
+import AnalyticsDashboardPage from '@/pages/AnalyticsDashboardPage'
+import StudentPaymentsPage from '@/pages/StudentPaymentsPage'
 
 // Utils
 import { getStoredUser, isTokenValid } from '@/utils/tokenUtils'
@@ -98,6 +100,36 @@ function App() {
             element={
               <RoleProtectedRoute requiredRole="student">
                 <StudentDashboard />
+              </RoleProtectedRoute>
+            }
+          />
+
+          {/* Admin Analytics */}
+          <Route
+            path="/admin/analytics"
+            element={
+              <RoleProtectedRoute requiredRole="admin">
+                <AnalyticsDashboardPage />
+              </RoleProtectedRoute>
+            }
+          />
+
+          {/* Teacher Analytics */}
+          <Route
+            path="/teacher/analytics"
+            element={
+              <RoleProtectedRoute requiredRole="teacher">
+                <AnalyticsDashboardPage />
+              </RoleProtectedRoute>
+            }
+          />
+
+          {/* Student Payments */}
+          <Route
+            path="/student/payments"
+            element={
+              <RoleProtectedRoute requiredRole="student">
+                <StudentPaymentsPage />
               </RoleProtectedRoute>
             }
           />

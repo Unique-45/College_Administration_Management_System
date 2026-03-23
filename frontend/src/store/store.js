@@ -6,6 +6,8 @@ import uiReducer from './slices/uiSlice'
 import dashboardReducer from './slices/dashboardSlice'
 import videoReducer from './slices/videoSlice'
 import eventReducer from './slices/eventSlice'
+import analyticsReducer from './slices/analyticsSlice'
+import paymentReducer from './slices/paymentSlice'
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +18,8 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     video: videoReducer,
     event: eventReducer,
+    analytics: analyticsReducer,
+    payment: paymentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
