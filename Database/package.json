@@ -1,0 +1,14 @@
+{
+  "name": "college-admin-db-setup",
+  "version": "1.0.0",
+  "description": "MongoDB collection setup for College Administration System",
+  "main": "create-collections.js",
+  "scripts": {
+    "setup": "node create-collections.js",
+    "test-connection": "node test-connection.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "mongodb": "^6.8.0"
+  }
+}
