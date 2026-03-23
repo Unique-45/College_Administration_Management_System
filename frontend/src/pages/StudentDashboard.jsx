@@ -1,10 +1,17 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchDashboardStats, fetchClasses } from '../store/slices/dashboardSlice'
+import StudentScheduleTimetable from '../components/Dashboard/StudentScheduleTimetable'
+import StudentFeePaymentStatus from '../components/Dashboard/StudentFeePaymentStatus'
+import StudentAvailableVideosList from '../components/Dashboard/StudentAvailableVideosList'
+import StudentAttendanceRecord from '../components/Dashboard/StudentAttendanceRecord'
+import StudentProfileInformation from '../components/Dashboard/StudentProfileInformation'
 
 const StudentDashboard = () => {
   const dispatch = useDispatch()
-  const { loading, error } = useSelector((state) => state.dashboard)
+  const { statsLoading, classesLoading, statsError, classesError } = useSelector((state) => state.dashboard)
+  const isLoading = statsLoading || classesLoading
+  const error = statsError || classesError
 
   useEffect(() => {
     // Fetch student-specific dashboard data
@@ -12,7 +19,7 @@ const StudentDashboard = () => {
     dispatch(fetchClasses())
   }, [dispatch])
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
@@ -36,80 +43,22 @@ const StudentDashboard = () => {
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Student Dashboard</h1>
 
-        {/* Welcome Section */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Welcome to your Student Dashboard
-          </h2>
-          <p className="text-gray-600">
-            View your classes, attendance, videos, and payment status all in one place.
-          </p>
-        </div>
-
-        {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          {/* Classes Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Enrolled Classes</p>
-                <p className="text-2xl font-bold text-gray-900">5</p>
-              </div>
-              <div className="text-3xl">📚</div>
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <div className="lg:col-span-1">
+            <StudentProfileInformation />
           </div>
-
-          {/* Attendance Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Attendance</p>
-                <p className="text-2xl font-bold text-gray-900">92%</p>
-              </div>
-              <div className="text-3xl">✅</div>
-            </div>
-          </div>
-
-          {/* Pending Fees Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Pending Fees</p>
-                <p className="text-2xl font-bold text-gray-900">₹5,000</p>
-              </div>
-              <div className="text-3xl">💰</div>
-            </div>
-          </div>
-
-          {/* Videos Watched Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm">Videos Watched</p>
-                <p className="text-2xl font-bold text-gray-900">24</p>
-              </div>
-              <div className="text-3xl">🎥</div>
-            </div>
+          <div className="lg:col-span-2">
+            <StudentFeePaymentStatus />
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-              <div className="text-2xl mb-2">🎥</div>
-              <p className="font-medium text-gray-900">Watch Videos</p>
-            </button>
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-              <div className="text-2xl mb-2">💳</div>
-              <p className="font-medium text-gray-900">Pay Fees</p>
-            </button>
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-              <div className="text-2xl mb-2">📋</div>
-              <p className="font-medium text-gray-900">View Attendance</p>
-            </button>
-          </div>
+        <div className="mb-6">
+          <StudentScheduleTimetable />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <StudentAvailableVideosList />
+          <StudentAttendanceRecord />
         </div>
       </div>
     </div>
