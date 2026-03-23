@@ -4,6 +4,8 @@ import userReducer from './slices/userSlice'
 import notificationReducer from './slices/notificationSlice'
 import uiReducer from './slices/uiSlice'
 import dashboardReducer from './slices/dashboardSlice'
+import videoReducer from './slices/videoSlice'
+import eventReducer from './slices/eventSlice'
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ export const store = configureStore({
     notification: notificationReducer,
     ui: uiReducer,
     dashboard: dashboardReducer,
+    video: videoReducer,
+    event: eventReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
