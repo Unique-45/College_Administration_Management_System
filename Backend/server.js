@@ -104,9 +104,11 @@ app.use(errorHandler);
  */
 const startServer = async () => {
   try {
-    // Connect to database
-    logger.info('Starting College Admin Backend Application...');
-    await connectDatabase();
+    // Connect to database (skip in test environment)
+    if (config.app.env !== 'test') {
+      logger.info('Starting College Admin Backend Application...');
+      await connectDatabase();
+    }
 
     // Start Express server
     const server = app.listen(config.app.port, () => {

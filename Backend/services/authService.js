@@ -90,7 +90,7 @@ class AuthService {
       const token = jwt.sign(payload, config.jwt.accessTokenSecret, {
         expiresIn: config.jwt.accessTokenExpiry,
         issuer: 'college-admin-backend',
-        subject: user._id || user.id,
+        subject: (user._id || user.id).toString(),
       });
 
       return token;
@@ -116,7 +116,7 @@ class AuthService {
       const token = jwt.sign(payload, config.jwt.refreshTokenSecret, {
         expiresIn: config.jwt.refreshTokenExpiry,
         issuer: 'college-admin-backend',
-        subject: user._id || user.id,
+        subject: (user._id || user.id).toString(),
       });
 
       return token;
@@ -207,7 +207,7 @@ class AuthService {
     try {
       const resetToken = jwt.sign({ userId, type: 'password-reset' }, config.jwt.accessTokenSecret, {
         expiresIn: '1h', // Reset link valid for 1 hour
-        subject: userId,
+        subject: userId.toString(),
       });
 
       const decoded = jwt.decode(resetToken);
