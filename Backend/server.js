@@ -91,8 +91,11 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/classes', classesRoutes);
 
+// Phase 4: Attendance routes
+const attendanceRoutes = require('./routes/attendance');
+app.use('/api/attendance', attendanceRoutes);
+
 // Additional routes will be added in subsequent phases:
-// app.use('/api/attendance', require('./routes/attendance'));
 // app.use('/api/videos', require('./routes/videos'));
 // app.use('/api/events', require('./routes/events'));
 // app.use('/api/payments', require('./routes/payments'));

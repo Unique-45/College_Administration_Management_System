@@ -81,7 +81,7 @@ class AuthService {
   static generateAccessToken(user) {
     try {
       const payload = {
-        userId: user._id || user.id,
+        userId: user._id || user.id || user.userId,
         email: user.email,
         role: user.role,
         type: 'access',
@@ -90,7 +90,7 @@ class AuthService {
       const token = jwt.sign(payload, config.jwt.accessTokenSecret, {
         expiresIn: config.jwt.accessTokenExpiry,
         issuer: 'college-admin-backend',
-        subject: (user._id || user.id).toString(),
+        subject: (user._id || user.id || user.userId).toString(),
       });
 
       return token;

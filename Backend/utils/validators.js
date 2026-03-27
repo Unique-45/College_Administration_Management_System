@@ -260,6 +260,116 @@ const extractValidationErrors = (joiError) => {
 };
 
 // ============================================
+// ATTENDANCE VALIDATORS
+// ============================================
+
+/**
+ * Validate attendance marking input
+ * @param {Object} data - Attendance marking data
+ * @returns {Object} - Joi validation result
+ */
+const validateAttendanceMark = (data) => {
+  const schema = Joi.object({
+    classId: Joi.string()
+      .regex(/^[0-9a-fA-F]{24}$/)
+      .required()
+      .messages({
+        'string.pattern.base': 'Invalid class ID format',
+        'any.required': 'Class ID is required',
+      }),
+
+    date: Joi.date()
+      .iso()
+      .required()
+      .messages({
+        'date.format': 'Date must be in ISO format (YYYY-MM-DD)',
+        'any.required': 'Date is required',
+      }),
+
+    attendance: Joi.array()
+      .items(
+        Joi.object({
+          studentId: Joi.string()
+            .regex(/^[0-9a-fA-F]{24}$/)
+            .required()
+            .messages({
+              'string.pattern.base': 'Invalid student ID format',
+              'any.required': 'Student ID is required',
+            }),
+
+          status: Joi.string()
+            .valid('present', 'absent', 'late')
+            .required()
+            .messages({
+              'any.only': 'Status must be present, absent, or late',
+              'any.required': 'Status is required',
+            }),
+
+          notes: Joi.string()
+            .max(200)
+            .optional()
+            .messages({
+              'string.max': 'Notes cannot exceed 200 characters',
+            }),
+        })
+      )
+      .min(1)
+      .required()
+      .messages({
+        'array.min': 'At least one attendance record is required',
+        'any.required': 'Attendance records are required',
+      }),
+  });
+
+  return schema.validate(data, { abortEarly: false });
+};
+
+/**
+ * Validate attendance update input
+ * @param {Object} data - Attendance update data
+ * @returns {Object} - Joi validation result
+ */
+const validateAttendanceUpdate = (data) => {
+  const schema = Joi.object({
+    attendance: Joi.array()
+      .items(
+        Joi.object({
+          studentId: Joi.string()
+            .regex(/^[0-9a-fA-F]{24}$/)
+            .required()
+            .messages({
+              'string.pattern.base': 'Invalid student ID format',
+              'any.required': 'Student ID is required',
+            }),
+
+          status: Joi.string()
+            .valid('present', 'absent', 'late')
+            .required()
+            .messages({
+              'any.only': 'Status must be present, absent, or late',
+              'any.required': 'Status is required',
+            }),
+
+          notes: Joi.string()
+            .max(200)
+            .optional()
+            .messages({
+              'string.max': 'Notes cannot exceed 200 characters',
+            }),
+        })
+      )
+      .min(1)
+      .required()
+      .messages({
+        'array.min': 'At least one attendance record is required',
+        'any.required': 'Attendance records are required',
+      }),
+  });
+
+  return schema.validate(data, { abortEarly: false });
+};
+
+// ============================================
 // EXPORTS
 // ============================================
 
@@ -271,6 +381,8 @@ module.exports = {
   validateResetPassword,
   validateChangePassword,
   validateRefreshToken,
+  validateAttendanceMark,
+  validateAttendanceUpdate,
 
   // Utility functions
   isValidEmail,

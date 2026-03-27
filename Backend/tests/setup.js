@@ -5,10 +5,9 @@
 
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
-const { app, startServer } = require('../server');
+const { app } = require('../server');
 
 let mongoServer;
-let server;
 
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
@@ -18,9 +17,6 @@ beforeAll(async () => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-
-  // Start the server
-  server = await startServer();
 });
 
 /**
@@ -39,7 +35,6 @@ afterAll(async () => {
   await mongoose.connection.dropDatabase();
   await mongoose.connection.close();
   await mongoServer.stop();
-  if (server) {
-    server.close();
-  }
 });
+
+module.exports = { app };
