@@ -277,7 +277,7 @@ userSchema.methods.toJSON = function () {
  * @returns {Promise<User>}
  */
 userSchema.statics.findByEmailWithPassword = function (email) {
-  return this.findOne({ email: email.toLowerCase() }).select('+password');
+  return this.findOne({ email: email.toLowerCase() }, { password: 1, email: 1, role: 1, isActive: 1, loginAttempts: 1, lockUntil: 1 });
 };
 
 /**
@@ -361,8 +361,12 @@ userSchema.pre('save', function (next) {
  * Prevent password from being returned in queries by default
  */
 userSchema.pre(/^find/, function (next) {
-  if (!this.options._recursed) {
-    this.select('-password -passwordResetToken -passwordResetExpiry');
+  // Don't exclude fields if they are explicitly selected in the projection
+  const projection = this._fields;
+  if (!projection || (!projection.password && !projection['+password'])) {
+    if (!this.options._recursed) {
+      this.select('-password -passwordResetToken -passwordResetExpiry');
+    }
   }
   next();
 });
