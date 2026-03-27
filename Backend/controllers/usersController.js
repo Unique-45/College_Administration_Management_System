@@ -1,0 +1,298 @@
+/**
+ * Users Controller
+ * Handles user profile management and user listing operations
+ * Phase 3: Dashboard & User Management
+ */
+
+const User = require('../models/User');
+const logger = require('../utils/logger');
+const { sendSuccess, sendError } = require('../utils/responses');
+const { validateUpdateProfile, extractValidationErrors } = require('../utils/validators');
+const constants = require('../config/constants');
+
+// ============================================
+// USER PROFILE ENDPOINTS
+// ============================================
+
+/**
+ * Get current user profile
+ * GET /users/profile
+ * @param {Object} req - Express request (must include authorized user)
+ * @param {Object} res - Express response
+ */
+const getProfile = async (req, res, next) => {
+  try {
+    logger.info('Fetching user profile', { userId: req.user._id });
+
+    // Get user from database (user should already be in req.user from auth middleware)
+    const user = await User.findById(req.user._id).select('-password');
+
+    if (!user) {
+      logger.warn('User profile not found', { userId: req.user._id });
+      return sendError(
+        res,
+        'User profile not found',
+        constants.ERROR_CODES.NOT_FOUND,
+        null,
+        constants.HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    if (!user.isActive) {
+      logger.warn('User account is inactive', { userId: req.user._id });
+      return sendError(
+        res,
+        'User account is inactive',
+        constants.ERROR_CODES.FORBIDDEN,
+        null,
+        constants.HTTP_STATUS.FORBIDDEN
+      );
+    }
+
+    logger.info('User profile retrieved successfully', { userId: req.user._id });
+
+    return sendSuccess(res, 'User profile retrieved successfully', {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      department: user.department,
+      designation: user.designation,
+      profilePicture: user.profilePicture,
+      emailVerified: user.emailVerified,
+      isActive: user.isActive,
+      lastLogin: user.lastLogin,
+      createdAt: user.createdAt,
+    });
+  } catch (error) {
+    logger.error('Error fetching user profile', { error: error.message, userId: req.user._id });
+    next(error);
+  }
+};
+
+/**
+ * Update user profile
+ * PUT /users/profile
+ * @param {Object} req - Express request with update data in body
+ * @param {Object} res - Express response
+ */
+const updateProfile = async (req, res, next) => {
+  try {
+    logger.info('Updating user profile', { userId: req.user._id });
+
+    // Validate input
+    const { error, value } = validateUpdateProfile(req.body);
+    if (error) {
+      const details = extractValidationErrors(error);
+      return sendError(
+        res,
+        'Validation failed',
+        constants.ERROR_CODES.VALIDATION_ERROR,
+        details,
+        constants.HTTP_STATUS.BAD_REQUEST
+      );
+    }
+
+    const { name, phone, department, designation, profilePicture } = value;
+
+    // Find and update user
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      logger.warn('User not found for update', { userId: req.user._id });
+      return sendError(
+        res,
+        'User not found',
+        constants.ERROR_CODES.NOT_FOUND,
+        null,
+        constants.HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    // Update fields
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+    if (department) user.department = department;
+    if (designation) user.designation = designation;
+    if (profilePicture) user.profilePicture = profilePicture;
+
+    user.updatedAt = new Date();
+
+    await user.save();
+
+    logger.info('User profile updated successfully', { userId: req.user._id });
+
+    return sendSuccess(res, 'User profile updated successfully', {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      department: user.department,
+      designation: user.designation,
+      profilePicture: user.profilePicture,
+      updatedAt: user.updatedAt,
+    });
+  } catch (error) {
+    logger.error('Error updating user profile', { error: error.message, userId: req.user._id });
+    next(error);
+  }
+};
+
+// ============================================
+// USER LISTING ENDPOINTS
+// ============================================
+
+/**
+ * List all users with pagination and filters
+ * GET /dashboard/users?page=1&limit=10&role=student&search=john
+ * Only Admin can access this endpoint
+ * @param {Object} req - Express request with query parameters
+ * @param {Object} res - Express response
+ */
+const listUsers = async (req, res, next) => {
+  try {
+    logger.info('Listing users', { requestedBy: req.user._id, query: req.query });
+
+    // Extract query parameters
+    const page = parseInt(req.query.page) || constants.PAGINATION_DEFAULTS.PAGE;
+    const limit = Math.min(
+      parseInt(req.query.limit) || constants.PAGINATION_DEFAULTS.LIMIT,
+      constants.PAGINATION_DEFAULTS.MAX_LIMIT
+    );
+    const role = req.query.role;
+    const search = req.query.search;
+    const sortBy = req.query.sortBy || 'createdAt';
+    const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
+
+    // Build filter
+    const filter = {
+      isActive: true,
+      deletedAt: null,
+    };
+
+    // Add role filter if provided
+    if (role && Object.values(constants.ROLES).includes(role)) {
+      filter.role = role;
+    }
+
+    // Add search filter if provided (search in name or email)
+    if (search) {
+      filter.$or = [
+        { name: new RegExp(search, 'i') },
+        { email: new RegExp(search, 'i') },
+      ];
+    }
+
+    // Calculate pagination
+    const skip = (page - 1) * limit;
+
+    // Execute query
+    const users = await User.find(filter)
+      .select('-password -emailVerificationToken -passwordResetToken')
+      .sort({ [sortBy]: sortOrder })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    // Get total count for pagination
+    const total = await User.countDocuments(filter);
+
+    logger.info('Users listed successfully', { page, limit, total, count: users.length });
+
+    return sendSuccess(res, 'Users retrieved successfully', {
+      users: users.map((user) => ({
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        department: user.department,
+        designation: user.designation,
+        profilePicture: user.profilePicture,
+        isActive: user.isActive,
+        lastLogin: user.lastLogin,
+        createdAt: user.createdAt,
+      })),
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    logger.error('Error listing users', { error: error.message });
+    next(error);
+  }
+};
+
+/**
+ * Get user by ID
+ * GET /users/:id
+ * Only Admin or the user themselves can access
+ * @param {Object} req - Express request with userId in params
+ * @param {Object} res - Express response
+ */
+const getUserById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    logger.info('Fetching user by ID', { userId: id, requestedBy: req.user._id });
+
+    // Check authorization
+    if (req.user.role !== constants.ROLES.ADMIN && req.user._id.toString() !== id) {
+      logger.warn('User attempted to access another user profile', {
+        requestedBy: req.user._id,
+        targetUser: id,
+      });
+      return sendError(
+        res,
+        'Unauthorized: Cannot access this user profile',
+        constants.ERROR_CODES.FORBIDDEN,
+        null,
+        constants.HTTP_STATUS.FORBIDDEN
+      );
+    }
+
+    const user = await User.findById(id).select('-password -emailVerificationToken -passwordResetToken');
+
+    if (!user || !user.isActive) {
+      logger.warn('User not found or inactive', { userId: id });
+      return sendError(
+        res,
+        'User not found or inactive',
+        constants.ERROR_CODES.NOT_FOUND,
+        null,
+        constants.HTTP_STATUS.NOT_FOUND
+      );
+    }
+
+    logger.info('User retrieved successfully', { userId: id });
+
+    return sendSuccess(res, 'User retrieved successfully', {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      department: user.department,
+      designation: user.designation,
+      profilePicture: user.profilePicture,
+      emailVerified: user.emailVerified,
+      isActive: user.isActive,
+      lastLogin: user.lastLogin,
+      createdAt: user.createdAt,
+    });
+  } catch (error) {
+    logger.error('Error fetching user by ID', { error: error.message });
+    next(error);
+  }
+};
+
+module.exports = {
+  getProfile,
+  updateProfile,
+  listUsers,
+  getUserById,
+};

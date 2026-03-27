@@ -73,16 +73,25 @@ app.get('/api/version', (req, res) => {
 
 /**
  * Routes
- * Phase 2: Authentication routes
- * Phase 3+: Dashboard, Classes, Attendance, Videos, Events, Payments, Analytics
+ * Phase 2: Authentication routes ✓
+ * Phase 3: Dashboard, Users, Classes ✓
+ * Phase 4+: Attendance, Videos, Events, Payments, Analytics (coming soon)
  */
+
+// Phase 2: Authentication routes
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
+// Phase 3: Dashboard, Users, Classes routes
+const dashboardRoutes = require('./routes/dashboard');
+const usersRoutes = require('./routes/users');
+const classesRoutes = require('./routes/classes');
+
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/classes', classesRoutes);
+
 // Additional routes will be added in subsequent phases:
-// app.use('/api/dashboard', require('./routes/dashboard'));
-// app.use('/api/users', require('./routes/users'));
-// app.use('/api/classes', require('./routes/classes'));
 // app.use('/api/attendance', require('./routes/attendance'));
 // app.use('/api/videos', require('./routes/videos'));
 // app.use('/api/events', require('./routes/events'));
