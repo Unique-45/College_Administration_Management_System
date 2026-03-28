@@ -107,16 +107,17 @@ class AuthService {
    */
   static generateRefreshToken(user) {
     try {
-      const payload = {
-        userId: user._id || user.id,
-        email: user.email,
-        type: 'refresh',
-      };
+const id = user._id || user.id || user.userId;
+    const payload = {
+      userId: id,
+      email: user.email,
+      type: 'refresh',
+    };
 
-      const token = jwt.sign(payload, config.jwt.refreshTokenSecret, {
-        expiresIn: config.jwt.refreshTokenExpiry,
-        issuer: 'college-admin-backend',
-        subject: (user._id || user.id).toString(),
+    const token = jwt.sign(payload, config.jwt.refreshTokenSecret, {
+      expiresIn: config.jwt.refreshTokenExpiry,
+      issuer: 'college-admin-backend',
+      subject: id.toString(),
       });
 
       return token;

@@ -203,6 +203,49 @@ const validateRefreshToken = (data) => {
 };
 
 // ============================================
+// EVENTS AND NOTIFICATIONS VALIDATORS
+// ============================================
+
+const validateEvent = (data) => {
+  const schema = Joi.object({
+    title: Joi.string().trim().min(2).max(150).required(),
+    description: Joi.string().trim().min(10).max(1200).required(),
+    eventType: Joi.string().trim().max(50).optional(),
+    location: Joi.string().trim().min(2).max(200).required(),
+    startAt: Joi.date().greater('now').required(),
+    endAt: Joi.date().greater(Joi.ref('startAt')).required(),
+    coverImageUrl: Joi.string().uri().optional().allow(null, ''),
+  });
+
+  return schema.validate(data, { abortEarly: false });
+};
+
+const validateEventUpdate = (data) => {
+  const schema = Joi.object({
+    title: Joi.string().trim().min(2).max(150).optional(),
+    description: Joi.string().trim().min(10).max(1200).optional(),
+    eventType: Joi.string().trim().max(50).optional(),
+    location: Joi.string().trim().min(2).max(200).optional(),
+    startAt: Joi.date().greater('now').optional(),
+    endAt: Joi.date().greater(Joi.ref('startAt')).optional(),
+    coverImageUrl: Joi.string().uri().optional().allow(null, ''),
+  });
+
+  return schema.validate(data, { abortEarly: false });
+};
+
+const validateEventRSVP = (data) => {
+  const schema = Joi.object({
+    status: Joi.string()
+      .valid('yes', 'no', 'maybe')
+      .required(),
+    notes: Joi.string().trim().max(300).optional().allow(null, ''),
+  });
+
+  return schema.validate(data, { abortEarly: false });
+};
+
+// ============================================
 // UTILITY VALIDATION FUNCTIONS
 // ============================================
 
@@ -383,6 +426,9 @@ module.exports = {
   validateRefreshToken,
   validateAttendanceMark,
   validateAttendanceUpdate,
+  validateEvent,
+  validateEventUpdate,
+  validateEventRSVP,
 
   // Utility functions
   isValidEmail,

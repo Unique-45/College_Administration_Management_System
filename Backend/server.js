@@ -101,8 +101,13 @@ app.use('/api/attendance', attendanceRoutes);
 const videosRoutes = require('./routes/videos');
 app.use('/api/videos', videosRoutes);
 
+// Phase 6: Events & Notifications routes
+const eventsRoutes = require('./routes/events');
+const notificationsRoutes = require('./routes/notifications');
+app.use('/api/events', eventsRoutes);
+app.use('/api/notifications', notificationsRoutes);
+
 // Additional routes will be added in subsequent phases:
-// app.use('/api/events', require('./routes/events'));
 // app.use('/api/payments', require('./routes/payments'));
 // app.use('/api/analytics', require('./routes/analytics'));
 
