@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
   ResponsiveContainer,
@@ -22,10 +22,27 @@ import {
   ArrowTrendingUpIcon,
 } from '@heroicons/react/24/outline'
 
-const ReportsAnalyticsView = () => {
-  const { reports } = useSelector((state) => state.dashboard)
-  const { summary, trendData, videos, engagementBreakdown, peakTimeHeatmap, usingFallbackData } =
-    useSelector((state) => state.analytics)
+const ReportsAnalyticsView = ({ onGenerateReport, userRole }) => {
+  const [reportType, setReportType] = useState('video')
+  const [reportPeriod, setReportPeriod] = useState('last30days')
+
+  const { reports = [] } = useSelector((state) => state.dashboard)
+  const {
+    summary,
+    trendData,
+    videos,
+    engagementBreakdown,
+    peakTimeHeatmap,
+    peakWatchSummary,
+    hourlyWatchBreakdown,
+    attendanceSummary,
+    attendanceByClass,
+    chronicAbsentees,
+    revenueSummary,
+    availableReports,
+    generatedReport,
+    usingFallbackData,
+  } = useSelector((state) => state.analytics)
 
   const reportItems = [
     {
@@ -59,7 +76,20 @@ const ReportsAnalyticsView = () => {
   ]
 
   const topVideos = videos.slice(0, 5)
+  const classAttendance = attendanceByClass.slice(0, 6)
   const pieColors = ['#16a34a', '#2563eb', '#f59e0b', '#ef4444', '#7c3aed']
+  const reportsCatalog = useMemo(() => {
+    if (Array.isArray(availableReports) && availableReports.length > 0) {
+      return availableReports
+    }
+
+    return [
+      { id: 'video', name: 'Video Performance Report' },
+      { id: 'engagement', name: 'Student Engagement Report' },
+      { id: 'attendance', name: 'Attendance Report' },
+      { id: 'comprehensive', name: 'Comprehensive Report' },
+    ]
+  }, [availableReports])
 
   const getHeatColor = (value) => {
     if (value >= 40) return 'bg-blue-700 text-white'
@@ -178,6 +208,196 @@ const ReportsAnalyticsView = () => {
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+        <div className="bg-gray-50 rounded-lg p-4">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Peak Watch-Time Insights</h3>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="rounded-lg bg-white p-3 border border-gray-200">
+              <p className="text-xs text-gray-500">Peak Hour</p>
+              <p className="text-xl font-semibold text-gray-900">{peakWatchSummary.hour}</p>
+            </div>
+            <div className="rounded-lg bg-white p-3 border border-gray-200">
+              <p className="text-xs text-gray-500">Views In Peak Hour</p>
+              <p className="text-xl font-semibold text-gray-900">{peakWatchSummary.viewCount}</p>
+            </div>
+            <div className="rounded-lg bg-white p-3 border border-gray-200">
+              <p className="text-xs text-gray-500">Unique Viewers</p>
+              <p className="text-xl font-semibold text-gray-900">{peakWatchSummary.viewerCount}</p>
+            </div>
+            <div className="rounded-lg bg-white p-3 border border-gray-200">
+              <p className="text-xs text-gray-500">Avg Views / Viewer</p>
+              <p className="text-xl font-semibold text-gray-900">{peakWatchSummary.averageViewsPerViewer}</p>
+            </div>
+          </div>
+          <div className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={hourlyWatchBreakdown}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="hourLabel" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="viewCount" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="bg-gray-50 rounded-lg p-4">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Attendance Analytics</h3>
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="rounded-lg bg-white p-3 border border-gray-200">
+              <p className="text-xs text-gray-500">Overall Attendance</p>
+              <p className="text-lg font-semibold text-gray-900">
+                {attendanceSummary.overallAttendancePercentage || 0}%
+              </p>
+            </div>
+            <div className="rounded-lg bg-white p-3 border border-gray-200">
+              <p className="text-xs text-gray-500">Total Present</p>
+              <p className="text-lg font-semibold text-gray-900">{attendanceSummary.totalPresent || 0}</p>
+            </div>
+            <div className="rounded-lg bg-white p-3 border border-gray-200">
+              <p className="text-xs text-gray-500">Total Absent</p>
+              <p className="text-lg font-semibold text-gray-900">{attendanceSummary.totalAbsent || 0}</p>
+            </div>
+          </div>
+
+          <div className="h-48 mb-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={classAttendance}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="className" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="attendancePercentage" fill="#14b8a6" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-gray-700 mb-2">Chronic Absentees</p>
+            <div className="space-y-2 max-h-28 overflow-y-auto">
+              {chronicAbsentees.length > 0 ? (
+                chronicAbsentees.slice(0, 5).map((student) => (
+                  <div
+                    key={student.studentId || student.studentName}
+                    className="flex items-center justify-between rounded-md border border-gray-200 bg-white px-3 py-2"
+                  >
+                    <p className="text-sm text-gray-700">{student.studentName || 'Unknown Student'}</p>
+                    <span className="text-xs font-semibold text-red-600">
+                      {student.attendancePercentage || 0}%
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500">No chronic absentee records available.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {userRole === 'admin' && (
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Revenue Analytics</h3>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="rounded-lg bg-white p-3 border border-gray-200">
+                <p className="text-xs text-gray-500">Total Revenue</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {(revenueSummary.totalRevenue || 0).toLocaleString()}
+                </p>
+              </div>
+              <div className="rounded-lg bg-white p-3 border border-gray-200">
+                <p className="text-xs text-gray-500">Pending Fees</p>
+                <p className="text-lg font-semibold text-gray-900">
+                  {(revenueSummary.pendingFees || 0).toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            <div className="h-52">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={revenueSummary.paymentTrends || []}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="period" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="amount" stroke="#22c55e" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Methods Distribution</h3>
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={revenueSummary.paymentsByMethod || []}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={95}
+                    dataKey="amount"
+                    nameKey="method"
+                    label
+                  >
+                    {(revenueSummary.paymentsByMethod || []).map((entry, index) => (
+                      <Cell key={`method-${entry.method || index}`} fill={pieColors[index % pieColors.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-gray-50 rounded-lg p-4 mb-8">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Generate Analytics Report</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+          <select
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            value={reportType}
+            onChange={(event) => setReportType(event.target.value)}
+          >
+            {reportsCatalog.map((report) => (
+              <option key={report.id} value={report.id}>
+                {report.name}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            value={reportPeriod}
+            onChange={(event) => setReportPeriod(event.target.value)}
+          >
+            <option value="last30days">Last 30 Days</option>
+            <option value="last90days">Last 90 Days</option>
+            <option value="custom">Custom Window</option>
+          </select>
+
+          <button
+            type="button"
+            onClick={() => onGenerateReport?.(reportType, reportPeriod)}
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            Generate Report
+          </button>
+        </div>
+
+        {generatedReport && (
+          <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-700">
+            <p className="font-semibold">{generatedReport.title || 'Report generated successfully'}</p>
+            <p>Type: {generatedReport.type || reportType}</p>
+            <p>Generated At: {generatedReport.generatedAt || 'Just now'}</p>
+          </div>
+        )}
       </div>
 
       {/* Recent Reports */}

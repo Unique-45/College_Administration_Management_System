@@ -4,18 +4,35 @@ import {
   fetchVideoAnalytics,
   fetchEngagementAnalytics,
   fetchViewershipTrends,
+  fetchPeakWatchTimes,
+  fetchAttendanceAnalytics,
+  fetchRevenueAnalytics,
+  fetchReportTypes,
+  generateAnalyticsReport,
 } from '@/store/slices/analyticsSlice'
 import ReportsAnalyticsView from '@/components/Dashboard/ReportsAnalyticsView'
 
 const AnalyticsDashboardPage = () => {
   const dispatch = useDispatch()
+  const { user } = useSelector((state) => state.auth)
   const { loading, error } = useSelector((state) => state.analytics)
 
   useEffect(() => {
     dispatch(fetchVideoAnalytics())
     dispatch(fetchEngagementAnalytics())
     dispatch(fetchViewershipTrends())
-  }, [dispatch])
+    dispatch(fetchPeakWatchTimes())
+    dispatch(fetchAttendanceAnalytics())
+    dispatch(fetchReportTypes())
+
+    if (user?.role === 'admin') {
+      dispatch(fetchRevenueAnalytics())
+    }
+  }, [dispatch, user?.role])
+
+  const handleGenerateReport = (type, period) => {
+    dispatch(generateAnalyticsReport({ type, params: { period, format: 'json' } }))
+  }
 
   if (loading) {
     return (
@@ -25,21 +42,15 @@ const AnalyticsDashboardPage = () => {
     )
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <h2 className="text-xl font-semibold text-red-700">Analytics API Error</h2>
-          <p className="text-red-600 mt-2">{error}</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        <ReportsAnalyticsView />
+        {error && (
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-700">
+            {error}
+          </div>
+        )}
+        <ReportsAnalyticsView onGenerateReport={handleGenerateReport} userRole={user?.role} />
       </div>
     </div>
   )
