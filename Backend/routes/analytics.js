@@ -10,8 +10,8 @@
  */
 
 const express = require('express');
-const authMiddleware = require('../middleware/auth');
-const roleGuard = require('../middleware/roleGuard');
+const { authMiddleware } = require('../middleware/auth');
+const { roleGuard } = require('../middleware/roleGuard');
 const analyticsController = require('../controllers/analyticsController');
 const logger = require('../utils/logger');
 

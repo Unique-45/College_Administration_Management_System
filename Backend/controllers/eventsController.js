@@ -929,4 +929,5 @@ module.exports = {
   cancelEvent,
   sendEventInvitations,
   getEventCalendarData,
-  getPopularEvents
+  getPopularEvents,
+};

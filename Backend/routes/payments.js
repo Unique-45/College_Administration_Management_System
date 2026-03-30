@@ -1,12 +1,7 @@
-/**
- * Payments Routes
- * Phase 7: Payment Processing and Fee Management
- * Per SRS 4.5: Secure online fee payments
- */
-
 const express = require('express');
 const router = express.Router();
-const { authenticate, authorize } = require('../middleware/auth');
+const { authMiddleware } = require('../middleware/auth');
+const { roleGuard } = require('../middleware/roleGuard');
 const constants = require('../config/constants');
 const {
   getPendingFees,
@@ -27,14 +22,14 @@ const {
  * Get pending fee details for current student
  * Access: Student (own fees), Admin (any student via query)
  */
-router.get('/pending-fees', authenticate, getPendingFees);
+router.get('/pending-fees', authMiddleware, getPendingFees);
 
 /**
  * GET /api/payments/history
  * Get payment history with pagination
  * Access: Student (own history), Admin (any student via query)
  */
-router.get('/history', authenticate, getPaymentHistory);
+router.get('/history', authMiddleware, getPaymentHistory);
 
 /**
  * POST /api/payments/initiate
@@ -42,7 +37,7 @@ router.get('/history', authenticate, getPaymentHistory);
  * Body: { amount, description, feeCategory, academicYear }
  * Access: Authenticated users
  */
-router.post('/initiate', authenticate, initiatePayment);
+router.post('/initiate', authMiddleware, initiatePayment);
 
 /**
  * POST /api/payments/verify
@@ -50,14 +45,14 @@ router.post('/initiate', authenticate, initiatePayment);
  * Body: { orderId, paymentId, signature }
  * Access: Authenticated users
  */
-router.post('/verify', authenticate, verifyPayment);
+router.post('/verify', authMiddleware, verifyPayment);
 
 /**
  * GET /api/payments/:paymentId/receipt
  * Download/view payment receipt
  * Access: Student (own receipts), Admin (any receipt)
  */
-router.get('/:paymentId/receipt', authenticate, downloadReceipt);
+router.get('/:paymentId/receipt', authMiddleware, downloadReceipt);
 
 // ============================================
 // ADMIN/TEACHER ENDPOINTS
@@ -71,8 +66,8 @@ router.get('/:paymentId/receipt', authenticate, downloadReceipt);
  */
 router.get(
   '/',
-  authenticate,
-  authorize(constants.ROLES.ADMIN, constants.ROLES.TEACHER),
+  authMiddleware,
+  roleGuard(constants.ROLES.ADMIN, constants.ROLES.TEACHER),
   listPayments
 );
 
