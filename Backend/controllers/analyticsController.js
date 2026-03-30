@@ -5,7 +5,7 @@
  */
 
 const analyticsService = require('../services/analyticsService');
-const { successResponse, errorResponse } = require('../utils/responses');
+const { sendSuccess, sendError } = require('../utils/responses');
 const logger = require('../utils/logger');
 
 // ============================================
@@ -44,9 +44,7 @@ const getVideoAnalytics = async (req, res) => {
       role: req.user.role,
     });
 
-    res.status(200).json(
-      successResponse(videos, 'Most watched videos retrieved successfully')
-    );
+    sendSuccess(res, videos, 'Most watched videos retrieved successfully', 200);
   } catch (error) {
     logger.error('Error fetching video analytics', {
       context: 'analyticsController::getVideoAnalytics',
@@ -54,11 +52,7 @@ const getVideoAnalytics = async (req, res) => {
       error: error.message,
     });
 
-    res
-      .status(500)
-      .json(
-        errorResponse('Failed to fetch video analytics', 'INTERNAL_ERROR')
-      );
+    sendError(res, 'Failed to fetch video analytics', 'INTERNAL_ERROR', [], 500);
   }
 };
 
@@ -73,11 +67,7 @@ const getVideoDetailAnalytics = async (req, res) => {
 
     // Validation
     if (!videoId) {
-      return res
-        .status(400)
-        .json(
-          errorResponse('Video ID is required', 'VALIDATION_ERROR')
-        );
+      return sendError(res, 'Video ID is required', 'VALIDATION_ERROR', [], 400);
     }
 
     const analytics = await analyticsService.getVideoDetailAnalytics(videoId);
@@ -88,16 +78,10 @@ const getVideoDetailAnalytics = async (req, res) => {
       userId: req.user._id,
     });
 
-    res.status(200).json(
-      successResponse(analytics, 'Video analytics retrieved successfully')
-    );
+    sendSuccess(res, analytics, 'Video analytics retrieved successfully', 200);
   } catch (error) {
     if (error.message === 'Video not found') {
-      return res
-        .status(404)
-        .json(
-          errorResponse('Video not found', 'NOT_FOUND')
-        );
+      return sendError(res, 'Video not found', 'NOT_FOUND', [], 404);
     }
 
     logger.error('Error fetching detailed video analytics', {
@@ -107,11 +91,7 @@ const getVideoDetailAnalytics = async (req, res) => {
       error: error.message,
     });
 
-    res
-      .status(500)
-      .json(
-        errorResponse('Failed to fetch video analytics', 'INTERNAL_ERROR')
-      );
+    sendError(res, 'Failed to fetch video analytics', 'INTERNAL_ERROR', [], 500);
   }
 };
 
@@ -131,14 +111,7 @@ const getViewershipTrends = async (req, res) => {
 
     // Validate granularity
     if (!['day', 'week', 'month'].includes(granularity)) {
-      return res
-        .status(400)
-        .json(
-          errorResponse(
-            'Invalid granularity. Must be day, week, or month',
-            'VALIDATION_ERROR'
-          )
-        );
+      return sendError(res, 'Invalid granularity. Must be day, week, or month', 'VALIDATION_ERROR', [], 400);
     }
 
     // Validate days
@@ -157,9 +130,7 @@ const getViewershipTrends = async (req, res) => {
       userId: req.user._id,
     });
 
-    res.status(200).json(
-      successResponse(trends, 'Viewership trends retrieved successfully')
-    );
+    sendSuccess(res, trends, 'Viewership trends retrieved successfully', 200);
   } catch (error) {
     logger.error('Error fetching viewership trends', {
       context: 'analyticsController::getViewershipTrends',
@@ -167,11 +138,7 @@ const getViewershipTrends = async (req, res) => {
       error: error.message,
     });
 
-    res
-      .status(500)
-      .json(
-        errorResponse('Failed to fetch viewership trends', 'INTERNAL_ERROR')
-      );
+    sendError(res, 'Failed to fetch viewership trends', 'INTERNAL_ERROR', [], 500);
   }
 };
 
@@ -189,9 +156,7 @@ const getPeakWatchTimes = async (req, res) => {
       userId: req.user._id,
     });
 
-    res.status(200).json(
-      successResponse(peakData, 'Peak watch times retrieved successfully')
-    );
+    sendSuccess(res, peakData, 'Peak watch times retrieved successfully', 200);
   } catch (error) {
     logger.error('Error fetching peak watch times', {
       context: 'analyticsController::getPeakWatchTimes',
@@ -199,11 +164,7 @@ const getPeakWatchTimes = async (req, res) => {
       error: error.message,
     });
 
-    res
-      .status(500)
-      .json(
-        errorResponse('Failed to fetch peak watch times', 'INTERNAL_ERROR')
-      );
+    sendError(res, 'Failed to fetch peak watch times', 'INTERNAL_ERROR', [], 500);
   }
 };
 
@@ -226,9 +187,7 @@ const getEngagementMetrics = async (req, res) => {
       role: req.user.role,
     });
 
-    res.status(200).json(
-      successResponse(engagementData, 'Engagement metrics retrieved successfully')
-    );
+    sendSuccess(res, engagementData, 'Engagement metrics retrieved successfully', 200);
   } catch (error) {
     logger.error('Error fetching engagement metrics', {
       context: 'analyticsController::getEngagementMetrics',
@@ -236,11 +195,7 @@ const getEngagementMetrics = async (req, res) => {
       error: error.message,
     });
 
-    res
-      .status(500)
-      .json(
-        errorResponse('Failed to fetch engagement metrics', 'INTERNAL_ERROR')
-      );
+    sendError(res, 'Failed to fetch engagement metrics', 'INTERNAL_ERROR', [], 500);
   }
 };
 
@@ -273,9 +228,7 @@ const getAttendanceAnalytics = async (req, res) => {
       userId: req.user._id,
     });
 
-    res.status(200).json(
-      successResponse(attendanceData, 'Attendance analytics retrieved successfully')
-    );
+    sendSuccess(res, attendanceData, 'Attendance analytics retrieved successfully', 200);
   } catch (error) {
     logger.error('Error fetching attendance analytics', {
       context: 'analyticsController::getAttendanceAnalytics',
@@ -283,11 +236,7 @@ const getAttendanceAnalytics = async (req, res) => {
       error: error.message,
     });
 
-    res
-      .status(500)
-      .json(
-        errorResponse('Failed to fetch attendance analytics', 'INTERNAL_ERROR')
-      );
+    sendError(res, 'Failed to fetch attendance analytics', 'INTERNAL_ERROR', [], 500);
   }
 };
 
@@ -305,11 +254,7 @@ const getRevenueAnalytics = async (req, res) => {
   try {
     // Admin only
     if (req.user.role !== 'admin') {
-      return res
-        .status(403)
-        .json(
-          errorResponse('Only admins can view revenue analytics', 'FORBIDDEN')
-        );
+      return sendError(res, 'Only admins can view revenue analytics', 'FORBIDDEN', [], 403);
     }
 
     const revenueData = await analyticsService.getRevenueAnalytics();
@@ -319,9 +264,7 @@ const getRevenueAnalytics = async (req, res) => {
       userId: req.user._id,
     });
 
-    res.status(200).json(
-      successResponse(revenueData, 'Revenue analytics retrieved successfully')
-    );
+    sendSuccess(res, revenueData, 'Revenue analytics retrieved successfully', 200);
   } catch (error) {
     logger.error('Error fetching revenue analytics', {
       context: 'analyticsController::getRevenueAnalytics',
@@ -329,11 +272,7 @@ const getRevenueAnalytics = async (req, res) => {
       error: error.message,
     });
 
-    res
-      .status(500)
-      .json(
-        errorResponse('Failed to fetch revenue analytics', 'INTERNAL_ERROR')
-      );
+    sendError(res, 'Failed to fetch revenue analytics', 'INTERNAL_ERROR', [], 500);
   }
 };
 
@@ -406,20 +345,10 @@ const generateReport = async (req, res) => {
 
     // If PDF format requested, would generate here (not implemented in Phase 8)
     if (format === 'pdf') {
-      return res.status(200).json(
-        successResponse(
-          {
-            ...reportWithMetadata,
-            status: 'PDF generation coming in Phase 8.2',
-          },
-          'Report generated successfully (JSON format)'
-        )
-      );
+      return sendSuccess(res, { ...reportWithMetadata, status: 'PDF generation coming in Phase 8.2' }, 'Report generated successfully (JSON format)', 200);
     }
 
-    res.status(200).json(
-      successResponse(reportWithMetadata, 'Report generated successfully')
-    );
+    sendSuccess(res, reportWithMetadata, 'Report generated successfully', 200);
   } catch (error) {
     logger.error('Error generating report', {
       context: 'analyticsController::generateReport',
@@ -428,11 +357,7 @@ const generateReport = async (req, res) => {
       error: error.message,
     });
 
-    res
-      .status(500)
-      .json(
-        errorResponse('Failed to generate report', 'INTERNAL_ERROR')
-      );
+    sendError(res, 'Failed to generate report', 'INTERNAL_ERROR', [], 500);
   }
 };
 
@@ -501,20 +426,14 @@ const listReportTypes = async (req, res) => {
       userId: req.user._id,
     });
 
-    res.status(200).json(
-      successResponse(reportTypes, 'Available report types retrieved successfully')
-    );
+    sendSuccess(res, reportTypes, 'Available report types retrieved successfully', 200);
   } catch (error) {
     logger.error('Error listing report types', {
       context: 'analyticsController::listReportTypes',
       error: error.message,
     });
 
-    res
-      .status(500)
-      .json(
-        errorResponse('Failed to list report types', 'INTERNAL_ERROR')
-      );
+    sendError(res, 'Failed to list report types', 'INTERNAL_ERROR', [], 500);
   }
 };
 

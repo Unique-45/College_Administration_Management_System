@@ -91,7 +91,7 @@ const videoWatchProgressSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    collection: 'video_watch_progress',
+    collection: 'video_watch_events',
   }
 );
 

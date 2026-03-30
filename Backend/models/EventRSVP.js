@@ -36,6 +36,19 @@ const eventRsvpSchema = new mongoose.Schema(
       maxlength: 300,
       default: null,
     },
+
+    // Phase 5: Check-in tracking
+    checkedIn: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
+    checkedInAt: {
+      type: Date,
+      default: null,
+    },
+
     isDeleted: {
       type: Boolean,
       default: false,

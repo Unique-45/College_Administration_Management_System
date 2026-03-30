@@ -78,8 +78,8 @@ app.get('/api/version', (req, res) => {
  * Phase 4: Attendance ✓
  * Phase 5: Videos ✓
  * Phase 6: Events & Notifications ✓
+ * Phase 7: Payments ✓
  * Phase 8: Analytics & Reporting ✓
- * Phase 7: Payments (coming soon)
  */
 
 // Phase 2: Authentication routes
@@ -109,12 +109,13 @@ const notificationsRoutes = require('./routes/notifications');
 app.use('/api/events', eventsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 
+// Phase 7: Payments routes
+const paymentsRoutes = require('./routes/payments');
+app.use('/api/payments', paymentsRoutes);
+
 // Phase 8: Analytics & Reporting routes
 const analyticsRoutes = require('./routes/analytics');
 app.use('/api/analytics', analyticsRoutes);
-
-// Additional routes will be added in subsequent phases:
-// app.use('/api/payments', require('./routes/payments'));
 
 /**
  * Error Handling

@@ -59,6 +59,55 @@ const eventSchema = new mongoose.Schema(
       trim: true,
       default: null,
     },
+
+    // Phase 5: Analytics & Advanced Features
+    status: {
+      type: String,
+      enum: ['active', 'cancelled'],
+      default: 'active',
+      index: true,
+    },
+
+    checkedInCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    rescheduleHistory: [
+      {
+        oldDate: Date,
+        newDate: Date,
+        reason: String,
+        rescheduledBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+        },
+        rescheduledAt: Date,
+      },
+    ],
+
+    rescheduleReason: {
+      type: String,
+      default: null,
+    },
+
+    cancellationReason: {
+      type: String,
+      default: null,
+    },
+
+    cancelledAt: {
+      type: Date,
+      default: null,
+    },
+
+    cancelledBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+
     isDeleted: {
       type: Boolean,
       default: false,
