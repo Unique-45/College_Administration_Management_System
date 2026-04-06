@@ -9,6 +9,7 @@ import eventReducer from './slices/eventSlice'
 import eventAnalyticsReducer from './slices/eventAnalyticsSlice'
 import analyticsReducer from './slices/analyticsSlice'
 import paymentReducer from './slices/paymentSlice'
+import { authMiddleware } from './middleware/authMiddleware'
 
 export const store = configureStore({
   reducer: {
@@ -29,7 +30,7 @@ export const store = configureStore({
         // Ignore serialization check errors for specific actions
         ignoredActions: ['notification/showToast'],
       },
-    }),
+    }).concat(authMiddleware),
 })
 
 export default store

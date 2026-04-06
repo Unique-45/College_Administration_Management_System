@@ -92,36 +92,21 @@ const RegisterPage = () => {
 
     setIsLoading(true)
     try {
-      const response = await authService.register({
+      await authService.register({
         name: formData.name,
         email: formData.email,
         password: formData.password,
         role: formData.role,
       })
 
-      const { token, refreshToken, user } = response.data
-
-      // Dispatch auth success action
-      dispatch(
-        setAuth({
-          user,
-          token,
-          refreshToken,
-        })
-      )
-
-      toast.success('Registration successful!')
-
-      // Navigate to appropriate dashboard based on role
-      const dashboardRoute = {
-        admin: '/admin/dashboard',
-        teacher: '/teacher/dashboard',
-        student: '/student/dashboard',
-      }[user?.role] || '/student/dashboard'
-
-      navigate(dashboardRoute)
+      toast.success('Registration successful! Redirecting to login...')
+      
+      // Redirect to login page
+      setTimeout(() => {
+        navigate('/login')
+      }, 1500)
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.'
+      const errorMessage = error.response?.data?.message || error.message || 'Registration failed. Please try again.'
       setErrors({ submit: errorMessage })
       toast.error(errorMessage)
     } finally {

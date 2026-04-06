@@ -17,9 +17,13 @@ const authService = {
   register: async (data) => {
     try {
       const response = await api.post('/auth/register', data)
-      return response.data
+      // Response structure: { success, message, data: {...} }
+      return {
+        data: response.data.data,
+      }
     } catch (error) {
-      throw error.response?.data || { message: 'Registration failed' }
+      // Re-throw axios error properly so components can access error.response.data
+      throw error
     }
   },
 
@@ -31,9 +35,24 @@ const authService = {
   login: async (credentials) => {
     try {
       const response = await api.post('/auth/login', credentials)
-      return response.data
+      // Response structure: { success, message, data: { accessToken, refreshToken, user } }
+      const { accessToken, refreshToken, user } = response.data.data
+      return {
+        data: {
+          token: accessToken, // Map accessToken to token
+          refreshToken,
+          user: {
+            id: user._id, // Map MongoDB _id to id
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            phone: user.phone,
+          },
+        },
+      }
     } catch (error) {
-      throw error.response?.data || { message: 'Login failed' }
+      // Re-throw axios error properly so components can access error.response.data
+      throw error
     }
   },
 

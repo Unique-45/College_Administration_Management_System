@@ -6,12 +6,21 @@
 /**
  * Email validation using RFC 5322 standard regex
  * @param {string} email - Email to validate
- * @returns {boolean} - True if valid email
+ * @returns {object} - { isValid: boolean, feedback: string }
  */
 export const validateEmail = (email) => {
-  if (!email) return false
+  if (!email) {
+    return {
+      isValid: false,
+      feedback: 'Email is required',
+    }
+  }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
+  const isValid = emailRegex.test(email)
+  return {
+    isValid,
+    feedback: isValid ? '' : 'Please enter a valid email address',
+  }
 }
 
 /**
