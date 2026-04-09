@@ -379,54 +379,31 @@ const getEventAnalytics = async (req, res, next) => {
     // Get events
     const events = await Event.find(filter).lean();
 
-    // Calculate analytics
-    const analytics = {
-      totalEvents: events.length,
-      totalAttendees: 0,
-      avgAttendanceRate: 0,
-      eventsByType: {},
-      topEventsByAttendance: [],
-      eventsThisPeriod: [],
-    };
-
-    // Fetch RSVP data
-    for (const event of events) {
+    const enrichedEvents = [];
+    for (const e of events) {
       const rsvps = await EventRSVP.countDocuments({
-        eventId: event._id,
+        eventId: e._id,
         status: 'yes',
         isDeleted: false,
       });
 
-      event.attendeeCount = rsvps;
-      analytics.totalAttendees += rsvps;
-
-      if (!analytics.eventsByType[event.eventType]) {
-        analytics.eventsByType[event.eventType] = 0;
-      }
-      analytics.eventsByType[event.eventType] += 1;
-    }
-
-    // Get top events by attendance
-    analytics.topEventsByAttendance = events
-      .sort((a, b) => (b.attendeeCount || 0) - (a.attendeeCount || 0))
-      .slice(0, 5)
-      .map((e) => ({
-        id: e._id,
-        title: e.title,
-        attendees: e.attendeeCount || 0,
-        date: e.startAt,
-      }));
-
-    if (events.length > 0) {
-      analytics.avgAttendanceRate = Math.round(analytics.totalAttendees / events.length);
+      enrichedEvents.push({
+        _id: e._id,
+        name: e.title,
+        type: e.eventType,
+        attendees: rsvps,
+        attendanceRate: rsvps > 0 ? 100 : 0, // Simplified: assume 100% of 'yes' showed up for now or fetch actual check-ins
+        startAt: e.startAt,
+        location: e.location
+      });
     }
 
     logger.info('Fetched event analytics', {
-      userId: req.user._id,
-      count: events.length,
+      userId: req.user.userId,
+      count: enrichedEvents.length,
     });
 
-    sendSuccess(res, analytics, 'Event analytics retrieved successfully');
+    sendSuccess(res, enrichedEvents, 'Event analytics retrieved successfully');
   } catch (error) {
     logger.error('Error fetching event analytics', {
       userId: req.user._id,

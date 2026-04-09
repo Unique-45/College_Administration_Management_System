@@ -1,64 +1,61 @@
-import React from 'react'
-import { CheckCircleIcon, VideoCameraIcon, UserGroupIcon, DocumentTextIcon } from '@heroicons/react/24/outline'
+/**
+ * Quick Actions Component
+ * Contextual actions for different user roles
+ */
+
+import { Plus, UserPlus, FileText, Calendar, Video, CreditCard } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 const QuickActions = () => {
-  const actions = [
-    {
-      title: 'Mark Attendance',
-      description: 'Record attendance for today\'s classes',
-      icon: CheckCircleIcon,
-      color: 'bg-green-500',
-      action: () => {
-        // TODO: Implement mark attendance functionality
-      }
-    },
-    {
-      title: 'Upload Video',
-      description: 'Add new video content to your classes',
-      icon: VideoCameraIcon,
-      color: 'bg-blue-500',
-      action: () => {
-        // TODO: Implement upload video functionality
-      }
-    },
-    {
-      title: 'View Students',
-      description: 'Check student list and details',
-      icon: UserGroupIcon,
-      color: 'bg-purple-500',
-      action: () => {
-        // TODO: Implement view students functionality
-      }
-    },
-    {
-      title: 'Generate Report',
-      description: 'Create attendance or performance reports',
-      icon: DocumentTextIcon,
-      color: 'bg-orange-500',
-      action: () => {
-        // TODO: Implement generate report functionality
-      }
+  const navigate = useNavigate()
+  const { user } = useSelector((state) => state.auth)
+
+  const getActions = () => {
+    switch (user?.role) {
+      case 'admin':
+        return [
+          { label: 'Add Student', icon: UserPlus, href: '/admin/users?tab=students', color: 'text-primary' },
+          { label: 'Manage Classes', icon: FileText, href: '/admin/classes', color: 'text-accent' },
+          { label: 'System Settings', icon: Calendar, href: '/admin/settings', color: 'text-info' },
+        ]
+      case 'teacher':
+        return [
+          { label: 'Take Attendance', icon: Plus, href: '/teacher/attendance', color: 'text-primary' },
+          { label: 'Upload Video', icon: Video, href: '/teacher/videos/upload', color: 'text-accent' },
+          { label: 'Schedule Event', icon: Calendar, href: '/teacher/dashboard', color: 'text-info' },
+        ]
+      case 'student':
+        return [
+          { label: 'View Attendance', icon: FileText, href: '/student/attendance', color: 'text-primary' },
+          { label: 'Make Payment', icon: CreditCard, href: '/student/payments', color: 'text-accent' },
+          { label: 'My Videos', icon: Video, href: '/student/videos', color: 'text-info' },
+        ]
+      default:
+        return []
     }
-  ]
+  }
+
+  const actions = getActions()
+
+  if (actions.length === 0) return null
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-
-      <div className="grid grid-cols-1 gap-4">
+    <div className="card">
+      <h3 className="text-sm font-semibold text-text-primary mb-4 uppercase tracking-wider">Quick Actions</h3>
+      <div className="grid grid-cols-1 gap-3">
         {actions.map((action, index) => (
           <button
             key={index}
-            onClick={action.action}
-            className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors text-left"
+            onClick={() => navigate(action.href)}
+            className="flex items-center gap-3 p-3 rounded-input bg-surface-2 border border-transparent hover:border-primary/30 hover:bg-surface-3 transition-all duration-200 group text-left"
           >
-            <div className={`p-3 rounded-full ${action.color} text-white mr-4 flex-shrink-0`}>
-              <action.icon className="h-5 w-5" />
+            <div className={`p-2 rounded-lg bg-surface-3 ${action.color} group-hover:scale-110 transition-transform`}>
+              <action.icon className="w-4 h-4" />
             </div>
-            <div className="flex-1">
-              <h3 className="font-medium text-gray-900">{action.title}</h3>
-              <p className="text-sm text-gray-600">{action.description}</p>
-            </div>
+            <span className="text-sm font-medium text-text-secondary group-hover:text-text-primary transition-colors">
+              {action.label}
+            </span>
           </button>
         ))}
       </div>

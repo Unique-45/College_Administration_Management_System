@@ -1,3 +1,13 @@
+/**
+ * Reports & Analytics View — Premium Dark Theme
+ * Features:
+ * - KPIs with trend indicators
+ * - Sleek Recharts integration (Line, Bar, Pie)
+ * - Heatmap styling
+ * - Report generation interface
+ * - Recent reports list
+ */
+
 import React, { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
@@ -14,75 +24,98 @@ import {
   Pie,
   Cell,
   Legend,
+  AreaChart,
+  Area,
 } from 'recharts'
 import {
-  ChartBarIcon,
-  ClockIcon,
-  UsersIcon,
-  ArrowTrendingUpIcon,
-} from '@heroicons/react/24/outline'
+  BarChart3,
+  Clock,
+  Users,
+  TrendingUp,
+  Filter,
+  Download,
+  Calendar,
+  AlertCircle,
+  FileText,
+  ChevronRight,
+  Layers,
+  CheckCircle,
+} from 'lucide-react'
 
 const ReportsAnalyticsView = ({ onGenerateReport, userRole }) => {
   const [reportType, setReportType] = useState('video')
   const [reportPeriod, setReportPeriod] = useState('last30days')
 
-  const { reports = [] } = useSelector((state) => state.dashboard)
+  const { reports = [] } = useSelector((state) => state.dashboard || {})
+  const analytics = useSelector((state) => state.analytics || {})
+  
   const {
-    summary,
-    trendData,
-    videos,
-    engagementBreakdown,
-    peakTimeHeatmap,
-    peakWatchSummary,
-    hourlyWatchBreakdown,
-    attendanceSummary,
-    attendanceByClass,
-    chronicAbsentees,
-    revenueSummary,
-    availableReports,
-    generatedReport,
-    usingFallbackData,
-  } = useSelector((state) => state.analytics)
+    summary = {},
+    trendData = [],
+    videos = [],
+    engagementBreakdown = [],
+    peakTimeHeatmap = [],
+    peakWatchSummary = {},
+    hourlyWatchBreakdown = [],
+    attendanceSummary = {},
+    attendanceByClass = [],
+    chronicAbsentees = [],
+    revenueSummary = {},
+    availableReports = [],
+    generatedReport = null,
+    usingFallbackData = false,
+  } = analytics
 
   const reportItems = [
     {
       title: 'Total Views',
       value: (summary.totalViews || 0).toLocaleString(),
-      icon: ArrowTrendingUpIcon,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
+      icon: TrendingUp,
+      color: 'text-success',
+      bg: 'bg-success/10',
     },
     {
       title: 'Watch Time',
       value: `${(summary.totalWatchTime || 0).toLocaleString()} min`,
-      icon: ClockIcon,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100',
+      icon: Clock,
+      color: 'text-primary',
+      bg: 'bg-primary/10',
     },
     {
       title: 'Active Students',
       value: (summary.activeStudents || 0).toLocaleString(),
-      icon: UsersIcon,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      icon: Users,
+      color: 'text-accent',
+      bg: 'bg-accent/10',
     },
     {
       title: 'Engagement Rate',
       value: `${summary.engagementRate || 0}%`,
-      icon: ChartBarIcon,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100',
+      icon: BarChart3,
+      color: 'text-info',
+      bg: 'bg-info/10',
     },
   ]
 
-  const topVideos = videos.slice(0, 5)
-  const classAttendance = attendanceByClass.slice(0, 6)
-  const pieColors = ['#16a34a', '#2563eb', '#f59e0b', '#ef4444', '#7c3aed']
-  const reportsCatalog = useMemo(() => {
-    if (Array.isArray(availableReports) && availableReports.length > 0) {
-      return availableReports
-    }
+  const topVideos = Array.isArray(videos) ? videos.slice(0, 5) : []
+  const classAttendance = Array.isArray(attendanceByClass) ? attendanceByClass.slice(0, 6) : []
+  
+  // Custom theme colors for charts
+  const CHART_COLORS = {
+    primary: '#2563EB',
+    accent: '#14B8A6',
+    info: '#38BDF8',
+    success: '#22C55E',
+    warning: '#F59E0B',
+    danger: '#EF4444',
+    text: '#94A3B8',
+    border: '#334155',
+  }
+  
+  const pieColors = [CHART_COLORS.success, CHART_COLORS.primary, CHART_COLORS.warning, CHART_COLORS.danger, CHART_COLORS.accent]
 
+  const reportsCatalog = useMemo(() => {
+    if (Array.isArray(availableReports) && availableReports.length > 0) return availableReports
     return [
       { id: 'video', name: 'Video Performance Report' },
       { id: 'engagement', name: 'Student Engagement Report' },
@@ -92,331 +125,279 @@ const ReportsAnalyticsView = ({ onGenerateReport, userRole }) => {
   }, [availableReports])
 
   const getHeatColor = (value) => {
-    if (value >= 40) return 'bg-blue-700 text-white'
-    if (value >= 30) return 'bg-blue-500 text-white'
-    if (value >= 20) return 'bg-blue-300 text-blue-900'
-    if (value >= 10) return 'bg-blue-100 text-blue-900'
-    return 'bg-gray-100 text-gray-500'
+    if (value >= 40) return 'bg-primary text-white'
+    if (value >= 30) return 'bg-primary/70 text-white'
+    if (value >= 20) return 'bg-primary/40 text-text-primary'
+    if (value >= 10) return 'bg-primary/20 text-text-secondary'
+    return 'bg-surface-3 text-text-muted'
+  }
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-surface-1 border border-border-app p-3 rounded-lg shadow-dropdown animate-scale-in">
+          <p className="text-xs font-bold text-text-primary mb-2">{label}</p>
+          {payload.map((entry, index) => (
+            <div key={index} className="flex items-center gap-2 mb-1 last:mb-0">
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+              <p className="text-xs text-text-muted">
+                <span className="capitalize">{entry.name}:</span>
+                <span className="ml-2 font-medium text-text-secondary">{entry.value}</span>
+              </p>
+            </div>
+          ))}
+        </div>
+      )
+    }
+    return null
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">Reports & Analytics</h2>
-      {usingFallbackData && (
-        <p className="text-sm text-amber-600 mb-4">
-          Analytics API is unavailable, showing fallback data for now.
-        </p>
-      )}
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-text-primary font-heading">Reports & Analytics</h2>
+          <p className="text-sm text-text-muted mt-1">Deep dive into system performance and engagement</p>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          {usingFallbackData && (
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-pill bg-warning/10 text-warning text-xs font-medium">
+              <AlertCircle className="w-3.5 h-3.5" />
+              Fallback Data Active
+            </div>
+          )}
+          <button className="btn-secondary btn-sm flex items-center gap-2">
+            <Download className="w-4 h-4" />
+            Export Data
+          </button>
+        </div>
+      </div>
 
       {/* Analytics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {reportItems.map((item, index) => (
-          <div key={index} className="bg-gray-50 rounded-lg p-4">
-            <div className="flex items-center">
-              <div className={`p-3 rounded-full ${item.bgColor} mr-4`}>
-                <item.icon className={`h-6 w-6 ${item.color}`} />
+          <div key={index} className="card p-5 group hover:shadow-glow-primary transition-all">
+            <div className="flex items-center gap-4">
+              <div className={`p-3 rounded-btn ${item.bg} ${item.color} group-hover:scale-110 transition-transform`}>
+                <item.icon className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">{item.title}</p>
-                <p className="text-2xl font-bold text-gray-900">{item.value}</p>
+                <p className="text-xs font-medium text-text-muted uppercase tracking-wider">{item.title}</p>
+                <h3 className="text-xl font-bold text-text-primary font-heading mt-0.5">{item.value}</h3>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Daily Viewership Trend</h3>
-          <div className="h-72">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Daily Trend Area Chart */}
+        <div className="card">
+          <h3 className="text-base font-bold text-text-primary font-heading mb-6 flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-primary" />
+            Daily Viewership Trend
+          </h3>
+          <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={trendData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="period" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="views" stroke="#2563eb" strokeWidth={2} />
-                <Line type="monotone" dataKey="activeStudents" stroke="#16a34a" strokeWidth={2} />
-              </LineChart>
+              <AreaChart data={trendData}>
+                <defs>
+                  <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={CHART_COLORS.primary} stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor={CHART_COLORS.primary} stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.border} vertical={false} />
+                <XAxis dataKey="period" stroke={CHART_COLORS.text} fontSize={10} tickLine={false} axisLine={false} />
+                <YAxis stroke={CHART_COLORS.text} fontSize={10} tickLine={false} axisLine={false} />
+                <Tooltip content={<CustomTooltip />} />
+                <Area type="monotone" dataKey="views" stroke={CHART_COLORS.primary} strokeWidth={2} fillOpacity={1} fill="url(#colorViews)" name="Views" />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Most Watched Videos</h3>
-          <div className="h-72">
+        {/* Top Videos Bar Chart */}
+        <div className="card">
+          <h3 className="text-base font-bold text-text-primary font-heading mb-6 flex items-center gap-2">
+            <BarChart3 className="w-4 h-4 text-accent" />
+            Top Performing Videos
+          </h3>
+          <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={topVideos} layout="vertical" margin={{ left: 40 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis type="category" dataKey="title" width={140} />
-                <Tooltip />
-                <Bar dataKey="views" fill="#2563eb" radius={[0, 6, 6, 0]} />
+              <BarChart data={topVideos} layout="vertical" margin={{ left: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.border} horizontal={false} />
+                <XAxis type="number" hide />
+                <YAxis type="category" dataKey="title" width={100} stroke={CHART_COLORS.text} fontSize={10} tickLine={false} axisLine={false} />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="views" fill={CHART_COLORS.accent} radius={[0, 4, 4, 0]} barSize={20} name="Total Views" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Engagement Distribution</h3>
-          <div className="h-72">
+        {/* Engagement Pie Chart */}
+        <div className="card">
+          <h3 className="text-base font-bold text-text-primary font-heading mb-6 flex items-center gap-2">
+            <Layers className="w-4 h-4 text-info" />
+            Engagement Distribution
+          </h3>
+          <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={engagementBreakdown}
+                  data={Array.isArray(engagementBreakdown) ? engagementBreakdown : []}
                   cx="50%"
                   cy="50%"
-                  outerRadius={95}
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={5}
                   dataKey="value"
                   nameKey="name"
-                  label
                 >
-                  {engagementBreakdown.map((entry, index) => (
-                    <Cell key={`cell-${entry.name}`} fill={pieColors[index % pieColors.length]} />
+                  {(Array.isArray(engagementBreakdown) ? engagementBreakdown : []).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} stroke="transparent" />
                   ))}
                 </Pie>
-                <Tooltip />
-                <Legend />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', paddingTop: '20px' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Peak Viewing Time Heatmap</h3>
-          <div className="space-y-2">
-            <div className="grid grid-cols-5 gap-2 text-xs font-medium text-gray-500">
-              <span>Day</span>
+        {/* Heatmap */}
+        <div className="card">
+          <h3 className="text-base font-bold text-text-primary font-heading mb-6 flex items-center gap-2">
+            <Clock className="w-4 h-4 text-warning" />
+            Peak Viewing Activity
+          </h3>
+          <div className="space-y-3">
+            <div className="grid grid-cols-5 gap-2 text-[10px] font-bold text-text-muted uppercase tracking-widest pl-16">
               <span>08-12</span>
               <span>12-16</span>
               <span>16-20</span>
               <span>20-24</span>
             </div>
-            {peakTimeHeatmap.map((row) => (
-              <div key={row.day} className="grid grid-cols-5 gap-2">
-                <span className="text-sm font-medium text-gray-700">{row.day}</span>
-                {row.slots.map((value, idx) => (
-                  <span
-                    key={`${row.day}-${idx}`}
-                    className={`rounded-md px-2 py-1 text-center text-xs font-semibold ${getHeatColor(value)}`}
-                  >
-                    {value}
-                  </span>
-                ))}
+            {(Array.isArray(peakTimeHeatmap) ? peakTimeHeatmap : []).map((row) => (
+              <div key={row.day} className="flex items-center gap-4">
+                <span className="w-12 text-xs font-bold text-text-secondary">{row.day}</span>
+                <div className="flex-1 grid grid-cols-4 gap-2">
+                  {(Array.isArray(row.slots) ? row.slots : []).map((value, idx) => (
+                    <div
+                      key={`${row.day}-${idx}`}
+                      className={`h-8 rounded-lg flex items-center justify-center text-[10px] font-bold transition-all hover:scale-105 cursor-help ${getHeatColor(value)}`}
+                      title={`${value} active views`}
+                    >
+                      {value}
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
+          </div>
+          <div className="mt-6 flex items-center justify-between gap-4 p-3 bg-surface-2 rounded-input border border-border-app/50">
+             <div className="text-center">
+                <p className="text-[10px] text-text-muted mb-0.5">Peak Hour</p>
+                <p className="text-sm font-bold text-text-primary">{peakWatchSummary.hour}</p>
+             </div>
+             <div className="w-px h-8 bg-border-app/50" />
+             <div className="text-center">
+                <p className="text-[10px] text-text-muted mb-0.5">Max Views</p>
+                <p className="text-sm font-bold text-text-primary">{peakWatchSummary.viewCount}</p>
+             </div>
+             <div className="w-px h-8 bg-border-app/50" />
+             <div className="text-center">
+                <p className="text-[10px] text-text-muted mb-0.5">Unique Viewers</p>
+                <p className="text-sm font-bold text-text-primary">{peakWatchSummary.viewerCount}</p>
+             </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Peak Watch-Time Insights</h3>
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="rounded-lg bg-white p-3 border border-gray-200">
-              <p className="text-xs text-gray-500">Peak Hour</p>
-              <p className="text-xl font-semibold text-gray-900">{peakWatchSummary.hour}</p>
-            </div>
-            <div className="rounded-lg bg-white p-3 border border-gray-200">
-              <p className="text-xs text-gray-500">Views In Peak Hour</p>
-              <p className="text-xl font-semibold text-gray-900">{peakWatchSummary.viewCount}</p>
-            </div>
-            <div className="rounded-lg bg-white p-3 border border-gray-200">
-              <p className="text-xs text-gray-500">Unique Viewers</p>
-              <p className="text-xl font-semibold text-gray-900">{peakWatchSummary.viewerCount}</p>
-            </div>
-            <div className="rounded-lg bg-white p-3 border border-gray-200">
-              <p className="text-xs text-gray-500">Avg Views / Viewer</p>
-              <p className="text-xl font-semibold text-gray-900">{peakWatchSummary.averageViewsPerViewer}</p>
-            </div>
-          </div>
-          <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={hourlyWatchBreakdown}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="hourLabel" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="viewCount" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Attendance Analytics</h3>
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="rounded-lg bg-white p-3 border border-gray-200">
-              <p className="text-xs text-gray-500">Overall Attendance</p>
-              <p className="text-lg font-semibold text-gray-900">
-                {attendanceSummary.overallAttendancePercentage || 0}%
-              </p>
-            </div>
-            <div className="rounded-lg bg-white p-3 border border-gray-200">
-              <p className="text-xs text-gray-500">Total Present</p>
-              <p className="text-lg font-semibold text-gray-900">{attendanceSummary.totalPresent || 0}</p>
-            </div>
-            <div className="rounded-lg bg-white p-3 border border-gray-200">
-              <p className="text-xs text-gray-500">Total Absent</p>
-              <p className="text-lg font-semibold text-gray-900">{attendanceSummary.totalAbsent || 0}</p>
-            </div>
+      {/* Generate Report Card */}
+      <div className="card !bg-gradient-to-r from-surface-1 to-surface-2">
+        <h3 className="text-base font-bold text-text-primary font-heading mb-4">Generate Custom Intelligence Report</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="relative">
+            <Filter className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+            <select
+              className="select pl-10 w-full"
+              value={reportType}
+              onChange={(e) => setReportType(e.target.value)}
+            >
+              {reportsCatalog.map((report) => (
+                <option key={report.id} value={report.id}>{report.name}</option>
+              ))}
+            </select>
           </div>
 
-          <div className="h-48 mb-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={classAttendance}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="className" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="attendancePercentage" fill="#14b8a6" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="relative">
+            <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+            <select
+              className="select pl-10 w-full"
+              value={reportPeriod}
+              onChange={(e) => setReportPeriod(e.target.value)}
+            >
+              <option value="last30days">Last 30 Days</option>
+              <option value="last90days">Last 90 Days</option>
+              <option value="custom">Custom Window</option>
+            </select>
           </div>
-
-          <div>
-            <p className="text-sm font-semibold text-gray-700 mb-2">Chronic Absentees</p>
-            <div className="space-y-2 max-h-28 overflow-y-auto">
-              {chronicAbsentees.length > 0 ? (
-                chronicAbsentees.slice(0, 5).map((student) => (
-                  <div
-                    key={student.studentId || student.studentName}
-                    className="flex items-center justify-between rounded-md border border-gray-200 bg-white px-3 py-2"
-                  >
-                    <p className="text-sm text-gray-700">{student.studentName || 'Unknown Student'}</p>
-                    <span className="text-xs font-semibold text-red-600">
-                      {student.attendancePercentage || 0}%
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <p className="text-sm text-gray-500">No chronic absentee records available.</p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {userRole === 'admin' && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Revenue Analytics</h3>
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="rounded-lg bg-white p-3 border border-gray-200">
-                <p className="text-xs text-gray-500">Total Revenue</p>
-                <p className="text-lg font-semibold text-gray-900">
-                  {(revenueSummary.totalRevenue || 0).toLocaleString()}
-                </p>
-              </div>
-              <div className="rounded-lg bg-white p-3 border border-gray-200">
-                <p className="text-xs text-gray-500">Pending Fees</p>
-                <p className="text-lg font-semibold text-gray-900">
-                  {(revenueSummary.pendingFees || 0).toLocaleString()}
-                </p>
-              </div>
-            </div>
-
-            <div className="h-52">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={revenueSummary.paymentTrends || []}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="period" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="amount" stroke="#22c55e" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Methods Distribution</h3>
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={revenueSummary.paymentsByMethod || []}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={95}
-                    dataKey="amount"
-                    nameKey="method"
-                    label
-                  >
-                    {(revenueSummary.paymentsByMethod || []).map((entry, index) => (
-                      <Cell key={`method-${entry.method || index}`} fill={pieColors[index % pieColors.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="bg-gray-50 rounded-lg p-4 mb-8">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Generate Analytics Report</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-          <select
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-            value={reportType}
-            onChange={(event) => setReportType(event.target.value)}
-          >
-            {reportsCatalog.map((report) => (
-              <option key={report.id} value={report.id}>
-                {report.name}
-              </option>
-            ))}
-          </select>
-
-          <select
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
-            value={reportPeriod}
-            onChange={(event) => setReportPeriod(event.target.value)}
-          >
-            <option value="last30days">Last 30 Days</option>
-            <option value="last90days">Last 90 Days</option>
-            <option value="custom">Custom Window</option>
-          </select>
 
           <button
-            type="button"
             onClick={() => onGenerateReport?.(reportType, reportPeriod)}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="btn-primary md:col-span-2"
           >
-            Generate Report
+            Generate Intelligence Report
           </button>
         </div>
 
         {generatedReport && (
-          <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-700">
-            <p className="font-semibold">{generatedReport.title || 'Report generated successfully'}</p>
-            <p>Type: {generatedReport.type || reportType}</p>
-            <p>Generated At: {generatedReport.generatedAt || 'Just now'}</p>
+          <div className="mt-4 p-3 bg-primary/10 border border-primary/20 rounded-input flex items-center justify-between animate-slide-up">
+            <div className="flex items-center gap-3">
+              <CheckCircle className="w-5 h-5 text-primary" />
+              <div>
+                <p className="text-sm font-bold text-text-primary">{generatedReport.title || 'Report Ready'}</p>
+                <p className="text-xs text-text-muted">Generated at {new Date().toLocaleTimeString()}</p>
+              </div>
+            </div>
+            <button className="btn-secondary btn-sm">Download</button>
           </div>
         )}
       </div>
 
-      {/* Recent Reports */}
-      <div className="mt-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Reports</h3>
+      {/* Recent Activity / Reports */}
+      <div className="card">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-base font-bold text-text-primary font-heading">Recent Reports Archive</h3>
+          <button className="text-xs font-semibold text-primary hover:text-primary-hover transition-colors">View All Archive</button>
+        </div>
         <div className="space-y-3">
-          {reports.length > 0 ? (
+          {Array.isArray(reports) && reports.length > 0 ? (
             reports.map((report, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="font-medium text-gray-900">{report.title}</p>
-                  <p className="text-sm text-gray-600">{report.description}</p>
+              <div key={index} className="flex items-center justify-between p-4 bg-surface-2 rounded-xl border border-border-app/50 hover:border-primary/20 transition-all cursor-pointer group">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-lg bg-surface-3 text-text-muted group-hover:text-primary transition-colors">
+                    <FileText className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-text-primary">{report.title}</h4>
+                    <p className="text-xs text-text-muted mt-0.5">{report.description}</p>
+                  </div>
                 </div>
-                <span className="text-sm text-gray-500">{report.date}</span>
+                <div className="flex items-center gap-4">
+                  <div className="text-right hidden sm:block">
+                    <p className="text-xs font-bold text-text-secondary">{report.date}</p>
+                    <p className="text-[10px] text-text-muted uppercase">PDF Exported</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-text-muted group-hover:text-primary transition-transform group-hover:translate-x-1" />
+                </div>
               </div>
             ))
           ) : (
-            <div className="text-center py-8 text-gray-500">
-              <p>No reports available</p>
+            <div className="empty-state py-8">
+              <p className="text-sm text-text-muted">No reports found in archive</p>
             </div>
           )}
         </div>

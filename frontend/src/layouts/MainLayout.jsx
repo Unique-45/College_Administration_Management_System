@@ -1,12 +1,11 @@
 /**
  * Main Layout Component
- * Wrapper layout for all authenticated pages (Admin, Teacher, Student dashboards)
+ * Premium dark app shell with sidebar + header + content
  * Features:
- * - Header component (top navigation)
- * - Sidebar component (left navigation)
- * - Main content area with dynamic page outlet
- * - Responsive design (mobile, tablet, desktop)
- * - Consistent spacing and styling
+ * - Fixed sidebar with collapse support
+ * - Sticky header with blur backdrop
+ * - Main content area with proper spacing
+ * - Smooth responsive behavior
  */
 
 import { Outlet } from 'react-router-dom'
@@ -15,38 +14,30 @@ import Sidebar from '@/components/Common/Sidebar'
 
 const MainLayout = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <Header />
+    <div className="min-h-screen bg-app">
+      {/* Sidebar */}
+      <Sidebar />
 
-      {/* Main Content Wrapper */}
-      <div className="flex">
-        {/* Sidebar */}
-        <Sidebar />
+      {/* Main Content Wrapper — offset by sidebar width */}
+      <div className="lg:ml-64 flex flex-col min-h-screen transition-all duration-300">
+        {/* Header */}
+        <Header />
 
         {/* Main Content Area */}
         <main className="flex-1 w-full overflow-auto">
-          {/* Content Container with padding */}
-          <div className="p-4 sm:p-6 lg:p-8">
-            {/* Page Content Outlet */}
+          <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px]">
             <Outlet />
           </div>
 
           {/* Footer */}
-          <footer className="bg-white border-t border-gray-200 mt-12 py-6">
+          <footer className="border-t border-border-app/30 mt-12 py-6">
             <div className="max-w-full px-4 sm:px-6 lg:px-8">
-              <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-600">
-                <p>© 2026 College Administration Management System</p>
-                <div className="flex gap-4 mt-4 sm:mt-0">
-                  <a href="#" className="hover:text-gray-900">
-                    Privacy
-                  </a>
-                  <a href="#" className="hover:text-gray-900">
-                    Terms
-                  </a>
-                  <a href="#" className="hover:text-gray-900">
-                    Support
-                  </a>
+              <div className="flex flex-col sm:flex-row justify-between items-center text-xs text-text-muted gap-4">
+                <p>© 2026 CampusFlow — College Administration Management System</p>
+                <div className="flex gap-6">
+                  <a href="#" className="hover:text-text-secondary transition-colors">Privacy</a>
+                  <a href="#" className="hover:text-text-secondary transition-colors">Terms</a>
+                  <a href="#" className="hover:text-text-secondary transition-colors">Support</a>
                 </div>
               </div>
             </div>

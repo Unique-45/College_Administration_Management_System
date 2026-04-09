@@ -1,18 +1,36 @@
 /**
- * Sidebar Component
- * Navigation menu for authenticated users
+ * Premium Sidebar Component
+ * Dark, grouped navigation with Lucide icons
  * Features:
- * - Role-based menu items (Admin, Teacher, Student)
- * - Active route highlighting
+ * - Role-based navigation sections
+ * - Active route highlighting with accent bar
  * - Collapsible submenu items
- * - Mobile responsive (hidden on mobile, shown on lg+)
- * - Icon + label navigation
+ * - Mobile responsive with overlay
+ * - Icon + label layout with section grouping
+ * - Collapse mode support
  */
 
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { toggleSidebar } from '@/store/slices/uiSlice'
+import {
+  LayoutDashboard,
+  Users,
+  BookOpen,
+  BarChart3,
+  Settings,
+  CheckSquare,
+  Video,
+  Upload,
+  Library,
+  CreditCard,
+  GraduationCap,
+  ChevronDown,
+  ChevronLeft,
+  Sparkles,
+  Calendar,
+} from 'lucide-react'
 
 const Sidebar = () => {
   const location = useLocation()
@@ -20,212 +38,262 @@ const Sidebar = () => {
   const { user } = useSelector((state) => state.auth)
   const { sidebarOpen } = useSelector((state) => state.ui)
   const [expandedMenu, setExpandedMenu] = useState(null)
+  const [collapsed, setCollapsed] = useState(false)
 
-  const getMenuItems = () => {
-    const baseItems = [
-      {
-        icon: '📊',
-        label: 'Dashboard',
-        href: `/${user?.role}/dashboard`,
-      },
-    ]
-
-    const roleSpecificItems = {
+  const getMenuSections = () => {
+    const sections = {
       admin: [
         {
-          icon: '👥',
-          label: 'Users Management',
-          href: '/admin/users',
-        },
-        {
-          icon: '📚',
-          label: 'Classes',
-          href: '/admin/classes',
-        },
-        {
-          icon: '📊',
-          label: 'Analytics',
-          href: '/admin/analytics',
-          submenu: [
-            { label: 'Reports', href: '/admin/analytics/reports' },
-            { label: 'System Health', href: '/admin/analytics/health' },
+          title: 'Overview',
+          items: [
+            { icon: LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard' },
+            { 
+              icon: Calendar, 
+              label: 'Events', 
+              href: '/admin/events',
+              submenu: [
+                { label: 'Event List', href: '/admin/events/list' },
+                { label: 'Calendar', href: '/admin/events/calendar' },
+                { label: 'Analytics', href: '/admin/events/analytics' },
+              ]
+            },
           ],
         },
         {
-          icon: '⚙️',
-          label: 'Settings',
-          href: '/admin/settings',
+          title: 'Management',
+          items: [
+            { icon: Users, label: 'Users', href: '/admin/users' },
+            { icon: BookOpen, label: 'Classes', href: '/admin/classes' },
+            { 
+              icon: Library, 
+              label: 'Video Library', 
+              href: '/admin/videos',
+              submenu: [
+                { label: 'Browse All', href: '/admin/videos/library' },
+                { label: 'Upload New', href: '/admin/videos/upload' },
+              ]
+            },
+          ],
+        },
+        {
+          title: 'System',
+          items: [
+            { icon: Settings, label: 'Settings', href: '/admin/settings' },
+          ],
         },
       ],
       teacher: [
         {
-          icon: '📚',
-          label: 'Classes',
-          href: '/teacher/classes',
-        },
-        {
-          icon: '✅',
-          label: 'Attendance',
-          href: '/teacher/attendance',
-        },
-        {
-          icon: '🎥',
-          label: 'Videos',
-          href: '/teacher/videos',
-          submenu: [
-            { label: 'Upload Video', href: '/teacher/videos/upload' },
-            { label: 'My Videos', href: '/teacher/videos/library' },
+          title: 'Overview',
+          items: [
+            { icon: LayoutDashboard, label: 'Dashboard', href: '/teacher/dashboard' },
+            { 
+              icon: BarChart3, 
+              label: 'Analytics', 
+              href: '/teacher/analytics',
+              submenu: [
+                { label: 'Reports', href: '/teacher/analytics/reports' },
+              ]
+            },
           ],
         },
         {
-          icon: '📊',
-          label: 'Analytics',
-          href: '/teacher/analytics',
+          title: 'Teaching',
+          items: [
+            { icon: BookOpen, label: 'Classes', href: '/teacher/classes' },
+            { icon: CheckSquare, label: 'Attendance', href: '/teacher/attendance' },
+            { icon: Video, label: 'Videos', href: '/teacher/videos',
+              submenu: [
+                { label: 'Upload Video', href: '/teacher/videos/upload' },
+                { label: 'My Videos', href: '/teacher/videos/library' },
+              ],
+            },
+            { icon: Calendar, label: 'Events Hub', href: '/teacher/events' },
+          ],
         },
         {
-          icon: '⚙️',
-          label: 'Settings',
-          href: '/teacher/settings',
+          title: 'System',
+          items: [
+            { icon: Settings, label: 'Settings', href: '/teacher/settings' },
+          ],
         },
       ],
       student: [
         {
-          icon: '📚',
-          label: 'Classes',
-          href: '/student/classes',
+          title: 'Overview',
+          items: [
+            { icon: LayoutDashboard, label: 'Dashboard', href: '/student/dashboard' },
+          ],
         },
         {
-          icon: '✅',
-          label: 'Attendance',
-          href: '/student/attendance',
+          title: 'Academic',
+          items: [
+            { icon: BookOpen, label: 'Classes', href: '/student/classes' },
+            { icon: CheckSquare, label: 'Attendance', href: '/student/attendance' },
+            { icon: Video, label: 'Lessons', href: '/student/videos' },
+            { icon: Calendar, label: 'Calendar', href: '/student/events' },
+          ],
         },
         {
-          icon: '🎥',
-          label: 'Videos',
-          href: '/student/videos',
+          title: 'Finance',
+          items: [
+            { icon: CreditCard, label: 'Payments', href: '/student/payments' },
+          ],
         },
         {
-          icon: '💰',
-          label: 'Payments',
-          href: '/student/payments',
-        },
-        {
-          icon: '⚙️',
-          label: 'Settings',
-          href: '/student/settings',
+          title: 'System',
+          items: [
+            { icon: Settings, label: 'Settings', href: '/student/settings' },
+          ],
         },
       ],
     }
 
-    return [...baseItems, ...(roleSpecificItems[user?.role] || [])]
+    return sections[user?.role] || []
   }
 
   const isLinkActive = (href) => {
+    if (href === `/${user?.role}/dashboard`) {
+      return location.pathname === href
+    }
     return location.pathname.startsWith(href)
   }
 
-  const menuItems = getMenuItems()
+  const menuSections = getMenuSections()
 
   return (
     <>
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          className="overlay lg:hidden animate-fade-in"
           onClick={() => dispatch(toggleSidebar())}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-16 w-64 h-[calc(100vh-64px)] bg-white border-r border-gray-200 overflow-y-auto transition-transform duration-300 ease-in-out z-40 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        } lg:translate-x-0 lg:relative lg:top-0 lg:h-auto`}
+        className={`fixed left-0 top-0 h-screen bg-surface-1 border-r border-border-app overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out z-50 flex flex-col
+          ${collapsed ? 'w-[68px]' : 'w-64'}
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}
       >
-        <nav className="p-4 space-y-2">
-          {menuItems.map((item) => (
-            <div key={item.href}>
-              {item.submenu ? (
-                // Collapsible Menu Item
-                <div>
-                  <button
-                    onClick={() =>
-                      setExpandedMenu(
-                        expandedMenu === item.href ? null : item.href
-                      )
-                    }
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      isLinkActive(item.href)
-                        ? 'bg-blue-50 text-blue-600'
-                        : 'text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    <span className="flex items-center gap-3">
-                      <span className="text-lg">{item.icon}</span>
-                      {item.label}
-                    </span>
-                    <svg
-                      className={`w-4 h-4 transition-transform ${
-                        expandedMenu === item.href ? 'rotate-180' : ''
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                      />
-                    </svg>
-                  </button>
+        {/* Logo */}
+        <div className={`flex items-center h-16 px-4 border-b border-border-app/50 flex-shrink-0 ${collapsed ? 'justify-center' : 'gap-3'}`}>
+          <div className="w-9 h-9 bg-gradient-premium rounded-btn flex items-center justify-center flex-shrink-0">
+            <GraduationCap className="w-5 h-5 text-white" />
+          </div>
+          {!collapsed && (
+            <div className="animate-fade-in">
+              <h1 className="text-base font-bold text-text-primary font-heading tracking-tight">CampusFlow</h1>
+              <p className="text-[10px] text-text-muted font-medium uppercase tracking-widest">Admin Suite</p>
+            </div>
+          )}
+        </div>
 
-                  {/* Submenu Items */}
-                  {expandedMenu === item.href && (
-                    <div className="mt-2 ml-4 space-y-1 border-l border-gray-200 pl-4">
-                      {item.submenu.map((subitem) => (
-                        <Link
-                          key={subitem.href}
-                          to={subitem.href}
-                          onClick={() => dispatch(toggleSidebar())}
-                          className={`block px-4 py-2 rounded-lg text-sm transition-colors ${
-                            isLinkActive(subitem.href)
-                              ? 'bg-blue-50 text-blue-600 font-medium'
-                              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                          }`}
-                        >
-                          {subitem.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                // Simple Menu Item
-                <Link
-                  to={item.href}
-                  onClick={() => dispatch(toggleSidebar())}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                    isLinkActive(item.href)
-                      ? 'bg-blue-50 text-blue-600'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  {item.label}
-                </Link>
+        {/* Navigation */}
+        <nav className={`flex-1 py-4 space-y-1 ${collapsed ? 'px-2' : 'px-3'}`}>
+          {menuSections.map((section, sIdx) => (
+            <div key={sIdx} className={sIdx > 0 ? 'mt-6' : ''}>
+              {!collapsed && (
+                <p className="px-3 mb-2 text-[10px] font-semibold text-text-muted/60 uppercase tracking-widest">
+                  {section.title}
+                </p>
               )}
+              {collapsed && sIdx > 0 && <div className="divider !my-3" />}
+
+              <div className="space-y-0.5">
+                {section.items.map((item) => (
+                  <div key={item.href}>
+                    {item.submenu ? (
+                      <div>
+                        <button
+                          onClick={() =>
+                            setExpandedMenu(expandedMenu === item.href ? null : item.href)
+                          }
+                          className={`w-full flex items-center ${collapsed ? 'justify-center' : 'justify-between'} px-3 py-2.5 rounded-btn text-sm font-medium transition-all duration-200 group ${
+                            isLinkActive(item.href)
+                              ? 'bg-primary/10 text-primary-400'
+                              : 'text-text-muted hover:bg-surface-2 hover:text-text-primary'
+                          }`}
+                          title={collapsed ? item.label : undefined}
+                        >
+                          <span className="flex items-center gap-3">
+                            <item.icon className={`w-[18px] h-[18px] flex-shrink-0 ${isLinkActive(item.href) ? 'text-primary' : 'text-text-muted group-hover:text-text-secondary'}`} />
+                            {!collapsed && item.label}
+                          </span>
+                          {!collapsed && (
+                            <ChevronDown
+                              className={`w-4 h-4 transition-transform duration-200 ${
+                                expandedMenu === item.href ? 'rotate-180' : ''
+                              }`}
+                            />
+                          )}
+                        </button>
+
+                        {/* Submenu Items */}
+                        {!collapsed && expandedMenu === item.href && (
+                          <div className="mt-1 ml-5 space-y-0.5 border-l border-border-app/50 pl-3 animate-slide-up">
+                            {item.submenu.map((subitem) => (
+                              <Link
+                                key={subitem.href}
+                                to={subitem.href}
+                                onClick={() => dispatch(toggleSidebar())}
+                                className={`block px-3 py-2 rounded-btn text-sm transition-all duration-200 ${
+                                  isLinkActive(subitem.href)
+                                    ? 'text-primary-400 font-medium bg-primary/5'
+                                    : 'text-text-muted hover:text-text-primary hover:bg-surface-2'
+                                }`}
+                              >
+                                {subitem.label}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <Link
+                        to={item.href}
+                        onClick={() => dispatch(toggleSidebar())}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-btn text-sm font-medium transition-all duration-200 group relative ${
+                          isLinkActive(item.href)
+                            ? 'bg-primary/10 text-primary-400'
+                            : 'text-text-muted hover:bg-surface-2 hover:text-text-primary'
+                        } ${collapsed ? 'justify-center' : ''}`}
+                        title={collapsed ? item.label : undefined}
+                      >
+                        {isLinkActive(item.href) && (
+                          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />
+                        )}
+                        <item.icon className={`w-[18px] h-[18px] flex-shrink-0 ${isLinkActive(item.href) ? 'text-primary' : 'text-text-muted group-hover:text-text-secondary'}`} />
+                        {!collapsed && item.label}
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-gray-50">
-          <div className="text-xs text-gray-500 space-y-1">
-            <p>© 2026 College Admin</p>
-            <p>Version 1.0</p>
-          </div>
+        <div className={`flex-shrink-0 border-t border-border-app/50 p-3 ${collapsed ? 'text-center' : ''}`}>
+          {!collapsed && (
+            <div className="flex items-center gap-3 px-3 py-2 rounded-btn bg-surface-2/50 mb-3">
+              <Sparkles className="w-4 h-4 text-accent flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-text-secondary truncate">CampusFlow v2.0</p>
+                <p className="text-[10px] text-text-muted">© 2026</p>
+              </div>
+            </div>
+          )}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="hidden lg:flex items-center justify-center w-full p-2 rounded-btn text-text-muted hover:bg-surface-2 hover:text-text-primary transition-colors"
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <ChevronLeft className={`w-4 h-4 transition-transform duration-300 ${collapsed ? 'rotate-180' : ''}`} />
+          </button>
         </div>
       </aside>
     </>

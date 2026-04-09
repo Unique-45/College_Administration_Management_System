@@ -41,6 +41,9 @@ import AttendancePage from '@/pages/AttendancePage'
 import VideoLibraryPage from '@/pages/VideoLibraryPage'
 import VideoUploadPage from '@/pages/VideoUploadPage'
 import SettingsPage from '@/pages/SettingsPage'
+import EventsListPage from '@/pages/EventsListPage'
+import EventCalendarPage from '@/pages/EventCalendarPage'
+import EventAnalyticsPage from '@/pages/EventAnalyticsPage'
 
 // Utils
 import { getStoredUser, isTokenValid } from '@/utils/tokenUtils'
@@ -144,6 +147,48 @@ function App() {
               </RoleProtectedRoute>
             }
           />
+          <Route
+            path="/admin/videos/library"
+            element={
+              <RoleProtectedRoute requiredRole="admin">
+                <VideoLibraryPage />
+              </RoleProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/videos/upload"
+            element={
+              <RoleProtectedRoute requiredRole="admin">
+                <VideoUploadPage />
+              </RoleProtectedRoute>
+            }
+          />
+
+          {/* Admin Event Routes */}
+          <Route
+            path="/admin/events/list"
+            element={
+              <RoleProtectedRoute requiredRole="admin">
+                <EventsListPage />
+              </RoleProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/events/calendar"
+            element={
+              <RoleProtectedRoute requiredRole="admin">
+                <EventCalendarPage />
+              </RoleProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/events/analytics"
+            element={
+              <RoleProtectedRoute requiredRole="admin">
+                <EventAnalyticsPage />
+              </RoleProtectedRoute>
+            }
+          />
 
           {/* Teacher Specific Routes */}
           <Route
@@ -195,6 +240,16 @@ function App() {
             }
           />
 
+          {/* Teacher Event Routes */}
+          <Route
+            path="/teacher/events"
+            element={
+              <RoleProtectedRoute requiredRole="teacher">
+                <EventsListPage />
+              </RoleProtectedRoute>
+            }
+          />
+
           {/* Student Specific Routes */}
           <Route
             path="/student/classes"
@@ -233,6 +288,16 @@ function App() {
             element={
               <RoleProtectedRoute requiredRole="student">
                 <SettingsPage />
+              </RoleProtectedRoute>
+            }
+          />
+
+          {/* Student Event Routes */}
+          <Route
+            path="/student/events"
+            element={
+              <RoleProtectedRoute requiredRole="student">
+                <EventsListPage />
               </RoleProtectedRoute>
             }
           />

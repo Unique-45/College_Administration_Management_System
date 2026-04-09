@@ -1,14 +1,23 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { uploadVideo } from '@/store/slices/videoSlice'
 import { showToast } from '@/store/slices/notificationSlice'
-import { CloudArrowUpIcon } from '@heroicons/react/24/outline'
 import { fetchClasses } from '@/store/slices/dashboardSlice'
-import { useEffect } from 'react'
+import { 
+  CloudUpload, 
+  FileVideo, 
+  Image as ImageIcon, 
+  CheckCircle2, 
+  AlertCircle, 
+  Loader2,
+  X
+} from 'lucide-react'
 
-const VideoUploadScreen = () => {
+const VideoUploadScreen = ({ onClose }) => {
   const dispatch = useDispatch()
   const { loading, uploadProgress, error } = useSelector((state) => state.video)
+  const { classes = [], classesLoading } = useSelector((state) => state.dashboard)
+  
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -16,11 +25,12 @@ const VideoUploadScreen = () => {
     classId: '',
     file: null,
     thumbnail: null,
-    status: 'draft',
+    status: 'published',
   })
+  
   const [fileName, setFileName] = useState('')
   const [thumbnailName, setThumbnailName] = useState('')
-  const { classes, classesLoading } = useSelector((state) => state.dashboard)
+  const [dragActive, setDragActive] = useState(false)
 
   useEffect(() => {
     dispatch(fetchClasses())
@@ -40,330 +50,333 @@ const VideoUploadScreen = () => {
   const handleFileSelect = (e, type) => {
     const file = e.target.files[0]
     if (!file) return
+    processFile(file, type)
+  }
 
+  const processFile = (file, type) => {
     if (type === 'video') {
       const fileExtension = file.name.split('.').pop().toLowerCase()
       if (!supportedFormats.includes(fileExtension)) {
-        dispatch(
-          showToast({
-            message: `Unsupported format. Supported: ${supportedFormats.join(', ')}`,
-            type: 'error',
-          })
-        )
+        dispatch(showToast({
+          message: `Unsupported format. Supported: ${supportedFormats.join(', ')}`,
+          type: 'error',
+        }))
         return
       }
 
       if (file.size > maxFileSize) {
-        dispatch(
-          showToast({
-            message: 'File size exceeds 500 MB limit',
-            type: 'error',
-          })
-        )
+        dispatch(showToast({
+          message: 'File size exceeds 500 MB limit',
+          type: 'error',
+        }))
         return
       }
 
-      setFormData((prev) => ({
-        ...prev,
-        file,
-      }))
+      setFormData(prev => ({ ...prev, file }))
       setFileName(file.name)
     } else if (type === 'thumbnail') {
       if (!['jpg', 'jpeg', 'png', 'webp'].includes(file.name.split('.').pop().toLowerCase())) {
-        dispatch(
-          showToast({
-            message: 'Thumbnail must be JPG, PNG, or WebP',
-            type: 'error',
-          })
-        )
+        dispatch(showToast({
+          message: 'Thumbnail must be JPG, PNG, or WebP',
+          type: 'error',
+        }))
         return
       }
 
-      setFormData((prev) => ({
-        ...prev,
-        thumbnail: file,
-      }))
+      setFormData(prev => ({ ...prev, thumbnail: file }))
       setThumbnailName(file.name)
     }
   }
 
-  const validateForm = () => {
-    if (!formData.title.trim()) {
-      dispatch(showToast({ message: 'Please enter video title', type: 'error' }))
-      return false
+  const handleDrag = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true)
+    } else if (e.type === "dragleave") {
+      setDragActive(false)
     }
-
-    if (!formData.description.trim()) {
-      dispatch(showToast({ message: 'Please enter video description', type: 'error' }))
-      return false
-    }
-
-    if (!formData.subject) {
-      dispatch(showToast({ message: 'Please select subject', type: 'error' }))
-      return false
-    }
-
-    if (!formData.classId) {
-      dispatch(showToast({ message: 'Please select class', type: 'error' }))
-      return false
-    }
-
-    if (!formData.file) {
-      dispatch(showToast({ message: 'Please select video file', type: 'error' }))
-      return false
-    }
-
-    return true
   }
 
-  const handleUpload = async (e) => {
+  const handleDrop = (e) => {
     e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      processFile(e.dataTransfer.files[0], 'video')
+    }
+  }
 
-    if (!validateForm()) return
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    if (!formData.title.trim()) {
+      dispatch(showToast({ message: 'Title is required', type: 'error' }))
+      return
+    }
+    if (!formData.file) {
+      dispatch(showToast({ message: 'Video file is required', type: 'error' }))
+      return
+    }
+    if (!formData.classId) {
+      dispatch(showToast({ message: 'Please select a class', type: 'error' }))
+      return
+    }
 
-    const uploadFormData = new FormData()
-    uploadFormData.append('title', formData.title)
-    uploadFormData.append('description', formData.description)
-    uploadFormData.append('subject', formData.subject)
-    uploadFormData.append('classId', formData.classId)
-    uploadFormData.append('status', formData.status)
-    uploadFormData.append('file', formData.file)
+    const videoData = new FormData()
+    videoData.append('title', formData.title)
+    videoData.append('description', formData.description)
+    videoData.append('subject', formData.subject)
+    videoData.append('classId', formData.classId)
+    videoData.append('video', formData.file)
+    videoData.append('status', formData.status)
     if (formData.thumbnail) {
-      uploadFormData.append('thumbnail', formData.thumbnail)
+      videoData.append('thumbnail', formData.thumbnail)
     }
 
     try {
-      const result = await dispatch(uploadVideo(uploadFormData))
-      if (result.payload) {
-        dispatch(
-          showToast({
-            message: 'Video uploaded successfully!',
-            type: 'success',
-          })
-        )
-        // Reset form
+      const resultAction = await dispatch(uploadVideo(videoData))
+      if (uploadVideo.fulfilled.match(resultAction)) {
+        dispatch(showToast({ message: 'Video uploaded successfully!', type: 'success' }))
+        if (onClose) onClose()
         setFormData({
-          title: '',
-          description: '',
-          subject: '',
-          classId: '',
-          file: null,
-          thumbnail: null,
-          status: 'draft',
+            title: '',
+            description: '',
+            subject: '',
+            classId: '',
+            file: null,
+            thumbnail: null,
+            status: 'published',
         })
         setFileName('')
         setThumbnailName('')
       }
-    } catch (_err) {
-      dispatch(
-        showToast({
-          message: error || 'Failed to upload video',
-          type: 'error',
-        })
-      )
+    } catch (err) {
+      dispatch(showToast({ message: err.message || 'Upload failed', type: 'error' }))
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload Video</h1>
-          <p className="text-gray-600 mb-8">Share educational content with your classes</p>
-
-          <form onSubmit={handleUpload} className="space-y-6">
-            {/* Video Title */}
+    <div className="min-h-screen bg-[#0B1220] py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="glass-card overflow-hidden">
+          {/* Header */}
+          <div className="p-6 border-b border-white/10 flex items-center justify-between bg-gradient-to-r from-blue-600/10 to-transparent">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Video Title *
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                placeholder="Enter video title"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <CloudUpload className="text-blue-400" />
+                Upload Course Video
+              </h2>
+              <p className="text-slate-400 text-sm mt-1">Share knowledge with your students</p>
             </div>
+            {onClose && (
+              <button 
+                onClick={onClose}
+                className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            )}
+          </div>
 
-            {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description *
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                placeholder="Enter video description"
-                rows="4"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            {/* Subject and Class */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Subject *
-                </label>
-                <select
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Select Subject</option>
-                  <option value="mathematics">Mathematics</option>
-                  <option value="physics">Physics</option>
-                  <option value="chemistry">Chemistry</option>
-                  <option value="english">English</option>
-                  <option value="history">History</option>
-                  <option value="biology">Biology</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Class *
-                </label>
-                <select
-                  name="classId"
-                  value={formData.classId}
-                  onChange={handleInputChange}
-                  disabled={classesLoading}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Select Class</option>
-                  {classes && classes.map((cls) => (
-                    <option key={cls._id} value={cls._id}>
-                      {cls.name} - {cls.subject || 'All Subjects'}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* File Upload */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Video File * (Max 500MB)
-              </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition">
-                <input
-                  type="file"
-                  accept={supportedFormats.map((f) => `.${f}`).join(',')}
-                  onChange={(e) => handleFileSelect(e, 'video')}
-                  className="hidden"
-                  id="videoFile"
-                  disabled={loading}
-                />
-                <label htmlFor="videoFile" className="cursor-pointer">
-                  <CloudArrowUpIcon className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-                  <p className="text-gray-600">
-                    {fileName || 'Click to upload or drag and drop'}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Supported: {supportedFormats.join(', ')}
-                  </p>
-                </label>
-              </div>
-            </div>
-
-            {/* Thumbnail Upload */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Thumbnail (Optional)
-              </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition">
-                <input
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.webp"
-                  onChange={(e) => handleFileSelect(e, 'thumbnail')}
-                  className="hidden"
-                  id="thumbnailFile"
-                  disabled={loading}
-                />
-                <label htmlFor="thumbnailFile" className="cursor-pointer">
-                  <CloudArrowUpIcon className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-                  <p className="text-gray-600">
-                    {thumbnailName || 'Click to upload thumbnail'}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">JPG, PNG, or WebP</p>
-                </label>
-              </div>
-            </div>
-
-            {/* Status */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-              <div className="flex items-center space-x-6">
-                <label className="flex items-center">
+          <form onSubmit={handleSubmit} className="p-8 space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Left Column - Form Data */}
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Video Title</label>
                   <input
-                    type="radio"
-                    name="status"
-                    value="draft"
-                    checked={formData.status === 'draft'}
+                    type="text"
+                    name="title"
+                    value={formData.title}
                     onChange={handleInputChange}
-                    className="mr-2"
+                    placeholder="e.g. Introduction to Quantum Physics"
+                    className="premium-input w-full"
+                    required
                   />
-                  <span className="text-gray-700">Draft (Not Published)</span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="status"
-                    value="published"
-                    checked={formData.status === 'published'}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
                     onChange={handleInputChange}
-                    className="mr-2"
+                    placeholder="Describe what students will learn..."
+                    rows="4"
+                    className="premium-input w-full resize-none"
+                    required
                   />
-                  <span className="text-gray-700">Published</span>
-                </label>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Subject</label>
+                    <input 
+                      type="text"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Physics"
+                      className="premium-input w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Target Class</label>
+                    <div className="relative">
+                      <select
+                        name="classId"
+                        value={formData.classId}
+                        onChange={handleInputChange}
+                        className="premium-input w-full appearance-none"
+                        required
+                      >
+                        <option value="" className="bg-[#0B1220]">Select Class</option>
+                        {classes && Array.isArray(classes) && classes.map((cls) => (
+                          <option key={cls._id} value={cls._id} className="bg-[#0B1220]">
+                            {cls.name}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                        <Loader2 className={`w-4 h-4 animate-spin ${classesLoading ? 'opacity-100' : 'opacity-0'}`} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Upload Areas */}
+              <div className="space-y-6">
+                {/* Video Dropzone */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Video File</label>
+                  <div 
+                    className={`relative border-2 border-dashed rounded-xl p-8 transition-all flex flex-col items-center justify-center text-center group cursor-pointer
+                      ${dragActive ? 'border-blue-500 bg-blue-500/10' : 'border-white/10 hover:border-blue-500/50 hover:bg-white/5'}
+                      ${fileName ? 'border-emerald-500/50 bg-emerald-500/5' : ''}`}
+                    onDragEnter={handleDrag}
+                    onDragLeave={handleDrag}
+                    onDragOver={handleDrag}
+                    onDrop={handleDrop}
+                    onClick={() => document.getElementById('video-input').click()}
+                  >
+                    <input 
+                      id="video-input"
+                      type="file" 
+                      className="hidden" 
+                      accept={supportedFormats.map(f => `.${f}`).join(',')}
+                      onChange={(e) => handleFileSelect(e, 'video')}
+                    />
+                    
+                    {fileName ? (
+                      <>
+                        <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mb-4">
+                          <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+                        </div>
+                        <p className="text-white font-medium truncate max-w-full">{fileName}</p>
+                        <p className="text-emerald-400/80 text-xs mt-1">Ready for upload</p>
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                          <FileVideo className="w-8 h-8 text-blue-400" />
+                        </div>
+                        <p className="text-white font-medium">Click or drag video to upload</p>
+                        <p className="text-slate-500 text-xs mt-1">MP4, WebM, MOV up to 500MB</p>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Thumbnail Dropzone */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">Thumbnail (Optional)</label>
+                  <div 
+                    className={`relative border-2 border-dashed rounded-xl p-6 transition-all flex items-center gap-4 group cursor-pointer
+                      ${thumbnailName ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-white/10 hover:border-blue-500/50 hover:bg-white/5'}`}
+                    onClick={() => document.getElementById('thumb-input').click()}
+                  >
+                    <input 
+                      id="thumb-input"
+                      type="file" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={(e) => handleFileSelect(e, 'thumbnail')}
+                    />
+                    
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${thumbnailName ? 'bg-emerald-500/20' : 'bg-white/5 group-hover:bg-blue-500/10'}`}>
+                      <ImageIcon className={`w-6 h-6 ${thumbnailName ? 'text-emerald-400' : 'text-slate-400 group-hover:text-blue-400'}`} />
+                    </div>
+                    
+                    <div className="flex-1 text-left">
+                      <p className="text-sm text-white font-medium truncate">
+                        {thumbnailName || 'Select Preview Image'}
+                      </p>
+                      <p className="text-slate-500 text-xs mt-0.5">JPG, PNG or WebP</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Upload Progress */}
-            {uploadProgress > 0 && uploadProgress < 100 && (
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${uploadProgress}%` }}
-                />
+            {/* Error Message */}
+            {error && (
+              <div className="p-4 bg-red-500/10 border border-red-500/50 rounded-lg flex items-center gap-3 text-red-400">
+                <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                <p className="text-sm">{typeof error === 'string' ? error : 'An error occurred during upload'}</p>
+              </div>
+            )}
+
+            {/* Progress Bar */}
+            {loading && (
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-blue-400 font-medium flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Uploading video...
+                  </span>
+                  <span className="text-white">{uploadProgress}%</span>
+                </div>
+                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-blue-600 to-indigo-500 transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
               </div>
             )}
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-lg transition duration-200"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  Uploading... {uploadProgress}%
-                </span>
-              ) : (
-                'Upload Video'
+            <div className="pt-6 flex items-center justify-end gap-4">
+              {onClose && (
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-6 py-2.5 text-slate-300 hover:text-white transition-colors"
+                >
+                  Cancel
+                </button>
               )}
-            </button>
+              <button
+                type="submit"
+                disabled={loading || classesLoading}
+                className={`premium-button flex items-center gap-2 px-10
+                  ${(loading || classesLoading) ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <CloudUpload className="w-5 h-5" />
+                    Publish Video
+                  </>
+                )}
+              </button>
+            </div>
           </form>
         </div>
       </div>

@@ -2,11 +2,11 @@ import React, { useState, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { checkInAttendee } from '@/store/slices/eventAnalyticsSlice'
 import { showToast } from '@/store/slices/notificationSlice'
-import { UserCheckIcon, XMarkIcon } from '@heroicons/react/24/solid'
+import { UserCheck, X, Search, QrCode, Users, CheckCircle2, Loader2, Info } from 'lucide-react'
 
 /**
  * EventAttendanceCheckIn - QR/Manual check-in component for event attendees
- * Phase 5: Event attendance verification system
+ * REDESIGNED: Premium Dark Academy Design
  */
 const EventAttendanceCheckIn = ({ eventId, attendees = [], onClose, onSuccess }) => {
   const dispatch = useDispatch()
@@ -46,12 +46,12 @@ const EventAttendanceCheckIn = ({ eventId, attendees = [], onClose, onSuccess })
 
   // Handle check-in for an attendee
   const handleCheckIn = async (attendee) => {
-    if (checkedInUsers.has(attendee._id || attendee.id)) {
+    const attendeeId = attendee._id || attendee.id
+    if (checkedInUsers.has(attendeeId)) {
       dispatch(showToast({ message: 'Already checked in', type: 'info' }))
       return
     }
 
-    const attendeeId = attendee._id || attendee.id
     setLoadingStates((prev) => ({ ...prev, [attendeeId]: true }))
 
     try {
@@ -74,151 +74,163 @@ const EventAttendanceCheckIn = ({ eventId, attendees = [], onClose, onSuccess })
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="max-h-90vh my-4 w-full max-w-2xl space-y-4 rounded-lg bg-white p-6 shadow-xl">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+      <div className="w-full max-w-2xl bg-surface-1 border border-border-app/50 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-200 pb-4">
-          <div className="flex items-center gap-2">
-            <UserCheckIcon className="h-6 w-6 text-blue-600" />
+        <div className="px-6 py-5 border-b border-border-app/50 bg-surface-2/30 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-accent-primary/10 flex items-center justify-center border border-accent-primary/20">
+              <UserCheck className="w-5 h-5 text-accent-primary" />
+            </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-800">Event Check-In</h2>
-              <p className="text-sm text-gray-600">Verify attendee attendance</p>
+              <h2 className="text-lg font-bold text-text-primary">Event Check-In</h2>
+              <p className="text-xs text-text-secondary">Scan or verify attendee status</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1 hover:bg-gray-100"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-surface-3 transition-colors"
           >
-            <XMarkIcon className="h-6 w-6 text-gray-600" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Check-In Statistics */}
-        <div className="rounded-lg bg-blue-50 p-4">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-semibold text-gray-700">
-              {checkedInCount} of {totalCount} checked in
-            </span>
-            <span className="text-lg font-bold text-blue-600">{checkInPercentage}%</span>
+        <div className="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1">
+          {/* Stats Bar */}
+          <div className="bg-surface-2/50 border border-border-app/30 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3 text-sm">
+              <span className="text-text-secondary flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                {checkedInCount} of {totalCount} verified
+              </span>
+              <span className="font-bold text-accent-primary">{checkInPercentage}%</span>
+            </div>
+            <div className="h-1.5 w-full bg-surface-3 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-accent-primary transition-all duration-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                style={{ width: `${checkInPercentage}%` }}
+              />
+            </div>
           </div>
-          <div className="h-2 w-full rounded-full bg-blue-200">
-            <div
-              className="h-full rounded-full bg-blue-600 transition-all"
-              style={{ width: `${checkInPercentage}%` }}
-            ></div>
+
+          {/* Inputs */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-text-secondary uppercase tracking-wider ml-1">QR Scan / ID</label>
+              <div className="relative">
+                <QrCode className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+                <input
+                  type="text"
+                  placeholder="Focus here & scan..."
+                  value={qrInput}
+                  onChange={(e) => setQrInput(e.target.value)}
+                  onKeyUp={handleQRInput}
+                  className="w-full bg-surface-2 border border-border-app/50 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:border-accent-primary focus:ring-1 focus:ring-accent-primary/20 outline-none transition-all placeholder:text-text-tertiary"
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-text-secondary uppercase tracking-wider ml-1">Quick Search</label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+                <input
+                  type="text"
+                  placeholder="Search name or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-surface-2 border border-border-app/50 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:border-accent-primary focus:ring-1 focus:ring-accent-primary/20 outline-none transition-all placeholder:text-text-tertiary"
+                />
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* QR Code Input */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700">
-            Scan QR Code or Enter ID
-          </label>
-          <input
-            type="text"
-            placeholder="Place cursor here and scan QR code..."
-            value={qrInput}
-            onChange={(e) => setQrInput(e.target.value)}
-            onKeyUp={handleQRInput}
-            className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-          />
-        </div>
+          {/* List */}
+          <div className="space-y-3">
+            <h3 className="text-xs font-medium text-text-secondary uppercase tracking-wider ml-1">Attendees</h3>
+            <div className="space-y-2">
+              {filteredAttendees.length > 0 ? (
+                filteredAttendees.map((attendee) => {
+                  const attendeeId = attendee._id || attendee.id
+                  const isCheckedIn = checkedInUsers.has(attendeeId)
+                  const isLoading = loadingStates[attendeeId]
 
-        {/* Search Input */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700">Search Attendees</label>
-          <input
-            type="text"
-            placeholder="Search by name or email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-          />
-        </div>
-
-        {/* Attendees List */}
-        <div className="max-h-96 space-y-2 overflow-y-auto">
-          {filteredAttendees.length > 0 ? (
-            filteredAttendees.map((attendee) => {
-              const attendeeId = attendee._id || attendee.id
-              const isCheckedIn = checkedInUsers.has(attendeeId)
-              const isLoading = loadingStates[attendeeId]
-
-              return (
-                <div
-                  key={attendeeId}
-                  className={`flex items-center justify-between rounded-lg border p-3 transition-colors ${
-                    isCheckedIn
-                      ? 'border-green-300 bg-green-50'
-                      : 'border-gray-200 bg-white hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className={`font-medium ${
-                        isCheckedIn ? 'text-green-700' : 'text-gray-800'
+                  return (
+                    <div
+                      key={attendeeId}
+                      className={`group flex items-center justify-between p-4 rounded-xl border transition-all ${
+                        isCheckedIn
+                          ? 'bg-green-500/5 border-green-500/20'
+                          : 'bg-surface-2/30 border-border-app/30 hover:bg-surface-2/50 hover:border-border-app/50'
                       }`}
                     >
-                      {attendee.name}
-                    </p>
-                    <p className="truncate text-sm text-gray-600">{attendee.email}</p>
-                    {attendee.rsvpStatus && (
-                      <span className="mt-1 inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-700">
-                        RSVP: {attendee.rsvpStatus}
-                      </span>
-                    )}
-                  </div>
-
-                  {isCheckedIn ? (
-                    <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500">
-                        <UserCheckIcon className="h-5 w-5 text-white" />
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border font-bold text-xs shrink-0 ${
+                          isCheckedIn ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-surface-3 border-border-app/50 text-text-secondary'
+                        }`}>
+                          {attendee.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <p className={`font-semibold text-sm truncate ${isCheckedIn ? 'text-green-400' : 'text-text-primary'}`}>
+                            {attendee.name}
+                          </p>
+                          <p className="text-xs text-text-tertiary truncate">{attendee.email}</p>
+                          {attendee.rsvpStatus && (
+                            <span className="mt-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                              RSVP: {attendee.rsvpStatus}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <span className="text-sm font-semibold text-green-700">Checked In</span>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => handleCheckIn(attendee)}
-                      disabled={isLoading}
-                      className="ml-3 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
-                    >
-                      {isLoading ? (
-                        <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+
+                      {isCheckedIn ? (
+                        <div className="flex items-center gap-2 text-green-500 shrink-0">
+                          <CheckCircle2 className="w-5 h-5" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest hidden sm:inline">Verified</span>
+                        </div>
                       ) : (
-                        'Check In'
+                        <button
+                          onClick={() => handleCheckIn(attendee)}
+                          disabled={isLoading}
+                          className="px-4 py-1.5 rounded-lg bg-accent-primary text-white text-xs font-bold hover:bg-accent-primary/90 disabled:opacity-50 transition-all shadow-lg shadow-accent-primary/10 active:scale-95"
+                        >
+                          {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Check In'}
+                        </button>
                       )}
-                    </button>
-                  )}
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="py-12 flex flex-col items-center justify-center text-center space-y-4 border-2 border-dashed border-border-app/20 rounded-2xl">
+                  <div className="w-12 h-12 rounded-full bg-surface-2 flex items-center justify-center">
+                    <Info className="w-6 h-6 text-text-tertiary" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-text-secondary font-medium">No attendees found</p>
+                    <p className="text-text-tertiary text-xs">Try adjusting your search terms</p>
+                  </div>
                 </div>
-              )
-            })
-          ) : (
-            <div className="py-8 text-center">
-              <p className="text-gray-600">
-                {searchTerm ? 'No attendees match your search' : 'No attendees available'}
-              </p>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Footer Actions */}
-        <div className="flex gap-3 border-t border-gray-200 pt-4">
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-border-app/50 bg-surface-2/30 flex gap-4">
           <button
             onClick={onClose}
-            className="flex-1 rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="flex-1 py-2 rounded-xl text-sm font-semibold text-text-secondary hover:text-text-primary hover:bg-surface-3 border border-border-app/50 transition-all"
           >
-            Close
+            Cancel Session
           </button>
           <button
             onClick={() => {
-              dispatch(
-                showToast({ message: 'Check-in session ended', type: 'success' })
-              )
+              dispatch(showToast({ message: 'Session finalized', type: 'success' }))
               onClose()
             }}
-            className="flex-1 rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-700"
+            className="flex-1 py-2 rounded-xl bg-surface-3 text-text-primary text-sm font-semibold hover:bg-surface-4 border border-border-app/50 shadow-sm transition-all"
           >
-            End Check-In
+            End Verification
           </button>
         </div>
       </div>
@@ -227,3 +239,4 @@ const EventAttendanceCheckIn = ({ eventId, attendees = [], onClose, onSuccess })
 }
 
 export default EventAttendanceCheckIn
+

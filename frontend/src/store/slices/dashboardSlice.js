@@ -331,7 +331,12 @@ const dashboardSlice = createSlice({
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.usersLoading = false
-        state.users = action.payload.data || action.payload
+        // Extract users array from the response structure
+        const usersData = action.payload.data?.users || (Array.isArray(action.payload.data) ? action.payload.data : action.payload.users || [])
+        state.users = usersData
+        state.totalUsers = action.payload.data?.total || action.payload.total || (Array.isArray(usersData) ? usersData.length : 0)
+        state.totalPages = action.payload.data?.pages || action.payload.pages || 1
+        state.currentPage = action.payload.data?.page || action.payload.page || 1
         state.lastFetchTime.users = Date.now()
       })
       .addCase(fetchUsers.rejected, (state, action) => {
@@ -347,7 +352,8 @@ const dashboardSlice = createSlice({
       })
       .addCase(fetchClasses.fulfilled, (state, action) => {
         state.classesLoading = false
-        state.classes = action.payload.data || action.payload
+        // Extract classes array from the response structure
+        state.classes = action.payload.data?.classes || (Array.isArray(action.payload.data) ? action.payload.data : action.payload.classes || [])
         state.lastFetchTime.classes = Date.now()
       })
       .addCase(fetchClasses.rejected, (state, action) => {
@@ -363,6 +369,7 @@ const dashboardSlice = createSlice({
       })
       .addCase(fetchReports.fulfilled, (state, action) => {
         state.reportsLoading = false
+        // Extract reports data
         state.reports = action.payload.data || action.payload
         state.lastFetchTime.reports = Date.now()
       })
@@ -379,8 +386,10 @@ const dashboardSlice = createSlice({
       })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.notificationsLoading = false
-        state.notifications = action.payload.data || action.payload
-        state.unreadCount = state.notifications.filter((n) => !n.read).length
+        // Extract notifications array from the response structure
+        const notifications = action.payload.data?.notifications || (Array.isArray(action.payload.data) ? action.payload.data : action.payload.notifications || [])
+        state.notifications = notifications
+        state.unreadCount = Array.isArray(notifications) ? notifications.filter((n) => !n.read).length : 0
         state.lastFetchTime.notifications = Date.now()
       })
       .addCase(fetchNotifications.rejected, (state, action) => {

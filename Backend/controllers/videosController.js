@@ -158,7 +158,6 @@ const uploadVideo = async (req, res, next) => {
 
     return sendSuccess(
       res,
-      'Video uploaded successfully',
       {
         id: video._id,
         title: video.title,
@@ -169,6 +168,7 @@ const uploadVideo = async (req, res, next) => {
         duration: video.duration,
         createdAt: video.createdAt,
       },
+      'Video uploaded successfully',
       constants.HTTP_STATUS.CREATED
     );
   } catch (error) {
@@ -260,7 +260,7 @@ const getVideos = async (req, res, next) => {
       count: videos.length,
     });
 
-    return sendSuccess(res, 'Videos retrieved successfully', {
+    return sendSuccess(res, {
       videos: videos.map((video) => ({
         id: video._id,
         title: video.title,
@@ -277,7 +277,7 @@ const getVideos = async (req, res, next) => {
         total,
         pages: Math.ceil(total / limit),
       },
-    });
+    }, 'Videos retrieved successfully');
   } catch (error) {
     logger.error('Error fetching videos', { error: error.message });
     next(error);
@@ -342,7 +342,7 @@ const getVideoById = async (req, res, next) => {
 
     logger.info('Video retrieved successfully', { videoId: id });
 
-    return sendSuccess(res, 'Video retrieved successfully', {
+    return sendSuccess(res, {
       id: video._id,
       title: video.title,
       description: video.description,
@@ -362,7 +362,7 @@ const getVideoById = async (req, res, next) => {
       streamingUrl: sasUrl,
       createdAt: video.createdAt,
       updatedAt: video.updatedAt,
-    });
+    }, 'Video retrieved successfully');
   } catch (error) {
     logger.error('Error fetching video by ID', { error: error.message });
     next(error);
@@ -440,7 +440,7 @@ const updateVideo = async (req, res, next) => {
 
     logger.info('Video updated successfully', { videoId: id });
 
-    return sendSuccess(res, 'Video updated successfully', {
+    return sendSuccess(res, {
       id: video._id,
       title: video.title,
       description: video.description,
@@ -448,7 +448,7 @@ const updateVideo = async (req, res, next) => {
       duration: video.duration,
       isPublished: video.isPublished,
       updatedAt: video.updatedAt,
-    });
+    }, 'Video updated successfully');
   } catch (error) {
     logger.error('Error updating video', { error: error.message });
     next(error);
@@ -510,10 +510,10 @@ const deleteVideo = async (req, res, next) => {
 
     logger.info('Video deleted successfully', { videoId: id });
 
-    return sendSuccess(res, 'Video deleted successfully', {
+    return sendSuccess(res, {
       id: video._id,
       message: 'Video has been archived',
-    });
+    }, 'Video deleted successfully');
   } catch (error) {
     logger.error('Error deleting video', { error: error.message });
     next(error);
@@ -583,13 +583,13 @@ const logWatchProgress = async (req, res, next) => {
       completionPercentage: progress.completionPercentage,
     });
 
-    return sendSuccess(res, 'Watch progress recorded', {
+    return sendSuccess(res, {
       videoId: id,
       watchedDuration: progress.watchedDuration,
       totalDuration: progress.totalDuration,
       completionPercentage: progress.completionPercentage,
       isCompleted: progress.isCompleted,
-    });
+    }, 'Watch progress recorded');
   } catch (error) {
     logger.error('Error logging watch progress', { error: error.message });
     next(error);
@@ -641,7 +641,7 @@ const getWatchProgress = async (req, res, next) => {
       completionPercentage: progress.completionPercentage,
     });
 
-    return sendSuccess(res, 'Watch progress retrieved', progress.getFormattedProgress());
+    return sendSuccess(res, progress.getFormattedProgress(), 'Watch progress retrieved');
   } catch (error) {
     logger.error('Error fetching watch progress', { error: error.message });
     next(error);
@@ -698,7 +698,7 @@ const getVideoAnalytics = async (req, res, next) => {
 
     logger.info('Video analytics retrieved', { videoId: id, stats });
 
-    return sendSuccess(res, 'Video analytics retrieved', {
+    return sendSuccess(res, {
       videoId: id,
       title: video.title,
       totalViews: video.views,
@@ -707,7 +707,7 @@ const getVideoAnalytics = async (req, res, next) => {
       completedCount: stats.completedCount,
       completionRate: stats.averageCompletion || 0,
       averageWatchedDuration: Math.round(stats.averageWatchedDuration || 0),
-    });
+    }, 'Video analytics retrieved');
   } catch (error) {
     logger.error('Error fetching video analytics', { error: error.message });
     next(error);

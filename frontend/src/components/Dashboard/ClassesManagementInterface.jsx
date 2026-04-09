@@ -1,13 +1,32 @@
+/**
+ * Classes Management Interface — Premium Dark Theme
+ * Features:
+ * - Card-based class list
+ * - Search by name/code
+ * - Add/Edit/Delete with modal
+ * - Department/Semester info
+ * - Student count display
+ */
+
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { PlusIcon, PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Plus, Pencil, Trash2, X, Search, BookOpen, User, Layers, Hash } from 'lucide-react'
 import { addClass, updateClass, deleteClass } from '@/store/slices/dashboardSlice'
 import { showToast } from '@/store/slices/notificationSlice'
 
 const ClassesManagementInterface = () => {
   const dispatch = useDispatch()
-  const { classes } = useSelector((state) => state.dashboard)
-  const { user } = useSelector((state) => state.auth)
+  const {
+    classes = [],
+    loading,
+    error,
+    stats,
+  } = useSelector((state) => state.dashboard || {})
+
+  // Safety check: ensure classes is an array before mapping/filtering
+  const safeClasses = Array.isArray(classes) ? classes : []
+  
+  const { user } = useSelector((state) => state.auth || {})
   
   const [searchTerm, setSearchTerm] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -22,7 +41,7 @@ const ClassesManagementInterface = () => {
     teacher: ''
   })
 
-  const filteredClasses = classes.filter(cls =>
+  const filteredClasses = safeClasses.filter(cls =>
     cls.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     cls.subject?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     cls.class_code?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -81,153 +100,162 @@ const ClassesManagementInterface = () => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Active Classes</h2>
+    <div className="card h-full flex flex-col">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+          <h2 className="text-lg font-bold text-text-primary font-heading">Active Classes</h2>
+          <p className="text-xs text-text-muted mt-0.5">Manage course offerings and assignments</p>
+        </div>
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="btn-primary btn-sm flex items-center gap-2"
         >
-          <PlusIcon className="h-5 w-5 mr-2" />
-          Add New Class
+          <Plus className="h-4 w-4" />
+          Add Class
         </button>
       </div>
 
-      <div className="mb-6">
+      <div className="relative mb-6">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
         <input
           type="text"
           placeholder="Search by name, subject, or code..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          className="input pl-10"
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-4 overflow-y-auto pr-1">
         {filteredClasses.map((cls) => (
-          <div key={cls._id} className="border border-gray-100 rounded-xl p-5 hover:shadow-lg transition-all bg-gray-50 group">
+          <div key={cls._id} className="p-4 rounded-xl bg-surface-2 border border-border-app/50 hover:border-primary/30 hover:bg-surface-3 transition-all group relative overflow-hidden">
+            {/* Background Accent */}
+            <div className={`absolute top-0 right-0 w-20 h-20 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary/5 blur-xl group-hover:bg-primary/10 transition-colors`} />
+            
             <div className="flex justify-between items-start mb-3">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-1 rounded">
+              <div className="min-w-0">
+                <span className="badge-primary mb-1.5 uppercase tracking-widest text-[10px]">
                   {cls.class_code}
                 </span>
-                <h3 className="text-lg font-bold text-gray-900 mt-2">{cls.name}</h3>
+                <h3 className="text-base font-bold text-text-primary truncate font-heading">{cls.name}</h3>
+                <p className="text-xs text-text-muted truncate mt-0.5">{cls.subject}</p>
               </div>
-              <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => handleOpenModal(cls)}
-                  className="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg"
-                  title="Edit Class"
+                  className="btn-icon p-1.5 text-text-muted hover:text-primary hover:bg-primary/10"
                 >
-                  <PencilIcon className="h-5 w-5" />
+                  <Pencil className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={() => handleDelete(cls._id)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                  title="Delete Class"
+                  className="btn-icon p-1.5 text-text-muted hover:text-danger hover:bg-danger/10"
                 >
-                  <TrashIcon className="h-5 w-5" />
+                  <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
             </div>
             
-            <div className="space-y-2 text-sm text-gray-600">
-              <p className="flex justify-between">
-                <span className="font-medium text-gray-500">Subject:</span>
-                <span className="text-gray-900 font-semibold">{cls.subject}</span>
-              </p>
-              <p className="flex justify-between">
-                <span className="font-medium text-gray-500">Department:</span>
-                <span>{cls.department}</span>
-              </p>
-              <p className="flex justify-between">
-                <span className="font-medium text-gray-500">Semester:</span>
-                <span>{cls.semester}</span>
-              </p>
-              <p className="flex justify-between">
-                <span className="font-medium text-gray-500">Students:</span>
-                <span className="bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full text-xs font-bold">
-                  {cls.students?.length || 0}
+            <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border-app/30">
+              <div className="flex items-center gap-2 text-text-muted">
+                <Layers className="w-3.5 h-3.5 text-accent" />
+                <span className="text-[11px] font-medium truncate">{cls.department}</span>
+              </div>
+              <div className="flex items-center gap-2 text-text-muted">
+                <Hash className="w-3.5 h-3.5 text-info" />
+                <span className="text-[11px] font-medium">Sem {cls.semester}</span>
+              </div>
+              <div className="flex items-center gap-2 text-text-muted">
+                <User className="w-3.5 h-3.5 text-primary" />
+                <span className="text-[11px] font-medium line-clamp-1">
+                  {cls.students?.length || 0} Students
                 </span>
-              </p>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
       {filteredClasses.length === 0 && (
-        <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-          <p className="text-gray-500 text-lg">No classes found matching your criteria</p>
+        <div className="empty-state py-12 flex-1">
+          <BookOpen className="h-10 w-10 text-text-muted/20 mb-3" />
+          <p className="text-sm text-text-muted">No classes found</p>
         </div>
       )}
 
       {/* Modal Overlay */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-center p-6 border-b">
-              <h3 className="text-xl font-bold text-gray-900">
-                {editingClass ? 'Edit Class' : 'Add New Class'}
-              </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">
-                <XMarkIcon className="h-6 w-6" />
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="overlay" onClick={() => setIsModalOpen(false)} />
+          <div className="card w-full max-w-md relative z-10 animate-scale-in">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-xl font-bold text-text-primary font-heading">
+                  {editingClass ? 'Edit Class' : 'Add New Class'}
+                </h3>
+                <p className="text-xs text-text-muted mt-1">
+                  {editingClass ? 'Update existing class details' : 'Configure a new class for the system'}
+                </p>
+              </div>
+              <button onClick={() => setIsModalOpen(false)} className="btn-icon text-text-muted hover:text-text-primary">
+                <X className="h-5 w-5" />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Class Name</label>
+                <label className="input-label">Class Name</label>
                 <input
                   required
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="input"
                   placeholder="e.g. Computer Science A"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
+                <label className="input-label">Subject</label>
                 <input
                   required
                   type="text"
                   value={formData.subject}
                   onChange={(e) => setFormData({...formData, subject: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="input"
                   placeholder="e.g. Data Structures"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Class Code</label>
+                  <label className="input-label">Class Code</label>
                   <input
                     required
                     type="text"
                     value={formData.class_code}
                     onChange={(e) => setFormData({...formData, class_code: e.target.value})}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="input"
                     placeholder="e.g. CS101"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Semester</label>
+                  <label className="input-label">Semester</label>
                   <select
                     value={formData.semester}
                     onChange={(e) => setFormData({...formData, semester: e.target.value})}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="select"
                   >
                     {[1,2,3,4,5,6,7,8].map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Department</label>
+                <label className="input-label">Department</label>
                 <input
                   required
                   type="text"
                   value={formData.department}
                   onChange={(e) => setFormData({...formData, department: e.target.value})}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="input"
                   placeholder="e.g. Engineering"
                 />
               </div>
@@ -236,13 +264,13 @@ const ClassesManagementInterface = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="btn-secondary flex-1"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-bold"
+                  className="btn-primary flex-1"
                 >
                   {editingClass ? 'Update Class' : 'Create Class'}
                 </button>
@@ -255,4 +283,4 @@ const ClassesManagementInterface = () => {
   )
 }
 
-export default ClassesManagementInterface
+export default ClassesManagementInterface

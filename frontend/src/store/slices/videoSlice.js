@@ -122,7 +122,9 @@ const videoSlice = createSlice({
       })
       .addCase(fetchVideos.fulfilled, (state, action) => {
         state.loading = false
-        state.videos = Array.isArray(action.payload) ? action.payload : []
+        // Extract videos array from action.payload.data
+        const videosData = action.payload.data?.videos || (Array.isArray(action.payload.data) ? action.payload.data : action.payload.videos || [])
+        state.videos = Array.isArray(videosData) ? videosData : []
       })
       .addCase(fetchVideos.rejected, (state, action) => {
         state.loading = false
@@ -137,7 +139,7 @@ const videoSlice = createSlice({
       })
       .addCase(fetchVideoById.fulfilled, (state, action) => {
         state.loading = false
-        state.currentVideo = action.payload
+        state.currentVideo = action.payload.data || action.payload
       })
       .addCase(fetchVideoById.rejected, (state, action) => {
         state.loading = false
@@ -154,7 +156,10 @@ const videoSlice = createSlice({
       .addCase(uploadVideo.fulfilled, (state, action) => {
         state.loading = false
         state.uploadProgress = 100
-        state.videos.unshift(action.payload)
+        const newVideo = action.payload.data || action.payload
+        if (newVideo && typeof newVideo === 'object') {
+          state.videos.unshift(newVideo)
+        }
       })
       .addCase(uploadVideo.rejected, (state, action) => {
         state.loading = false
@@ -170,12 +175,15 @@ const videoSlice = createSlice({
       })
       .addCase(updateVideo.fulfilled, (state, action) => {
         state.loading = false
-        const index = state.videos.findIndex((v) => v._id === action.payload._id)
-        if (index !== -1) {
-          state.videos[index] = action.payload
-        }
-        if (state.currentVideo?._id === action.payload._id) {
-          state.currentVideo = action.payload
+        const updatedVideo = action.payload.data || action.payload
+        const index = state.videos.findIndex((v) => v._id === updatedVideo._id)
+        if (updatedVideo && typeof updatedVideo === 'object') {
+          if (index !== -1) {
+            state.videos[index] = updatedVideo
+          }
+          if (state.currentVideo?._id === updatedVideo._id) {
+            state.currentVideo = updatedVideo
+          }
         }
       })
       .addCase(updateVideo.rejected, (state, action) => {
@@ -207,8 +215,10 @@ const videoSlice = createSlice({
         state.error = null
       })
       .addCase(updateWatchProgress.fulfilled, (state, action) => {
-        if (state.currentVideo?._id === action.payload._id) {
-          state.currentVideo = action.payload
+        const progressData = action.payload.data || action.payload
+        // We don't usually update currentVideo based on watch progress unless it returns the video object
+        if (progressData && progressData._id && state.currentVideo?._id === progressData._id) {
+          state.currentVideo = progressData
         }
       })
       .addCase(updateWatchProgress.rejected, (state, action) => {

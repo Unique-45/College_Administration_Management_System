@@ -7,7 +7,7 @@ import EventAnalyticsDashboard from '@/components/Event/EventAnalyticsDashboard'
  */
 const EventAnalyticsPage = () => {
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="page-container">
       <EventAnalyticsDashboard />
     </div>
   )

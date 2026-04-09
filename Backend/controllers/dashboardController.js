@@ -90,7 +90,7 @@ const getDashboardStats = async (req, res, next) => {
       userCounts,
     });
 
-    return sendSuccess(res, 'Dashboard statistics retrieved successfully', {
+    return sendSuccess(res, {
       totalUsers,
       usersByRole: {
         admin: userCounts.admin,
@@ -105,7 +105,7 @@ const getDashboardStats = async (req, res, next) => {
         apiStatus: 'operational',
       },
       timestamp: new Date().toISOString(),
-    });
+    }, 'Dashboard statistics retrieved successfully');
   } catch (error) {
     logger.error('Error fetching dashboard statistics', { error: error.message });
     next(error);
@@ -176,7 +176,7 @@ const getAdminDashboard = async (req, res, next) => {
 
     logger.info('Admin dashboard retrieved successfully', { adminId: req.user._id });
 
-    return sendSuccess(res, 'Admin dashboard retrieved successfully', {
+    return sendSuccess(res, {
       summary: {
         totalUsers: userCounts.admin + userCounts.teacher + userCounts.student,
         totalAdmins: userCounts.admin,
@@ -198,7 +198,7 @@ const getAdminDashboard = async (req, res, next) => {
         students: cls.studentCount,
       })),
       timestamp: new Date().toISOString(),
-    });
+    }, 'Admin dashboard retrieved successfully');
   } catch (error) {
     logger.error('Error fetching admin dashboard', { error: error.message });
     next(error);
@@ -250,7 +250,7 @@ const getTeacherDashboard = async (req, res, next) => {
       classCount: stats.totalClasses,
     });
 
-    return sendSuccess(res, 'Teacher dashboard retrieved successfully', {
+    return sendSuccess(res, {
       summary: {
         myClasses: stats.totalClasses,
         myStudents: stats.totalStudents || 0,
@@ -263,7 +263,7 @@ const getTeacherDashboard = async (req, res, next) => {
         schedule: cls.schedule || {},
       })),
       timestamp: new Date().toISOString(),
-    });
+    }, 'Teacher dashboard retrieved successfully');
   } catch (error) {
     logger.error('Error fetching teacher dashboard', { error: error.message });
     next(error);
@@ -299,7 +299,7 @@ const getStudentDashboard = async (req, res, next) => {
       classCount,
     });
 
-    return sendSuccess(res, 'Student dashboard retrieved successfully', {
+    return sendSuccess(res, {
       summary: {
         enrolledClasses: classCount,
       },
@@ -315,7 +315,7 @@ const getStudentDashboard = async (req, res, next) => {
         schedule: cls.schedule || {},
       })),
       timestamp: new Date().toISOString(),
-    });
+    }, 'Student dashboard retrieved successfully');
   } catch (error) {
     logger.error('Error fetching student dashboard', { error: error.message });
     next(error);
@@ -351,7 +351,7 @@ const getDashboardClasses = async (req, res, next) => {
         .lean();
     }
 
-    return sendSuccess(res, 'Classes retrieved successfully', {
+    return sendSuccess(res, {
       classes: classes.map((cls) => ({
         id: cls._id,
         name: cls.name,
@@ -363,7 +363,7 @@ const getDashboardClasses = async (req, res, next) => {
         schedule: cls.schedule || {},
       })),
       total: classes.length,
-    });
+    }, 'Classes retrieved successfully');
   } catch (error) {
     logger.error('Error fetching classes', { error: error.message });
     next(error);
@@ -398,7 +398,7 @@ const getDashboardUsers = async (req, res, next) => {
       User.countDocuments(filter),
     ]);
 
-    return sendSuccess(res, 'Users retrieved successfully', {
+    return sendSuccess(res, {
       users: users.map((u) => ({
         id: u._id,
         name: u.name,
@@ -413,7 +413,7 @@ const getDashboardUsers = async (req, res, next) => {
       page: Number(page),
       limit: Number(limit),
       pages: Math.ceil(total / limit),
-    });
+    }, 'Users retrieved successfully');
   } catch (error) {
     logger.error('Error fetching users', { error: error.message });
     next(error);
@@ -439,14 +439,14 @@ const getDashboardReports = async (req, res, next) => {
     const roleCounts = { admin: 0, teacher: 0, student: 0 };
     usersByRole.forEach((r) => { roleCounts[r._id] = r.count; });
 
-    return sendSuccess(res, 'Reports retrieved successfully', {
+    return sendSuccess(res, {
       summary: {
         totalUsers,
         totalClasses,
         usersByRole: roleCounts,
       },
       generatedAt: new Date().toISOString(),
-    });
+    }, 'Reports retrieved successfully');
   } catch (error) {
     logger.error('Error fetching reports', { error: error.message });
     next(error);

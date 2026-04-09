@@ -7,7 +7,7 @@ import EventCalendarView from '@/components/Event/EventCalendarView'
  */
 const EventCalendarPage = () => {
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="page-container">
       <EventCalendarView />
     </div>
   )
