@@ -3,6 +3,9 @@
  * Persists authentication state to localStorage
  */
 
+import config from '@/config/environment'
+import { storeAuthData, clearAuthData } from '@/utils/tokenUtils'
+
 export const authMiddleware = (store) => (next) => (action) => {
   const result = next(action)
   const state = store.getState()
@@ -11,18 +14,18 @@ export const authMiddleware = (store) => (next) => (action) => {
   if (action.type.startsWith('auth/')) {
     const auth = state.auth
     if (auth.isAuthenticated && auth.token) {
-      localStorage.setItem(
-        'authState',
-        JSON.stringify({
-          user: auth.user,
-          token: auth.token,
-          refreshToken: auth.refreshToken,
-        })
-      )
-      localStorage.setItem('authToken', auth.token)
+      storeAuthData({
+        user: auth.user,
+        token: auth.token,
+        refreshToken: auth.refreshToken,
+      })
     } else if (!auth.isAuthenticated) {
+      clearAuthData()
       localStorage.removeItem('authState')
       localStorage.removeItem('authToken')
+      localStorage.removeItem(config.auth.tokenKey)
+      localStorage.removeItem(config.auth.refreshTokenKey)
+      localStorage.removeItem('user')
     }
   }
 

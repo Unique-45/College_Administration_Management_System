@@ -206,20 +206,38 @@ const AttendancePage = () => {
                       <td className="text-center">
                         <div className="flex justify-center gap-2">
                           {[
-                            { id: 'present', label: 'Present', icon: CheckCircle2, color: 'success' },
-                            { id: 'absent', label: 'Absent', icon: XCircle, color: 'danger' },
-                            { id: 'late', label: 'Late', icon: Clock, color: 'warning' }
+                            {
+                              id: 'present',
+                              label: 'Present',
+                              icon: CheckCircle2,
+                              activeClass: 'bg-success/20 text-success border-success/50 shadow-sm',
+                              activeIconClass: 'text-success',
+                            },
+                            {
+                              id: 'absent',
+                              label: 'Absent',
+                              icon: XCircle,
+                              activeClass: 'bg-danger/20 text-danger border-danger/50 shadow-sm',
+                              activeIconClass: 'text-danger',
+                            },
+                            {
+                              id: 'late',
+                              label: 'Late',
+                              icon: Clock,
+                              activeClass: 'bg-warning/20 text-warning border-warning/50 shadow-sm',
+                              activeIconClass: 'text-warning',
+                            },
                           ].map(status => (
                             <button
                               key={status.id}
                               onClick={() => handleStatusChange(record.studentId, status.id)}
                               className={`flex items-center gap-2 px-4 py-2 rounded-btn text-xs font-bold transition-all border ${
                                 record.status === status.id 
-                                  ? `bg-${status.color}/20 text-${status.color} border-${status.color}/50 shadow-sm`
+                                  ? status.activeClass
                                   : 'bg-surface-3 text-text-muted border-border-app hover:border-text-muted'
                               }`}
                             >
-                              <status.icon className={`w-3.5 h-3.5 ${record.status === status.id ? `text-${status.color}` : 'opacity-40'}`} />
+                              <status.icon className={`w-3.5 h-3.5 ${record.status === status.id ? status.activeIconClass : 'opacity-40'}`} />
                               {status.label}
                             </button>
                           ))}

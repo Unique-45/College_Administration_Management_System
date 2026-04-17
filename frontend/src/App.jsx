@@ -9,11 +9,10 @@
 
 import { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { setupInterceptors } from '@/middleware/setupInterceptors'
-import { useAppDispatch } from '@/hooks/useRedux'
+import { setupInterceptors, refreshAccessToken } from '@/middleware/setupInterceptors'
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux'
 import store from '@/store/store'
-import { setAuth } from '@/store/slices/authSlice'
-import config from '@/config/environment'
+import { clearAuth } from '@/store/slices/authSlice'
 
 // Auth Pages
 import LoginPage from '@/pages/LoginPage'
@@ -46,10 +45,11 @@ import EventCalendarPage from '@/pages/EventCalendarPage'
 import EventAnalyticsPage from '@/pages/EventAnalyticsPage'
 
 // Utils
-import { getStoredUser, isTokenValid } from '@/utils/tokenUtils'
+import { isTokenValid, shouldRefreshToken, clearAuthData } from '@/utils/tokenUtils'
 
 function App() {
   const dispatch = useAppDispatch()
+  const { token, refreshToken, isAuthenticated } = useAppSelector((state) => state.auth)
 
   /**
    * Initialize authentication on app mount
@@ -60,12 +60,62 @@ function App() {
     // Set up request/response interceptors
     setupInterceptors(store)
 
-    // Verify token validity on load
-    const token = store.getState().auth.token
-    if (token && !isTokenValid(token)) {
-      dispatch(logout())
+    const restoreSession = async () => {
+      const authState = store.getState().auth
+      const hasAccessToken = Boolean(authState.token)
+      const hasRefreshToken = Boolean(authState.refreshToken)
+
+      // Keep valid access token; no need to do anything.
+      if (hasAccessToken && isTokenValid(authState.token)) {
+        return
+      }
+
+      // Attempt recovery with refresh token instead of logging out immediately.
+      if (hasRefreshToken) {
+        try {
+          await refreshAccessToken()
+          return
+        } catch (error) {
+          console.error('Session restore failed:', error)
+        }
+      }
+
+      if (hasAccessToken || hasRefreshToken) {
+        dispatch(clearAuth())
+        clearAuthData()
+      }
     }
+
+    restoreSession()
   }, [dispatch])
+
+  useEffect(() => {
+    if (!isAuthenticated || !token || !refreshToken) {
+      return undefined
+    }
+
+    const intervalId = window.setInterval(async () => {
+      if (!token) {
+        return
+      }
+
+      if (!shouldRefreshToken(token)) {
+        return
+      }
+
+      try {
+        await refreshAccessToken()
+      } catch (error) {
+        console.error('Automatic token refresh failed:', error)
+        dispatch(clearAuth())
+        clearAuthData()
+      }
+    }, 30 * 1000)
+
+    return () => {
+      window.clearInterval(intervalId)
+    }
+  }, [dispatch, isAuthenticated, refreshToken, token])
 
   return (
     <Router>
@@ -307,22 +357,20 @@ function App() {
         <Route
           path="/unauthorized"
           element={
-            <AuthLayout>
-              <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-                <div className="text-center">
-                  <h1 className="text-4xl font-bold text-gray-900">403</h1>
-                  <p className="mt-2 text-lg text-gray-600">
-                    You don't have permission to access this resource
+            <div className="min-h-screen bg-app px-4 py-8">
+              <div className="mx-auto flex min-h-[80vh] max-w-xl items-center justify-center">
+                <div className="card w-full text-center">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-danger">Access denied</p>
+                  <h1 className="mt-3 text-4xl font-semibold text-text-primary">403</h1>
+                  <p className="mt-2 text-sm text-text-muted">
+                    You do not have permission to access this resource.
                   </p>
-                  <a
-                    href="/login"
-                    className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                  >
+                  <a href="/login" className="btn-primary mt-6 inline-flex">
                     Go to Login
                   </a>
                 </div>
               </div>
-            </AuthLayout>
+            </div>
           }
         />
 

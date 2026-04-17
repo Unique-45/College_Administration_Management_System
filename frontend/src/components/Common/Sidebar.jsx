@@ -162,7 +162,6 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
           className="overlay lg:hidden animate-fade-in"
@@ -170,32 +169,29 @@ const Sidebar = () => {
         />
       )}
 
-      {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-screen bg-surface-1 border-r border-border-app overflow-y-auto overflow-x-hidden transition-all duration-300 ease-in-out z-50 flex flex-col
+        className={`fixed left-0 top-0 z-50 flex h-screen flex-col overflow-y-auto overflow-x-hidden border-r border-white/10 sidebar-surface text-[rgb(var(--sidebar-text))] shadow-2xl transition-all duration-300 ease-in-out
           ${sidebarCollapsed ? 'w-[68px]' : 'w-64'}
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
-        {/* Logo */}
-        <div className={`flex items-center h-16 px-4 border-b border-border-app/50 flex-shrink-0 ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
+        <div className={`flex h-16 flex-shrink-0 items-center border-b border-white/10 px-4 ${sidebarCollapsed ? 'justify-center' : 'gap-3'}`}>
           <div className="w-9 h-9 bg-gradient-premium rounded-btn flex items-center justify-center flex-shrink-0">
             <GraduationCap className="w-5 h-5 text-white" />
           </div>
           {!sidebarCollapsed && (
             <div className="animate-fade-in">
-              <h1 className="text-base font-bold text-text-primary font-heading tracking-tight">CampusFlow</h1>
-              <p className="text-[10px] text-text-muted font-medium uppercase tracking-widest">Admin Suite</p>
+              <h1 className="font-heading text-base font-semibold tracking-tight text-white">CampusFlow</h1>
+              <p className="text-[10px] font-medium uppercase tracking-widest text-slate-300">Admin Suite</p>
             </div>
           )}
         </div>
 
-        {/* Navigation */}
         <nav className={`flex-1 py-4 space-y-1 ${sidebarCollapsed ? 'px-2' : 'px-3'}`}>
           {menuSections.map((section, sIdx) => (
             <div key={sIdx} className={sIdx > 0 ? 'mt-6' : ''}>
               {!sidebarCollapsed && (
-                <p className="px-3 mb-2 text-[10px] font-semibold text-text-muted/60 uppercase tracking-widest">
+                <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-slate-300/70">
                   {section.title}
                 </p>
               )}
@@ -210,15 +206,15 @@ const Sidebar = () => {
                           onClick={() =>
                             setExpandedMenu(expandedMenu === item.href ? null : item.href)
                           }
-                          className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} px-3 py-2.5 rounded-btn text-sm font-medium transition-all duration-200 group ${
+                          className={`group w-full rounded-btn px-3 py-2.5 text-sm font-medium transition-all duration-200 ${sidebarCollapsed ? 'justify-center' : 'justify-between'} flex items-center ${
                             isLinkActive(item.href)
-                              ? 'bg-primary/10 text-primary-400'
-                              : 'text-text-muted hover:bg-surface-2 hover:text-text-primary'
+                              ? 'bg-primary/20 text-white'
+                              : 'text-slate-300 hover:bg-white/10 hover:text-white'
                           }`}
                           title={sidebarCollapsed ? item.label : undefined}
                         >
                           <span className="flex items-center gap-3">
-                            <item.icon className={`w-[18px] h-[18px] flex-shrink-0 ${isLinkActive(item.href) ? 'text-primary' : 'text-text-muted group-hover:text-text-secondary'}`} />
+                            <item.icon className={`h-[18px] w-[18px] flex-shrink-0 ${isLinkActive(item.href) ? 'text-white' : 'text-slate-300 group-hover:text-white'}`} />
                             {!sidebarCollapsed && item.label}
                           </span>
                           {!sidebarCollapsed && (
@@ -230,9 +226,8 @@ const Sidebar = () => {
                           )}
                         </button>
 
-                        {/* Submenu Items */}
                         {!sidebarCollapsed && expandedMenu === item.href && (
-                          <div className="mt-1 ml-5 space-y-0.5 border-l border-border-app/50 pl-3 animate-slide-up">
+                          <div className="mt-1 ml-5 space-y-0.5 border-l border-white/10 pl-3 animate-slide-up">
                             {item.submenu.map((subitem) => (
                               <Link
                                 key={subitem.href}
@@ -240,8 +235,8 @@ const Sidebar = () => {
                                 onClick={() => dispatch(toggleSidebar())}
                                 className={`block px-3 py-2 rounded-btn text-sm transition-all duration-200 ${
                                   isLinkActive(subitem.href)
-                                    ? 'text-primary-400 font-medium bg-primary/5'
-                                    : 'text-text-muted hover:text-text-primary hover:bg-surface-2'
+                                    ? 'bg-primary/20 font-semibold text-white'
+                                    : 'text-slate-300 hover:bg-white/10 hover:text-white'
                                 }`}
                               >
                                 {subitem.label}
@@ -254,17 +249,17 @@ const Sidebar = () => {
                       <Link
                         to={item.href}
                         onClick={() => dispatch(toggleSidebar())}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-btn text-sm font-medium transition-all duration-200 group relative ${
+                        className={`group relative flex items-center gap-3 rounded-btn px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                           isLinkActive(item.href)
-                            ? 'bg-primary/10 text-primary-400'
-                            : 'text-text-muted hover:bg-surface-2 hover:text-text-primary'
+                            ? 'bg-primary/20 text-white'
+                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
                         } ${sidebarCollapsed ? 'justify-center' : ''}`}
                         title={sidebarCollapsed ? item.label : undefined}
                       >
                         {isLinkActive(item.href) && (
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />
                         )}
-                        <item.icon className={`w-[18px] h-[18px] flex-shrink-0 ${isLinkActive(item.href) ? 'text-primary' : 'text-text-muted group-hover:text-text-secondary'}`} />
+                        <item.icon className={`h-[18px] w-[18px] flex-shrink-0 ${isLinkActive(item.href) ? 'text-white' : 'text-slate-300 group-hover:text-white'}`} />
                         {!sidebarCollapsed && item.label}
                       </Link>
                     )}
@@ -275,20 +270,19 @@ const Sidebar = () => {
           ))}
         </nav>
 
-        {/* Sidebar Footer */}
-        <div className={`flex-shrink-0 border-t border-border-app/50 p-3 ${sidebarCollapsed ? 'text-center' : ''}`}>
+        <div className={`flex-shrink-0 border-t border-white/10 p-3 ${sidebarCollapsed ? 'text-center' : ''}`}>
           {!sidebarCollapsed && (
-            <div className="flex items-center gap-3 px-3 py-2 rounded-btn bg-surface-2/50 mb-3">
-              <Sparkles className="w-4 h-4 text-accent flex-shrink-0" />
+            <div className="sidebar-elevated mb-3 flex items-center gap-3 rounded-btn px-3 py-2">
+              <Sparkles className="h-4 w-4 flex-shrink-0 text-accent" />
               <div className="min-w-0">
-                <p className="text-xs font-medium text-text-secondary truncate">CampusFlow v2.0</p>
-                <p className="text-[10px] text-text-muted">© 2026</p>
+                <p className="truncate text-xs font-medium text-white">CampusFlow v2.0</p>
+                <p className="text-[10px] text-slate-300">© 2026</p>
               </div>
             </div>
           )}
           <button
             onClick={() => dispatch(toggleSidebarCollapsed())}
-            className="hidden lg:flex items-center justify-center w-full p-2 rounded-btn text-text-muted hover:bg-surface-2 hover:text-text-primary transition-colors"
+            className="hidden w-full items-center justify-center rounded-btn p-2 text-slate-300 transition-colors hover:bg-white/10 hover:text-white lg:flex"
             title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             <ChevronLeft className={`w-4 h-4 transition-transform duration-300 ${sidebarCollapsed ? 'rotate-180' : ''}`} />

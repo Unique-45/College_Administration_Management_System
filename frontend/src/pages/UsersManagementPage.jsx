@@ -22,12 +22,14 @@ const UsersManagementPage = () => {
 
   if (usersError) {
     return (
-      <div className="bg-red-50 p-6 rounded-lg text-red-600">
-        <h2 className="text-lg font-bold">Error Loading Users</h2>
-        <p>{usersError}</p>
+      <div className="status-banner-danger">
+        <div>
+          <h2 className="text-base font-semibold">Error Loading Users</h2>
+          <p className="text-sm">{usersError}</p>
+        </div>
         <button 
           onClick={() => dispatch(fetchUsers())}
-          className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          className="btn-danger ml-auto"
         >
           Retry
         </button>
@@ -36,7 +38,7 @@ const UsersManagementPage = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="page-container">
       <UsersManagementTable />
     </div>
   )

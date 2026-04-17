@@ -2,11 +2,53 @@
  * Seed & Unlock Script - run from Backend/ directory
  */
 
-require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const adminTestEnvPath = path.join(__dirname, '.env.admin.testing');
+if (fs.existsSync(adminTestEnvPath)) {
+  dotenv.config({ path: adminTestEnvPath, override: true });
+}
 
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const AuthService = require('./services/authService');
+
+const getAdminSeedUsers = () => {
+  const admins = [];
+
+  for (let i = 1; i <= 5; i += 1) {
+    const email = process.env[`TEST_ADMIN_${i}_EMAIL`];
+    const password = process.env[`TEST_ADMIN_${i}_PASSWORD`];
+
+    if (!email || !password) {
+      continue;
+    }
+
+    admins.push({
+      name: process.env[`TEST_ADMIN_${i}_NAME`] || `System Admin ${i}`,
+      email,
+      role: 'admin',
+      password,
+    });
+  }
+
+  if (admins.length > 0) {
+    return admins;
+  }
+
+  return [
+    {
+      name: 'System Admin',
+      email: 'admin@college.edu',
+      role: 'admin',
+      password: 'Admin@1234',
+    },
+  ];
+};
 
 async function main() {
   console.log('Connecting to MongoDB...');
@@ -26,11 +68,12 @@ async function main() {
   console.log(`Unlocked ${unlockResult.modifiedCount} account(s)\n`);
 
   // 2. Ensure test users exist
+  const adminSeedUsers = getAdminSeedUsers();
   const testUsers = [
     { name: 'Test Student', email: 'student@college.edu', role: 'student', password: 'Test@1234' },
     { name: 'Test Student Two', email: 'student2@college.edu', role: 'student', password: 'Test@1234' },
     { name: 'Test Teacher', email: 'testteacher@college.edu', role: 'teacher', password: 'Test@1234' },
-    { name: 'System Admin', email: 'admin@college.edu', role: 'admin', password: 'Admin@1234' },
+    ...adminSeedUsers,
   ];
 
   for (const u of testUsers) {

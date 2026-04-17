@@ -8,8 +8,12 @@ import api from '@/services/api'
 import { setAuth, clearAuth, updateToken } from '@/store/slices/authSlice'
 import { showToast } from '@/store/slices/notificationSlice'
 import config from '@/config/environment'
+import { storeAuthData, clearAuthData, getStoredUser } from '@/utils/tokenUtils'
 
 let store = null
+let requestInterceptorId = null
+let responseInterceptorId = null
+let refreshPromise = null
 
 /**
  * Initialize interceptors with Redux store reference
@@ -18,11 +22,20 @@ let store = null
 export const setupInterceptors = (reduxStore) => {
   store = reduxStore
 
+  // React StrictMode mounts components twice in development.
+  // Eject previous interceptors so requests are handled exactly once.
+  if (requestInterceptorId !== null) {
+    api.interceptors.request.eject(requestInterceptorId)
+  }
+  if (responseInterceptorId !== null) {
+    api.interceptors.response.eject(responseInterceptorId)
+  }
+
   /**
    * Request Interceptor
    * Adds JWT token to outgoing requests
    */
-  api.interceptors.request.use(
+  requestInterceptorId = api.interceptors.request.use(
     (config) => {
       const token = getTokenFromStorage()
       if (token) {
@@ -39,13 +52,16 @@ export const setupInterceptors = (reduxStore) => {
    * Response Interceptor
    * Handles token refresh on 401, error responses, etc.
    */
-  api.interceptors.response.use(
+  responseInterceptorId = api.interceptors.response.use(
     (response) => response,
     async (error) => {
       const originalRequest = error.config
+      const isRefreshRequest = originalRequest?.url?.includes('/auth/refresh-token')
+      const isPublicAuthRequest = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password']
+        .some((path) => originalRequest?.url?.includes(path))
 
       // Handle 401 Unauthorized - Token might be expired
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      if (error.response?.status === 401 && !originalRequest?._retry && !isRefreshRequest && !isPublicAuthRequest) {
         originalRequest._retry = true
 
         try {
@@ -62,6 +78,7 @@ export const setupInterceptors = (reduxStore) => {
           // Token refresh failed - redirect to login
           if (store) {
             store.dispatch(clearAuth())
+            clearAuthData()
             store.dispatch(
               showToast({
                 type: 'error',
@@ -132,44 +149,66 @@ const getTokenFromStorage = () => {
  * Refresh access token using refresh token
  */
 export const refreshAccessToken = async () => {
+  if (refreshPromise) {
+    return refreshPromise
+  }
+
   try {
-    // Get stored refresh token from Redux state
-    const state = store ? store.getState() : null
-    const storedRefreshToken = state?.auth?.refreshToken
+    refreshPromise = (async () => {
+      // Get refresh token from Redux state first, then localStorage fallback.
+      const state = store ? store.getState() : null
+      const storedRefreshToken = state?.auth?.refreshToken || getStoredRefreshToken()
 
-    if (!storedRefreshToken) {
-      throw new Error('No refresh token available')
-    }
-
-    const response = await api.post('/auth/refresh-token', {
-      refreshToken: storedRefreshToken,
-    })
-
-    if (response.data?.data?.accessToken || response.data?.accessToken) {
-      const newToken = response.data?.data?.accessToken || response.data?.accessToken
-      const newRefreshToken = response.data?.data?.refreshToken || response.data?.refreshToken
-
-      // Update token in Redux store
-      if (store) {
-        store.dispatch(updateToken(newToken))
-
-        if (newRefreshToken) {
-          const currentState = store.getState()
-          store.dispatch(
-            setAuth({
-              user: currentState.auth.user,
-              token: newToken,
-              refreshToken: newRefreshToken,
-            })
-          )
-        }
+      if (!storedRefreshToken) {
+        throw new Error('No refresh token available')
       }
 
-      return { token: newToken, refreshToken: newRefreshToken }
-    }
+      const response = await api.post('/auth/refresh-token', {
+        refreshToken: storedRefreshToken,
+      })
+
+      if (response.data?.data?.accessToken || response.data?.accessToken) {
+        const newToken = response.data?.data?.accessToken || response.data?.accessToken
+        const newRefreshToken = response.data?.data?.refreshToken || response.data?.refreshToken || storedRefreshToken
+
+        // Update token in Redux store and persist to localStorage.
+        if (store) {
+          const currentState = store.getState()
+          const currentUser = currentState.auth.user || getStoredUser()
+
+          if (currentUser) {
+            store.dispatch(
+              setAuth({
+                user: currentUser,
+                token: newToken,
+                refreshToken: newRefreshToken,
+              })
+            )
+          } else {
+            store.dispatch(updateToken(newToken))
+          }
+
+          storeAuthData({
+            user: currentUser,
+            token: newToken,
+            refreshToken: newRefreshToken,
+          })
+        } else {
+          storeToken(newToken, newRefreshToken)
+        }
+
+        return { token: newToken, refreshToken: newRefreshToken }
+      }
+
+      throw new Error('Token refresh response missing access token')
+    })()
+
+    return await refreshPromise
   } catch (error) {
     console.error('Token refresh failed:', error)
     throw error
+  } finally {
+    refreshPromise = null
   }
 }
 

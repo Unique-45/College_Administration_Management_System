@@ -11,7 +11,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '@/store/slices/authSlice'
 import { toggleSidebar } from '@/store/slices/uiSlice'
@@ -26,10 +26,12 @@ import {
   Shield,
   GraduationCap,
   BookOpen,
+  ChevronRight,
 } from 'lucide-react'
 
 const Header = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const dispatch = useDispatch()
   const [showUserMenu, setShowUserMenu] = useState(false)
   const dropdownRef = useRef(null)
@@ -72,42 +74,71 @@ const Header = () => {
   }
 
   const roleMeta = getRoleMeta(user?.role)
+  const pathSegments = location.pathname.split('/').filter(Boolean)
+
+  const formatSegment = (segment) =>
+    segment
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, (char) => char.toUpperCase())
 
   return (
-    <header className="bg-surface-1/80 backdrop-blur-xl border-b border-border-app/50 sticky top-0 z-40">
+    <header className="sticky top-0 z-40 border-b border-border-app bg-surface-1/90 backdrop-blur-xl">
       <div className="max-w-full mx-auto px-4 sm:px-6">
-        <div className="flex justify-between items-center h-16">
-          {/* Left — Mobile Menu Toggle */}
-          <div className="flex items-center gap-3">
+        <div className="flex h-16 items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
             <button
               onClick={() => dispatch(toggleSidebar())}
-              className="lg:hidden btn-icon text-text-muted hover:text-text-primary"
+              className="btn-icon text-text-muted hover:bg-surface-2 hover:text-text-primary lg:hidden"
               aria-label="Toggle sidebar"
             >
               <Menu className="w-5 h-5" />
             </button>
 
-            {/* Search Bar */}
-            <div className="hidden sm:flex items-center gap-2 bg-surface-2 border border-border-app/50 rounded-btn px-3.5 py-2 text-sm text-text-muted cursor-pointer hover:border-border-app transition-colors w-64">
+            <nav className="hidden items-center gap-1 text-xs text-text-muted md:flex">
+              {pathSegments.length === 0 ? (
+                <span>Dashboard</span>
+              ) : (
+                pathSegments.map((segment, index) => {
+                  const segmentPath = `/${pathSegments.slice(0, index + 1).join('/')}`
+                  const isLast = index === pathSegments.length - 1
+
+                  return (
+                    <span key={segmentPath} className="flex items-center gap-1">
+                      {index > 0 && <ChevronRight className="h-3.5 w-3.5 text-text-muted/60" />}
+                      {isLast ? (
+                        <span className="font-semibold text-text-secondary">{formatSegment(segment)}</span>
+                      ) : (
+                        <Link to={segmentPath} className="transition-colors hover:text-primary">
+                          {formatSegment(segment)}
+                        </Link>
+                      )}
+                    </span>
+                  )
+                })
+              )}
+            </nav>
+
+            <button
+              className="hidden w-72 items-center gap-2 rounded-btn border border-border-app bg-surface-2 px-3.5 py-2 text-left text-sm text-text-muted transition-colors hover:border-primary/30 sm:flex"
+              type="button"
+              aria-label="Search"
+            >
               <Search className="w-4 h-4" />
               <span>Search anything...</span>
-              <kbd className="ml-auto text-[10px] font-medium bg-surface-3 px-1.5 py-0.5 rounded text-text-muted">⌘K</kbd>
-            </div>
+              <kbd className="ml-auto rounded bg-surface-3 px-1.5 py-0.5 text-[10px] font-medium text-text-muted">⌘K</kbd>
+            </button>
           </div>
 
-          {/* Right Side */}
           {isAuthenticated && (
             <div className="flex items-center gap-2">
-              {/* Role Badge */}
-              <div className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-pill text-xs font-medium ${roleMeta.color}`}>
+              <div className={`hidden items-center gap-1.5 rounded-pill px-3 py-1.5 text-xs font-semibold md:flex ${roleMeta.color}`}>
                 <roleMeta.icon className="w-3.5 h-3.5" />
                 {roleMeta.label}
               </div>
 
-              {/* Notification Bell */}
               <button
-                onClick={() => navigate(`/${user?.role}/dashboard`)}
-                className="relative btn-icon text-text-muted hover:text-text-primary hover:bg-surface-2"
+                onClick={() => navigate(`/${user?.role}/events`)}
+                className="relative btn-icon text-text-muted hover:bg-surface-2 hover:text-text-primary"
                 aria-label="Notifications"
               >
                 <Bell className="w-5 h-5" />
@@ -118,11 +149,12 @@ const Header = () => {
                 )}
               </button>
 
-              {/* User Profile Dropdown */}
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center gap-2.5 p-1.5 pr-3 rounded-btn hover:bg-surface-2 transition-all duration-200"
+                  className="flex items-center gap-2.5 rounded-btn p-1.5 pr-3 transition-all duration-200 hover:bg-surface-2"
+                  aria-expanded={showUserMenu}
+                  aria-haspopup="menu"
                 >
                   <div className={`avatar-sm bg-gradient-to-br ${getAvatarColor(user?.role)}`}>
                     {user?.name?.charAt(0).toUpperCase() || 'U'}
@@ -138,9 +170,8 @@ const Header = () => {
                   />
                 </button>
 
-                {/* Dropdown Menu */}
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-56 bg-surface-2 rounded-card border border-border-app shadow-dropdown py-1.5 z-50 animate-scale-in">
+                  <div className="absolute right-0 z-50 mt-2 w-56 animate-scale-in rounded-card border border-border-app bg-surface-1 py-1.5 shadow-dropdown" role="menu">
                     <div className="px-4 py-3 border-b border-border-app/50">
                       <p className="text-sm font-medium text-text-primary">{user?.name}</p>
                       <p className="text-xs text-text-muted truncate">{user?.email}</p>

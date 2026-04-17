@@ -21,9 +21,10 @@ import EventDetails from './EventDetails'
 import PageHeader from '@/components/Common/PageHeader'
 import PageSkeleton from '@/components/Common/PageSkeleton'
 
-const EventList = ({ userRole = 'student' }) => {
+const EventList = ({ userRole }) => {
   const dispatch = useDispatch()
   const { events, loading, filters } = useSelector((state) => state.event)
+  const activeRole = useSelector((state) => state.auth.user?.role)
   const [searchInput, setSearchInput] = useState('')
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState(null)
@@ -54,7 +55,8 @@ const EventList = ({ userRole = 'student' }) => {
     }
   }
 
-  const isAdmin = userRole === 'admin' || userRole === 'teacher'
+  const effectiveRole = userRole || activeRole || 'student'
+  const isAdmin = effectiveRole === 'admin' || effectiveRole === 'teacher'
 
   const formatDateString = (dateString) => {
     const d = new Date(dateString)
@@ -105,7 +107,7 @@ const EventList = ({ userRole = 'student' }) => {
              name="eventType"
              value={filters.eventType}
              onChange={handleFilterChange}
-             className="bg-surface-2 border-border-app text-text-secondary text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary/40 cursor-pointer"
+             className="select w-full bg-surface-2 px-4 py-2 text-[11px] font-semibold uppercase tracking-wide sm:w-auto"
            >
               <option value="">All Categories</option>
               {['academic', 'sports', 'cultural', 'workshop', 'seminar'].map(t => (
@@ -115,7 +117,7 @@ const EventList = ({ userRole = 'student' }) => {
 
            <div className="flex items-center gap-2 bg-surface-2 px-4 py-2 rounded-xl border border-border-app border-dashed">
               <Calendar className="w-3.5 h-3.5 text-primary" />
-              <input type="date" className="bg-transparent text-[10px] font-bold text-text-muted focus:outline-none" />
+              <input type="date" className="bg-transparent text-[11px] font-semibold text-text-muted focus:outline-none" />
            </div>
         </div>
       </div>

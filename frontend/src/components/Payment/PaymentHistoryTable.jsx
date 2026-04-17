@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react'
-import { Download, Search, Filter, Calendar, FileText, ChevronRight, IndianRupee } from 'lucide-react'
+import { Download, Search, Filter, Calendar, FileText, IndianRupee, Wallet, CreditCard } from 'lucide-react'
 
 const statusThemes = {
-  success: 'badge-success shadow-glow-success/10',
-  failed: 'badge-danger shadow-glow-danger/10',
-  pending: 'badge-warning shadow-glow-warning/10',
+  success: 'badge-success',
+  failed: 'badge-danger',
+  pending: 'badge-warning',
 }
 
 const PaymentHistoryTable = ({ payments = [], onDownloadReceipt, downloading }) => {

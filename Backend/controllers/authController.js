@@ -40,6 +40,17 @@ const register = async (req, res, next) => {
 
     const { name, email, password, role, phone } = value;
 
+    // Public signup must never create admin accounts.
+    if (role === constants.ROLES.ADMIN) {
+      return sendError(
+        res,
+        'Admin accounts can only be created through database seeding.',
+        constants.ERROR_CODES.FORBIDDEN,
+        { field: 'role', message: 'Admin role is not allowed in public registration' },
+        constants.HTTP_STATUS.FORBIDDEN
+      );
+    }
+
     // Check if email already exists
     const existingUser = await User.findByEmail(email);
     if (existingUser) {

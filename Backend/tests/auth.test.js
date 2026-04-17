@@ -155,6 +155,44 @@ describe('Authentication Module Tests', () => {
   });
 
   describe('End-to-End Auth Flow', () => {
+    test('should reject teacher registration with non-fot domain email', async () => {
+      const invalidTeacherData = {
+        name: 'Teacher Outside Domain',
+        email: 'teacher@gmail.com',
+        password: 'TeacherPass123!',
+        confirmPassword: 'TeacherPass123!',
+        role: 'teacher',
+        phone: '1234567898'
+      };
+
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(invalidTeacherData);
+
+      expect(response.status).toBe(400);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toContain('Validation failed');
+    });
+
+    test('should block public registration for admin role', async () => {
+      const adminSignupData = {
+        name: 'Blocked Admin',
+        email: 'blocked-admin@example.com',
+        password: 'AdminPass123!',
+        confirmPassword: 'AdminPass123!',
+        role: 'admin',
+        phone: '1234567899'
+      };
+
+      const response = await request(app)
+        .post('/api/auth/register')
+        .send(adminSignupData);
+
+      expect(response.status).toBe(400);
+      expect(response.body.success).toBe(false);
+      expect(response.body.message).toContain('Validation failed');
+    });
+
     test('complete registration and login flow', async () => {
       // Use different test data to avoid conflict with beforeEach user
       const newUserData = {

@@ -1,6 +1,7 @@
 # Environment variables
 .env.local
 .env.*.local
+.env.admin.testing
 
 # Dependencies
 node_modules/

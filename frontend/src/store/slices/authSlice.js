@@ -8,7 +8,7 @@ const refreshToken = localStorage.getItem(config.auth.refreshTokenKey)
 const user = getStoredUser()
 
 const initialState = {
-  isAuthenticated: !!token && !!user,
+  isAuthenticated: !!user && (!!token || !!refreshToken),
   user: user || {
     id: null,
     email: null,

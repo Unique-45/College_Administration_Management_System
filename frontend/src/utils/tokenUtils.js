@@ -6,6 +6,8 @@
 import { jwtDecode } from 'jwt-decode'
 import config from '@/config/environment'
 
+const TOKEN_EXPIRY_LEEWAY_SECONDS = 5
+
 /**
  * Check if token is valid and not expired
  * @param {string} token - JWT token to validate
@@ -18,8 +20,8 @@ export const isTokenValid = (token) => {
     const decoded = jwtDecode(token)
     const currentTime = Date.now() / 1000
 
-    // Check if token is expired (add 1 minute buffer)
-    return decoded.exp > currentTime + 60
+    // Small leeway for clock skew; do not invalidate far too early.
+    return decoded.exp > currentTime + TOKEN_EXPIRY_LEEWAY_SECONDS
   } catch (error) {
     console.error('Invalid token:', error)
     return false
@@ -99,7 +101,7 @@ export const getUserIdFromToken = (token) => {
  */
 export const shouldRefreshToken = (token) => {
   const timeUntilExpiry = getTimeUntilTokenExpiry(token)
-  if (!timeUntilExpiry) return true
+  if (timeUntilExpiry === null) return true
 
   // Refresh if less than 5 minutes remaining
   return timeUntilExpiry < 5 * 60 * 1000

@@ -28,7 +28,24 @@ const RegisterPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    const updatedFormData = { ...formData, [name]: value }
+    setFormData(updatedFormData)
+
+    if (updatedFormData.role === 'teacher' && updatedFormData.email && !updatedFormData.email.toLowerCase().endsWith('@fot.college.edu')) {
+      setErrors((prev) => ({
+        ...prev,
+        email: 'Teacher email must be a @fot.college.edu address',
+      }))
+    }
+
+    if (updatedFormData.role === 'teacher' && updatedFormData.email.toLowerCase().endsWith('@fot.college.edu')) {
+      setErrors((prev) => ({ ...prev, email: '' }))
+    }
+
+    if (updatedFormData.role !== 'teacher' && errors.email) {
+      setErrors((prev) => ({ ...prev, email: '' }))
+    }
+
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }))
     }
@@ -47,6 +64,9 @@ const RegisterPage = () => {
     if (!nameValidation.isValid) newErrors.name = nameValidation.feedback
     const emailValidation = validate.email(formData.email)
     if (!emailValidation.isValid) newErrors.email = emailValidation.feedback
+    if (formData.role === 'teacher' && !formData.email.toLowerCase().endsWith('@fot.college.edu')) {
+      newErrors.email = 'Teacher email must be a @fot.college.edu address'
+    }
     const passwordValidation = validate.password(formData.password)
     if (!passwordValidation.isValid) newErrors.password = passwordValidation.feedback
     if (formData.password !== formData.confirmPassword) {
@@ -139,9 +159,13 @@ const RegisterPage = () => {
               value={formData.role} onChange={handleInputChange}>
               <option value="student">Student</option>
               <option value="teacher">Teacher</option>
-              <option value="admin">Admin</option>
             </select>
           </div>
+          {formData.role === 'teacher' && (
+            <p className="mt-2 text-xs text-text-muted">
+              Use your institute email. Only <span className="font-semibold text-primary">@fot.college.edu</span> addresses are allowed for teacher signup.
+            </p>
+          )}
         </div>
 
         {/* Password */}

@@ -39,9 +39,19 @@ const validateRegistration = (data) => {
     email: Joi.string()
       .email()
       .lowercase()
+      .custom((value, helpers) => {
+        const { role } = helpers.state.ancestors[0] || {};
+
+        if (role === 'teacher' && !value.endsWith('@fot.college.edu')) {
+          return helpers.error('any.invalid');
+        }
+
+        return value;
+      })
       .required()
       .messages({
         'string.email': 'Invalid email format',
+        'any.invalid': 'Teacher email must be a @fot.college.edu address',
         'any.required': 'Email is required',
       }),
     password: Joi.string()
@@ -59,10 +69,10 @@ const validateRegistration = (data) => {
         'any.required': 'Password confirmation is required',
       }),
     role: Joi.string()
-      .valid('admin', 'teacher', 'student')
+      .valid('teacher', 'student')
       .required()
       .messages({
-        'any.only': 'Role must be admin, teacher, or student',
+        'any.only': 'Role must be teacher or student',
         'any.required': 'Role is required',
       }),
     phone: Joi.string()

@@ -18,32 +18,25 @@ const MainLayout = () => {
 
   return (
     <div className="min-h-screen bg-app">
-      {/* Sidebar */}
       <Sidebar />
 
-      {/* Main Content Wrapper — offset by sidebar width (responsive to collapse) */}
-      <div className={`flex flex-col min-h-screen transition-all duration-300 ${
+      <div className={`flex min-h-screen flex-col transition-all duration-300 ${
         sidebarCollapsed ? 'lg:ml-[68px]' : 'lg:ml-64'
       }`}>
-        {/* Header */}
         <Header />
 
-        {/* Main Content Area */}
         <main className="flex-1 w-full overflow-auto">
-          <div className="p-4 sm:p-6 lg:p-8 max-w-[1400px]">
+          <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
             <Outlet />
           </div>
 
-          {/* Footer */}
-          <footer className="border-t border-border-app/30 mt-12 py-6">
-            <div className="max-w-full px-4 sm:px-6 lg:px-8">
-              <div className="flex flex-col sm:flex-row justify-between items-center text-xs text-text-muted gap-4">
-                <p>© 2026 CampusFlow — College Administration Management System</p>
-                <div className="flex gap-6">
-                  <a href="#" className="hover:text-text-secondary transition-colors">Privacy</a>
-                  <a href="#" className="hover:text-text-secondary transition-colors">Terms</a>
-                  <a href="#" className="hover:text-text-secondary transition-colors">Support</a>
-                </div>
+          <footer className="mt-8 border-t border-border-app/70 py-6">
+            <div className="mx-auto flex w-full max-w-[1440px] flex-col items-center justify-between gap-4 px-4 text-xs text-text-muted sm:flex-row sm:px-6 lg:px-8">
+              <p>© 2026 CampusFlow · College Administration Management System</p>
+              <div className="flex items-center gap-6">
+                <a href="#" className="transition-colors hover:text-text-secondary">Privacy</a>
+                <a href="#" className="transition-colors hover:text-text-secondary">Terms</a>
+                <a href="#" className="transition-colors hover:text-text-secondary">Support</a>
               </div>
             </div>
           </footer>
